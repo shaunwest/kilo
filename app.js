@@ -4,18 +4,16 @@
  */
 
 //Load Modules
-var express = require('express');
-var engine = require('ejs-locals'); // this is no longer maintained?
-var http = require('http');
-var path = require('path');
-var routes = require('./routes');
-var users = require('./routes/users');
-
-var app = express();
+var express     = require('express'),
+    partials    = require('express-partials'),
+    http        = require('http'),
+    path        = require('path'),
+    routes      = require('./routes'),
+    users       = require('./routes/users'),
+    app         = express();
 
 // Configuration
-app.engine('ejs', engine);
-app.set('view engine', 'ejs');
+app.use(partials());
 
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');

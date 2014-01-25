@@ -5,9 +5,8 @@ module.exports = function(grunt) {
     grunt.initConfig({
         // Metadata.
         nodePort: 3000,
-        publicJs: "public/js",
-        jsLib: "<%= publicJs %>/lib",
-        assetmanager: "<%= publicJs %>/assetmanager",
+        public: "public",
+        appJs: "<%= public %>/assetmanager/js",
         pkg: grunt.file.readJSON('package.json'),
         banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
             '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
@@ -51,7 +50,7 @@ module.exports = function(grunt) {
             },
             dist: {
                 src: [
-                    '<%= assetmanager %>/**/*.js'
+                    '<%= appJs %>/**/*.js'
                 ],
                 dest: '.tmp/<%= pkg.name %>.js'
             }
@@ -62,7 +61,7 @@ module.exports = function(grunt) {
             },
             dist: {
                 src: '<%= concat.dist.dest %>',
-                dest: '<%= publicJs %>/<%= pkg.name %>.min.js'
+                dest: '<%= public %>/js/<%= pkg.name %>.min.js'
             }
         },
         jshint: {
@@ -75,14 +74,14 @@ module.exports = function(grunt) {
                 noarg: true,
                 sub: true,
                 undef: true,
-                unused: true,
+                unused: 'vars',
                 boss: true,
                 eqnull: true,
+                strict: false,
                 globals: {
                     jQuery: true,
                     $: true,
-                    Backbone: true,
-                    Handlebars: true
+                    angular: true
                 }
             },
             gruntfile: {
@@ -92,7 +91,7 @@ module.exports = function(grunt) {
                 src: ['lib/**/*.js', 'test/**/*.js']
             },
             pub: {
-                src: ['<%= publicJs %>/platform/**/*.js']
+                src: ['<%= appJs %>/**/*.js']
             }
         },
         nodeunit: {

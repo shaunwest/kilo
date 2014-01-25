@@ -2,11 +2,14 @@
  * Created by shaun on 1/22/14.
  */
 
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('assetManager.directives', []).
-    directive('appVersion', ['version', function(version) {
-        return function(scope, elm, attrs) {
-            elm.text(version);
-        };
-    }]);
+    angular.module('assetManager.directives', []).
+        directive('appVersion', ['version', function(version) {
+            return function(scope, elm, attrs) {
+                elm.text(version);
+            };
+        }]);
+})();
+

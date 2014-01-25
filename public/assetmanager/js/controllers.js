@@ -2,12 +2,15 @@
  * Created by shaun on 1/22/14.
  */
 
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('assetManager.controllers', []).
-    controller('MyCtrl1', [function() {
+    angular.module('assetManager.controllers', []).
+        controller('MyCtrl1', [function() {
 
-    }])
-    .controller('MyCtrl2', [function() {
+        }])
+        .controller('MyCtrl2', [function() {
 
-    }]);
+        }]);
+})();
+
