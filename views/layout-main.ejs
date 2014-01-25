@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="assetManager">
+<head>
+    <meta charset="utf-8">
+    <title><%= appTitle %></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+
+<%- body %>
+
+<% if(devMode) {%>
+<script src="js/lib/angular.js"></script>
+<script src="js/lib/angular-route.js"></script>
+<script src="assetmanager/js/app.js"></script>
+<script src="assetmanager/js/services.js"></script>
+<script src="assetmanager/js/controllers.js"></script>
+<script src="assetmanager/js/filters.js"></script>
+<script src="assetmanager/js/directives.js"></script>
+<% } else { %>
+<script src="js/retro2d.min.js"></script>
+<% } %>
+</body>
+</html>
+

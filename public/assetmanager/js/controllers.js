@@ -1,0 +1,13 @@
+/**
+ * Created by shaun on 1/22/14.
+ */
+
+'use strict';
+
+angular.module('assetManager.controllers', []).
+    controller('MyCtrl1', [function() {
+
+    }])
+    .controller('MyCtrl2', [function() {
+
+    }]);
