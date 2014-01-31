@@ -9,8 +9,10 @@ var express     = require('express'),
     http        = require('http'),
     path        = require('path'),
     routes      = require('./routes'),
-    users       = require('./routes/users'),
-    app         = express();
+    assets      = require('./routes/assets'),
+    app         = express(),
+    zero        = 0,
+    oneDay      = 86400000;
 
 // Configuration
 app.use(partials());
@@ -20,12 +22,13 @@ app.set('views', __dirname + '/views');
 
 app.use(express.favicon());
 app.use(express.logger('dev'));
+app.use(express.compress());
 app.use(express.urlencoded());
 app.use(express.json());
 app.use(express.methodOverride());
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: zero }));
 app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
-
+//app.use(routes.index); // Using explicit routes only
 
 // Set Dev Mode
 if ('development' == app.get('env')) {
@@ -39,8 +42,9 @@ if ('development' == app.get('env')) {
 app.locals.appTitle = 'Retro 2D';
 
 // Routes
+app.get('/assets/:assetName', assets.getAsset);
+app.get('/login', routes.index);
 app.get('/', routes.index);
-app.get('/users', users.all);
 
 http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));

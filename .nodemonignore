@@ -1,0 +1,7 @@
+public/**/*
+.idea/**
+.git/**
+.sass-cache/**
+.gitignore*
+Gruntfile.js
+node_modules/**/*

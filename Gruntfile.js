@@ -6,7 +6,7 @@ module.exports = function(grunt) {
         // Metadata.
         nodePort: 3000,
         public: "public",
-        appJs: "<%= public %>/assetmanager/js",
+        appJs: "<%= public %>/interface/js",
         pkg: grunt.file.readJSON('package.json'),
         banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
             '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
@@ -53,6 +53,16 @@ module.exports = function(grunt) {
                     '<%= appJs %>/**/*.js'
                 ],
                 dest: '.tmp/<%= pkg.name %>.js'
+            }
+        },
+        sass: {
+            dist: {
+                options: {
+                    style: 'expanded'
+                },
+                files: {
+                    'public/css/style.css': 'scss/main.scss'
+                }
             }
         },
         uglify: {
@@ -116,6 +126,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-nodeunit');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-nodemon');
 
     grunt.registerTask('target', 'Set the deploy target', function(value){
@@ -126,6 +137,7 @@ module.exports = function(grunt) {
         'clean:start',
         'jshint:pub',
         //'nodeunit',
+        'sass',
         'concat',
         'uglify',
         'clean:finish'

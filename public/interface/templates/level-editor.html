@@ -1,0 +1,6 @@
+<div class="{{ isEnabled() ? 'editorEnabled' : 'editorDisabled' }}">
+    <div ng-hide="isEnabled()">Spinning...</div>
+    <div ng-hide="!isEnabled()">
+        Level layers go here...
+    </div>
+</div>

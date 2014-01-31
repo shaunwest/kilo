@@ -1,0 +1,40 @@
+<div>
+    <nav>
+        <ul>
+            <li><a href="/login">Log out</a></li>
+        </ul>
+    </nav>
+    <h2>HOME</h2>
+
+    <ul>
+        <li>Current Level:
+            <form>
+                <select id="levelSelect">
+                    <option>Level 1</option>
+                    <option>Add New Level</option>
+                </select>
+            </form>
+        </li>
+        <li><a href="#">Delete this level</a></li>
+        <li><a href="#">Rename this level</a></li>
+    </ul>
+
+    <form>
+        <label for="tileSetSelect">Tile Set</label>
+        <select id="tileSetSelect">
+            <option>New Tile Set</option>
+            <option>Set 1</option>
+            <option>Set 2</option>
+        </select>
+        <a href="#">Delete current tile set</a>
+    </form>
+    <div>
+        TILES & "TRANSPARENT"
+    </div>
+
+    <form>
+        <label for="backgroundColor">Background Color</label>
+        <input id="backgroundColor" type="text">
+    </form>
+    <r2d-leveleditor class="levelEditor colorEmpty" r2d-enabled="editorEnabled"></r2d-leveleditor>
+</div>
