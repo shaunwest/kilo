@@ -15,7 +15,7 @@ module.exports = function(grunt) {
             ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
         // Task configuration.
         nodemon: {
-            dev: {
+            normal: {
                 options: {
                     file: 'app.js',
                     nodeArgs: [],
@@ -55,13 +55,23 @@ module.exports = function(grunt) {
                 dest: '.tmp/<%= pkg.name %>.js'
             }
         },
-        sass: {
+        compass: {
             dist: {
                 options: {
-                    style: 'expanded'
-                },
-                files: {
-                    'public/css/style.css': 'scss/main.scss'
+                    sassDir: 'sass',
+                    cssDir: 'public/css',
+                    environment: 'production',
+                    require: 'singularitygs',
+                    watch: true
+
+                }
+            },
+            dev: {
+                options: {
+                    sassDir: 'sass',
+                    cssDir: 'public/css',
+                    require: 'singularitygs',
+                    watch: true
                 }
             }
         },
@@ -84,10 +94,11 @@ module.exports = function(grunt) {
                 noarg: true,
                 sub: true,
                 undef: true,
-                unused: 'vars',
+                unused: 'vars',     // don't worry about functions
                 boss: true,
                 eqnull: true,
                 strict: false,
+                devel: true,        // don't worry about console
                 globals: {
                     jQuery: true,
                     $: true,
@@ -100,7 +111,7 @@ module.exports = function(grunt) {
             lib_test: {
                 src: ['lib/**/*.js', 'test/**/*.js']
             },
-            pub: {
+            public: {
                 src: ['<%= appJs %>/**/*.js']
             }
         },
@@ -115,6 +126,24 @@ module.exports = function(grunt) {
             lib_test: {
                 files: '<%= jshint.lib_test.src %>',
                 tasks: ['jshint:lib_test', 'nodeunit']
+            },
+            compass: { // Not using this. Compass 'watch' option is faster.
+                files: 'sass/**/*',
+                tasks: ['compass:dev']
+            }
+        },
+        concurrent: {
+            dev: {
+                tasks: ['compass:dev', 'nodemon:normal'],
+                options: {
+                    logConcurrentOutput: true
+                }
+            },
+            debug: {
+                tasks: ['compass:dev', 'nodemon:debug'],
+                options: {
+                    logConcurrentOutput: true
+                }
             }
         }
     });
@@ -126,8 +155,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-nodeunit');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-sass');
+    grunt.loadNpmTasks('grunt-contrib-compass');
+    grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-nodemon');
+
 
     grunt.registerTask('target', 'Set the deploy target', function(value){
         process.env.NODE_ENV = value;
@@ -135,9 +166,9 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build', [
         'clean:start',
-        'jshint:pub',
+        'jshint:public',
         //'nodeunit',
-        'sass',
+        'compass:dev',
         'concat',
         'uglify',
         'clean:finish'
@@ -145,17 +176,17 @@ module.exports = function(grunt) {
 
     grunt.registerTask('dev', [
         'target:development',
-        'nodemon:dev'
+        'concurrent:dev'
     ]);
 
     grunt.registerTask('debug', [
         'target:development',
-        'nodemon:debug'
+        'concurrent:debug'
     ]);
 
     grunt.registerTask('prod', [
         'target:production',
-        'nodemon:dev'
+        'nodemon:normal'
     ]);
 
     grunt.registerTask('default', [

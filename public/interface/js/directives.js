@@ -22,6 +22,18 @@
                 link: link,
                 templateUrl: '/interface/templates/level-editor.html'
             };
+        }])
+        .directive('r2dTileselector', [function() {
+            function link(scope, element, attrs) {
+            }
+
+            return {
+                scope: {},
+                restrict: 'E',
+                replace: true,
+                link: link,
+                templateUrl: '/interface/templates/tile-selector.html'
+            };
         }]);
 })();
 

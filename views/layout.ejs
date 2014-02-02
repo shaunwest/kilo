@@ -3,13 +3,23 @@
 <head>
     <meta charset="utf-8">
     <title><%= appTitle %></title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <!--<link rel="stylesheet" type="text/css" href="/css/bootstrap.css">-->
 </head>
-<body>
-<h1><%= appTitle %></h1>
+<body data-development-grid="show">
 
-<%- body %>
+<div class="container">
+    <h1><%= appTitle %></h1>
+    <nav>
+        <ul>
+            <li><a href="/login">Log out</a></li>
+        </ul>
+    </nav>
+
+    <%- body %>
+</div>
+
+<script src="/js/vendor/grid.js"></script>
 
 <script src="/components/angular/angular.js"></script>
 <script src="/components/angular-route/angular-route.js"></script>

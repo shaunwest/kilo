@@ -19,7 +19,7 @@
                     });
 
                 return deferred.promise;
-            }
+            };
         });
     }).
         value('version', '0.0.1');

@@ -1,0 +1,81 @@
+// Use Compass ('cause it rocks!)
+//@import "compass";
+@import "singularitygs";
+
+@import "../modules/all";
+
+@include grid-toggle;
+
+body, html {
+  font: $base-font;
+  color: $primary-color;
+  background-color: $secondary-background-color;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.container {
+  margin: 0 auto;
+  min-height: 100%;
+}
+
+nav {
+  @include grid-span(2, 11);
+}
+
+h1 {
+  @include grid-span(3, 1);
+}
+
+h2 {
+  @include grid-span(3, 2);
+   margin-top: 5px;
+}
+
+#loginForm {
+  @include grid-span(1, 2);
+}
+
+.page {
+  @include grid-span(12, 1);
+  margin: $primary-margin 0;
+  padding: $primary-padding 0;
+  background-color: $primary-background-color;
+}
+
+.options {
+  //@include grid-span(3, 2);
+  background-color: $secondary-background-color;
+  //clear: both;
+  /*height: 100px;*/
+}
+
+.tiles {
+ // @include grid-span(5, 5);
+  //clear: both;
+  /*height: 200px;*/
+  background-color: $secondary-background-color;
+}
+
+.tileSelector {
+  background-color: $secondary-background-color;
+  min-height: 200px;
+}
+
+.level {
+  //@include grid-span(10, 2);
+  //clear: both;
+  min-height: 450px;
+}
+
+.levelEditor {
+  background-color: $empty-background-color;
+  height: 400px;
+  width: 100%;
+}
+
+.editorEnabled {
+  background-color: $secondary-background-color;
+}
+

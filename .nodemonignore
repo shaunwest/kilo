@@ -1,4 +1,5 @@
 public/**/*
+sass/**/*
 .idea/**
 .git/**
 .sass-cache/**
