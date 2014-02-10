@@ -1,2 +1,4 @@
+node_modules/**
+.sass-cache/**
 public/css/main.css
-.sass-cache
+Gemfile.lock
