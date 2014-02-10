@@ -5,7 +5,7 @@
 (function() {
     'use strict';
 
-    angular.module('interface.directives', []).
+    angular.module('editor.directives', []).
         directive('appVersion', ['version', function(version) {
             return function(scope, elm, attrs) {
                 elm.text(version);
@@ -16,11 +16,11 @@
             }
 
             return {
-                scope: {isEnabled: '&r2dEnabled'},
-                restrict: 'E',
+                scope: {isEnabled: '=enabled'},
+                restrict: 'AE',
                 replace: true,
                 link: link,
-                templateUrl: '/interface/templates/level-editor.html'
+                templateUrl: '/editor/templates/level-editor.html'
             };
         }])
         .directive('r2dTileselector', [function() {
@@ -29,11 +29,22 @@
 
             return {
                 scope: {},
-                restrict: 'E',
+                restrict: 'AE',
                 replace: true,
                 link: link,
-                templateUrl: '/interface/templates/tile-selector.html'
+                templateUrl: '/editor/templates/tile-selector.html'
             };
+        }])
+        .directive('r2dSourcesselector', [function() {
+            function link(scope, element, attrs) {
+            }
+            return {
+                scope: {sources: '=sources'},
+                restrict: 'AE',
+                replace: true,
+                link: link,
+                templateUrl: '/editor/templates/sources-selector.html'
+            }
         }]);
 })();
 

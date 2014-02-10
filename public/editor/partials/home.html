@@ -14,7 +14,6 @@
             <li><a href="#">Rename this level</a></li>
         </ul>
     </div>
-
     <div class="tiles">
         <form>
             <label for="tileSetSelect">Tile Set</label>
@@ -23,8 +22,13 @@
                 <option>Set 1</option>
                 <option>Set 2</option>
             </select>
+            <button class="k-button" ng-click="sourcesWindow.open()">Add source</button>
             <a href="#">Delete current tile set</a>
         </form>
+        <div kendo-window="modal" k-title="'Tile Sources'" k-visible="false" k-modal="true" k-min-width="200" k-min-height="200" k-width="600" k-height="400">
+            <r2d-sourcesselector sources="sources"></r2d-sourcesselector>
+            <!--<div kendo-list-view k-data-source="sources" k-template="'<div>#=filename#</div>'"></div>-->
+        </div>
         <div>
             <r2d-tileselector class="tileSelector"></r2d-tileselector>
         </div>
@@ -35,6 +39,6 @@
             <label for="backgroundColor">Background Color</label>
             <input id="backgroundColor" type="text">
         </form>
-        <r2d-leveleditor class="levelEditor" r2d-enabled="editorEnabled"></r2d-leveleditor>
+        <r2d-leveleditor class="levelEditor" enabled="editorEnabled"></r2d-leveleditor>
     </div>
 </div>

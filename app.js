@@ -42,7 +42,8 @@ if ('development' == app.get('env')) {
 app.locals.appTitle = 'Retro 2D';
 
 // Routes
-app.get('/assets/:assetName', assets.getAsset);
+app.get('/:appId/sources', assets.listAssets);
+app.get('/:appId/sources/:sourceName', assets.getAsset);
 app.get('/login', routes.index);
 app.get('/', routes.index);
 

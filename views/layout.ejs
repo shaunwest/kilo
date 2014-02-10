@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="interface">
+<html lang="en" ng-app="editor">
 <head>
     <meta charset="utf-8">
     <title><%= appTitle %></title>
+    <link rel="stylesheet" type="text/css" href="/css/boilerplate.css">
+    <link rel="stylesheet" type="text/css" href="/css/normalize.css">
     <link rel="stylesheet" type="text/css" href="/css/main.css">
-    <!--<link rel="stylesheet" type="text/css" href="/css/bootstrap.css">-->
+    <link rel="stylesheet" type="text/css" href="/components/kendo-ui/styles/kendo.common.min.css">
+    <link rel="stylesheet" type="text/css" href="/components/kendo-ui/styles/kendo.default.min.css">
 </head>
 <body data-development-grid="show">
 
@@ -21,15 +24,17 @@
 
 <script src="/js/vendor/grid.js"></script>
 
+<script src="/components/jquery/jquery.js"></script>
 <script src="/components/angular/angular.js"></script>
 <script src="/components/angular-route/angular-route.js"></script>
-<script src="/components/angular-bootstrap/ui-bootstrap.js"></script>
+<script src="/components/kendo-ui/js/kendo.web.min.js"></script>
+<script src="/components/angular-kendo-ui/build/angular-kendo.js"></script>
 <% if(devMode) {%>
-<script src="/interface/js/app.js"></script>
-<script src="/interface/js/services.js"></script>
-<script src="/interface/js/controllers.js"></script>
-<script src="/interface/js/filters.js"></script>
-<script src="/interface/js/directives.js"></script>
+<script src="/editor/js/app.js"></script>
+<script src="/editor/js/services.js"></script>
+<script src="/editor/js/controllers.js"></script>
+<script src="/editor/js/filters.js"></script>
+<script src="/editor/js/directives.js"></script>
 <% } else { %>
 <script src="/js/retro2d.min.js"></script>
 <% } %>

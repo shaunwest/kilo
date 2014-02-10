@@ -5,7 +5,7 @@
 (function() {
     'use strict';
 
-    angular.module('interface.filters', []).
+    angular.module('editor.filters', []).
         filter('interpolate', ['version', function(version) {
             return function(text) {
                 return String(text).replace(/\%VERSION\%/mg, version);

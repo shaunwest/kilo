@@ -4,12 +4,13 @@
 (function() {
     'use strict';
 
-    angular.module('interface', [
+    angular.module('editor', [
             'ngRoute',
-            'interface.filters',
-            'interface.services',
-            'interface.directives',
-            'interface.controllers'
+            'kendo.directives',
+            'editor.filters',
+            'editor.services',
+            'editor.directives',
+            'editor.controllers'
         ]).
         value('gameId', 'ultradian').
         config(['$routeProvider', '$locationProvider',
@@ -19,22 +20,22 @@
 
                 // Home
                 $routeProvider.when('/', {
-                    templateUrl: '/interface/partials/home.html',
+                    templateUrl: '/editor/partials/home.html',
                     controller: 'HomeCtrl'
                 });
 
                 $routeProvider.when('/login', {
-                    templateUrl: '/interface/partials/login.html',
+                    templateUrl: '/editor/partials/login.html',
                     controller: 'LoginCtrl'
                 });
 
                 // Tiles
                 $routeProvider.when('/tiles/sources', {
-                    templateUrl: '/interface/partials/tiles/sources.html',
+                    templateUrl: '/editor/partials/tiles/sources.html',
                     controller: 'TilesCtrl'
                 });
                 $routeProvider.when('/tiles/sets', {
-                    templateUrl: '/interface/partials/tiles/sets.html',
+                    templateUrl: '/editor/partials/tiles/sets.html',
                     controller: 'TilesCtrl'
                 });
                 $routeProvider.when('/tiles', {redirectTo: '/tiles/sets'});

@@ -6,7 +6,7 @@ module.exports = function(grunt) {
         // Metadata.
         nodePort: 3000,
         public: "public",
-        appJs: "<%= public %>/interface/js",
+        appJs: "<%= public %>/editor/js",
         pkg: grunt.file.readJSON('package.json'),
         banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
             '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
@@ -62,8 +62,6 @@ module.exports = function(grunt) {
                     cssDir: 'public/css',
                     environment: 'production',
                     require: 'singularitygs',
-                    watch: true
-
                 }
             },
             dev: {
@@ -72,6 +70,13 @@ module.exports = function(grunt) {
                     cssDir: 'public/css',
                     require: 'singularitygs',
                     watch: true
+                }
+            },
+            build: {
+                options: {
+                    sassDir: 'sass',
+                    cssDir: 'public/css',
+                    require: 'singularitygs',
                 }
             }
         },
@@ -97,7 +102,7 @@ module.exports = function(grunt) {
                 unused: 'vars',     // don't worry about functions
                 boss: true,
                 eqnull: true,
-                strict: false,
+                strict: true,
                 devel: true,        // don't worry about console
                 globals: {
                     jQuery: true,
@@ -168,7 +173,7 @@ module.exports = function(grunt) {
         'clean:start',
         'jshint:public',
         //'nodeunit',
-        'compass:dev',
+        'compass:build',
         'concat',
         'uglify',
         'clean:finish'

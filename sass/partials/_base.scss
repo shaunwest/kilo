@@ -10,8 +10,6 @@ body, html {
   font: $base-font;
   color: $primary-color;
   background-color: $secondary-background-color;
-  margin: 0;
-  padding: 0;
   height: 100%;
 }
 
@@ -31,6 +29,31 @@ h1 {
 h2 {
   @include grid-span(3, 2);
    margin-top: 5px;
+}
+
+ul.sourceSelector {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+
+  img {
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    float: left;
+    margin: 5px;
+    min-width: 16px;
+    min-height: 16px;
+    background-color: $tile-background-color;
+    background-image: url('img/checker.png');
+    border: 2px solid $normal-border-color;
+  }
+
+  li:hover {
+    border-color: $hover-border-color;
+  }
 }
 
 #loginForm {
