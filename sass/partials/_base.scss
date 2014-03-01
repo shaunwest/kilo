@@ -11,24 +11,44 @@ body, html {
   color: $primary-color;
   background-color: $secondary-background-color;
   height: 100%;
+  margin: 0 10px;
 }
 
-.container {
-  margin: 0 auto;
-  min-height: 100%;
+header {
+  @include grid-span(3, 1);
 }
 
 nav {
   @include grid-span(2, 11);
 }
 
-h1 {
-  @include grid-span(3, 1);
+section.page {
+  @include grid-span(12, 1);
+  clear: both;
+  background-color: $primary-background-color;
+
+  header {
+    clear: both;
+  }
 }
 
-h2 {
-  @include grid-span(3, 2);
-   margin-top: 5px;
+section.options {
+  @include grid-span(4, 1);
+  background-color: $secondary-background-color;
+  clear: both;
+  height: 150px;
+}
+
+section.tiles {
+  @include grid-span(8, 5);
+  height: 150px;
+  background-color: $secondary-background-color;
+}
+
+section.level {
+  @include grid-span(12, 1);
+  clear: both;
+  min-height: 450px;
 }
 
 ul.sourceSelector {
@@ -47,7 +67,7 @@ ul.sourceSelector {
     min-width: 16px;
     min-height: 16px;
     background-color: $tile-background-color;
-    background-image: url('img/checker.png');
+    background-image: url('/img/checker.png');
     border: 2px solid $normal-border-color;
   }
 
@@ -60,36 +80,9 @@ ul.sourceSelector {
   @include grid-span(1, 2);
 }
 
-.page {
-  @include grid-span(12, 1);
-  margin: $primary-margin 0;
-  padding: $primary-padding 0;
-  background-color: $primary-background-color;
-}
-
-.options {
-  //@include grid-span(3, 2);
-  background-color: $secondary-background-color;
-  //clear: both;
-  /*height: 100px;*/
-}
-
-.tiles {
- // @include grid-span(5, 5);
-  //clear: both;
-  /*height: 200px;*/
-  background-color: $secondary-background-color;
-}
-
 .tileSelector {
   background-color: $secondary-background-color;
-  min-height: 200px;
-}
-
-.level {
-  //@include grid-span(10, 2);
-  //clear: both;
-  min-height: 450px;
+  //min-height: 150px;
 }
 
 .levelEditor {

@@ -10,23 +10,34 @@
             function($scope, configLoader, sourcesList, gameId) {
                 $scope.editorEnabled = false;
 
-                /*$scope.sources = {
-                    data: [
-                        { filename: "Thing 1" },
-                        { filename: "Thing 2" },
-                        { filename: "Thing 3" }
-                    ]
-                };*/
-
                 $scope.sourcesWindow = {
                     open: function() {
                         sourcesList(gameId).then(function(data) {
-                            $scope.sources = data;
+                            $scope.remoteSources = data;
+                            $scope.modal.center().open();
                         });
-                        $scope.modal.center().open();
+                    },
+                    close: function() {
+                        // close
                     }
                 };
 
+                $scope.addSource = function(source) {
+                    var gameConfig = $scope.gameConfig,
+                        sources = gameConfig.hasOwnProperty('sources') ? gameConfig['sources'] : {};
+
+                    if(sources.hasOwnProperty(source)) {
+                        console.log("Updated: " + source);
+                    } else {
+                        console.log("Added: " + source);
+                    }
+
+                    sources[source] = source;
+
+                    gameConfig.sources = sources;
+                };
+
+                // Load up the game config file
                 configLoader(gameId).then(function(config) {
                     $scope.gameConfig = config;
                     // Get tile sources
@@ -34,7 +45,8 @@
                     $scope.editorEnabled = true;
 
                 }, function(reason) {
-                    console.log(reason);
+                    console.log("ERROR: " + reason);
+
                     $scope.gameConfig = {};  // create a new empty game config
                     $scope.editorEnabled = true;
                 });

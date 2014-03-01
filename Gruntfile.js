@@ -14,23 +14,15 @@ module.exports = function(grunt) {
             '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
             ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
         // Task configuration.
-        nodemon: {
-            normal: {
+        express: {
+            server: {
                 options: {
-                    file: 'app.js',
-                    nodeArgs: [],
-                    env: {
-                        PORT: '<%= nodePort %>'
-                    }
-                }
-            },
-            debug: {
-                options: {
-                    file: 'app.js',
-                    nodeArgs: ['--debug'],
-                    env: {
-                        PORT: '<%= nodePort %>'
-                    }
+                    port: 3000,
+                    hostname: '*',
+                    bases: ['views', 'public'],
+                    server: 'app.js',
+                    serverreload: true,
+                    livereload: true
                 }
             }
         },
@@ -123,29 +115,9 @@ module.exports = function(grunt) {
         nodeunit: {
             files: ['test/**/*_test.js']
         },
-        watch: {
-            gruntfile: {
-                files: '<%= jshint.gruntfile.src %>',
-                tasks: ['jshint:gruntfile']
-            },
-            lib_test: {
-                files: '<%= jshint.lib_test.src %>',
-                tasks: ['jshint:lib_test', 'nodeunit']
-            },
-            compass: { // Not using this. Compass 'watch' option is faster.
-                files: 'sass/**/*',
-                tasks: ['compass:dev']
-            }
-        },
         concurrent: {
             dev: {
-                tasks: ['compass:dev', 'nodemon:normal'],
-                options: {
-                    logConcurrentOutput: true
-                }
-            },
-            debug: {
-                tasks: ['compass:dev', 'nodemon:debug'],
+                tasks: ['server', 'compass:dev' ],
                 options: {
                     logConcurrentOutput: true
                 }
@@ -159,10 +131,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-nodeunit');
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-compass');
+    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-concurrent');
-    grunt.loadNpmTasks('grunt-nodemon');
+    grunt.loadNpmTasks('grunt-express');
 
 
     grunt.registerTask('target', 'Set the deploy target', function(value){
@@ -177,6 +149,11 @@ module.exports = function(grunt) {
         'concat',
         'uglify',
         'clean:finish'
+    ]);
+
+    grunt.registerTask('server', [
+        'express',
+        'express-keepalive'
     ]);
 
     grunt.registerTask('dev', [
@@ -198,5 +175,3 @@ module.exports = function(grunt) {
         'dev'
     ]);
 };
-
-

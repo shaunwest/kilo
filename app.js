@@ -10,6 +10,7 @@ var express     = require('express'),
     path        = require('path'),
     routes      = require('./routes'),
     assets      = require('./routes/assets'),
+    config      = require('./routes/config'),
     app         = express(),
     zero        = 0,
     oneDay      = 86400000;
@@ -38,15 +39,23 @@ if ('development' == app.get('env')) {
     app.locals.devMode = false;
 }
 
-// App Vars
+// APP VARS
 app.locals.appTitle = 'Retro 2D';
 
-// Routes
-app.get('/:appId/sources', assets.listAssets);
-app.get('/:appId/sources/:sourceName', assets.getAsset);
+
+// ROUTES
+app.get('/:appId/sources/:groupName', assets.listAssets);
+app.get('/:appId/sources/:groupName/:sourceName', assets.getAsset);
+
+app.get('/:appId/config', config.getConfig);
+app.post('/:appId/config', config.putConfig);
+
 app.get('/login', routes.index);
 app.get('/', routes.index);
 
+
+module.exports = app;
+
 http.createServer(app).listen(app.get('port'), function(){
-    console.log('Express server listening on port ' + app.get('port'));
+  console.log('Express server listening on port ' + app.get('port'));
 });

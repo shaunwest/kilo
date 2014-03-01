@@ -26,7 +26,7 @@
             return function(appId) {
                 var deferred = $q.defer();
 
-                $http({method: 'GET', url: '/data/' + appId + '/config.json'}).
+                $http({method: 'GET', url: appId + '/config'}).
                     success(function(data, status, headers, config) {
                         deferred.resolve(data);
                     }).
@@ -40,7 +40,7 @@
 
         $provide.factory('sourcesList', function(resourceLoader) {
             return function(appId) {
-                return resourceLoader('/' + appId + '/sources');
+                return resourceLoader('/' + appId + '/sources/demo1');
             };
             /*return function(appId) {
                 var deferred = $q.defer();

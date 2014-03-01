@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="editor">
+<html lang="en" data-ng-app="editor">
 <head>
     <meta charset="utf-8">
     <title><%= appTitle %></title>
@@ -11,16 +11,16 @@
 </head>
 <body data-development-grid="show">
 
-<div class="container">
+<header>
     <h1><%= appTitle %></h1>
-    <nav>
-        <ul>
-            <li><a href="/login">Log out</a></li>
-        </ul>
-    </nav>
+</header>
+<nav>
+    <ul>
+        <li><a href="/login">Log out</a></li>
+    </ul>
+</nav>
 
-    <%- body %>
-</div>
+<%- body %>
 
 <script src="/js/vendor/grid.js"></script>
 
@@ -35,6 +35,7 @@
 <script src="/editor/js/controllers.js"></script>
 <script src="/editor/js/filters.js"></script>
 <script src="/editor/js/directives.js"></script>
+<script src="//alcibi:35729/livereload.js"></script>
 <% } else { %>
 <script src="/js/retro2d.min.js"></script>
 <% } %>
