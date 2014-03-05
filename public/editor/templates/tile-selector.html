@@ -1,3 +1,7 @@
-<div>
-    <r2d-tilegroup ng-repeat="source in sources" source="source"></r2d-tilegroup>
-</div>
+<ul>
+  <r2d-tilegroup ng-repeat="source in sources"
+                 source="source"
+                 index="{{ $index }}"
+                 on-action="onGroupAction">
+                 </r2d-tilegroup>
+</ul>

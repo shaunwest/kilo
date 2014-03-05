@@ -1,45 +1,43 @@
 <section class="page">
-    <header>
-        <h2>HOME</h2>
-    </header>
-    <section class="options">
-        <ul>
-            <li>
-                <form>
-                    <label for="levelSelect">Current Level</label>
-                    <select id="levelSelect">
-                        <option>Level 1</option>
-                        <option>Add New Level</option>
-                    </select>
-                </form>
-            </li>
-            <li><a href="#">Delete this level</a></li>
-            <li><a href="#">Rename this level</a></li>
-        </ul>
-    </section>
-    <section class="tiles">
+  <header>
+    <h2>HOME</h2>
+  </header>
+  <section class="options">
+    <ul>
+      <li>
         <form>
-            <label for="tileSetSelect">Tile Set</label>
-            <select id="tileSetSelect">
-                <option>New Tile Set</option>
-                <option>Set 1</option>
-                <option>Set 2</option>
-            </select>
-            <button class="k-button" data-ng-click="sourcesWindow.open()">Add source</button>
-            <a href="#">Delete current tile set</a>
+          <label for="levelSelect">Current Level</label>
+          <select id="levelSelect">
+            <option>Level 1</option>
+            <option>Add New Level</option>
+          </select>
         </form>
-        <div kendo-window="modal" data-k-title="'Tile Sources'" data-k-visible="false" data-k-modal="true" data-k-width="600" data-k-height="400">
-            <r2d-sourcesselector sources="remoteSources" on-add-source="addSource"></r2d-sourcesselector>
-        </div>
-        <div>
-            <r2d-tileselector sources="gameConfig.sources" class="tileSelector"></r2d-tileselector>
-        </div>
-    </section>
-    <section class="level">
-        <form>
-            <label for="backgroundColor">Background Color</label>
-            <input id="backgroundColor" type="text">
-        </form>
-        <r2d-leveleditor class="levelEditor" enabled="editorEnabled"></r2d-leveleditor>
-    </section>
+      </li>
+      <li><a href="#">Delete this level</a></li>
+      <li><a href="#">Rename this level</a></li>
+    </ul>
+  </section>
+  <section class="tiles">
+    <form>
+      <label for="tileSetSelect">Tile Set</label>
+      <select data-ng-model="tileSet" data-ng-options="tileSet.name for tileSet in gameConfig.tileSets" id="tileSetSelect" >
+        <option value="">Select One</option>
+      </select>
+      <button class="k-button" data-ng-click="sourcesWindow.open()">Add source</button>
+      <a href="#">Delete current tile set</a>
+    </form>
+    <div kendo-window="modal" data-k-title="'Tile Sources'" data-k-visible="false" data-k-modal="true" data-k-width="600" data-k-height="400">
+      <r2d-sourcesselector sources="remoteSources" on-add-source="addSource"></r2d-sourcesselector>
+    </div>
+    <div>
+      <r2d-tileselector sources="sources" class="tileSelector"></r2d-tileselector>
+    </div>
+  </section>
+  <section class="level">
+    <form>
+      <label for="backgroundColor">Background Color</label>
+      <input id="backgroundColor" type="text">
+    </form>
+    <r2d-leveleditor class="levelEditor" enabled="editorEnabled"></r2d-leveleditor>
+  </section>
 </section>
