@@ -80,12 +80,32 @@ ul.sourceSelector {
   @include grid-span(1, 2);
 }
 
+.selector {
+  position: absolute;
+  display: none;
+  border: 1px solid blue;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.selectedItem {
+  position: absolute;
+  display: none;
+  border: 1px solid $selected;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+}
+
 .tileSelector {
   background-color: $secondary-background-color;
 
   li {
     position: relative;
-    border: 1px solid red;
+    border: 1px solid $primary-color;
     border-top-width: 20px;
     @include border-radius(2px);
 
@@ -95,7 +115,7 @@ ul.sourceSelector {
       left: 0;
     }
 
-    div {
+    div.tileOverlay {
       position: absolute;
       top: 0;
       left: 0;
@@ -106,7 +126,11 @@ ul.sourceSelector {
   }
 
   li:hover {
-    border-color: blue;
+    border-color: $secondary-color;
+  }
+
+  li.selected {
+    border-color: $selected;
   }
 }
 

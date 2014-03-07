@@ -1,7 +1,4 @@
 <ul>
-  <r2d-tilegroup ng-repeat="source in sources"
-                 source="source"
-                 index="{{ $index }}"
-                 on-action="onGroupAction">
-                 </r2d-tilegroup>
+  <!--<li><input data-ng-model="testModel.testInput" name="testInput" type="text"></li>-->
+  <r2d-tilegroup ng-repeat="source in sources" source="source" ng-class="{selected:source.selected}"></r2d-tilegroup>
 </ul>

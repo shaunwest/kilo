@@ -40,10 +40,20 @@
         // Load up the game config file
         configLoader(gameId).then(
           function(config) {
+            var sources = config.tileSets[0].sources;
+
             $scope.gameConfig = config;
 
-            loadTileSet(config.tileSets[0]);
-            $scope.sources = config.tileSets[0].sources;
+            //loadTileSet(config.tileSets[0]);
+            $scope.selected = true;
+            $scope.sources = [];
+            for(var i = 0; i < sources.length; i++) {
+              $scope.sources.push({
+                source: sources[i],
+                selected: false
+              });
+            }
+
             // Get tile sources
             // Convert to tile selectors
             // Build level image from config...

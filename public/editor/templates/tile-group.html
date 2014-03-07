@@ -1,5 +1,11 @@
 <li data-ng-click="borderClick($event)">
-  <img data-ng-click="imageClick($event)">
-  <div data-ng-mousemove="mouseMove($event)"></div>
+  <img>
+  <div class="selector"></div>
+  <div class="selectedItem"></div>
+  <div class="tileOverlay"
+       data-ng-click="imageClick($event)"
+       data-ng-mousemove="mouseMove($event)"
+       data-ng-mouseout="mouseLeave($event)"
+       data-ng-mouseenter="mouseEnter($event)"></div>
 </li>
 
