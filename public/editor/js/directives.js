@@ -25,28 +25,11 @@
     }])
     .directive('r2dTileselector', ['$log', function($log) {
       function controller($scope) {
-        var tileGroups = [];
-
-        /*function init() {
-          $scope.onGroupAction = onGroupAction;
-        }*/
-
         function deselectAll() {
-          /*element.children().each(function() {
-            angular.element(this).attr('selected', 'false');
-            $log.debug(angular.element(this).attr('selected'));
-          });*/
-          /*for(var i = 0; i < $scope.sources; i++) {
-            $scope.sources[i].selected = false; /// BAH! IT DOESN'T WORK!
-          }*/
-          angular.forEach($scope.sources, function(source) {
+          angular.forEach($scope.tileGroups, function(source) {
             source.selected = false;
           });
         }
-
-        this.addTileGroup = function(tileGroup) {
-          tileGroups.push(tileGroup);
-        };
 
         this.selectTileGroup = function(groupId) {
           $log.debug(groupId);
@@ -56,13 +39,11 @@
         this.selectTile = function(groupId, tileX, tileY) {
           $log.debug(tileX + ', ' + tileY);
         };
-
-        //init();
       }
 
       return {
         scope: {
-          sources: '=sources'
+          tileGroups: '=tileGroups'
         },
         restrict: 'AE',
         controller: controller,
@@ -96,7 +77,7 @@
         }
 
         function init() {
-          scope.sourcePath  = '/ultradian/sources/' + scope.source.source;
+          scope.sourcePath  = '/ultradian/sources/' + scope.tileGroup.source;
 
           scope.imageClick  = imageClick;
           scope.borderClick = borderClick;
@@ -105,47 +86,18 @@
           scope.mouseEnter  = mouseEnter;
 
           getImage(scope.sourcePath);
-
-          tileSelectorCtrl.addTileGroup(scope);
-          $log.debug(scope.selected);
-
-          /*scope.$watch('selected', function(newVal, oldVal) {
-            $log.debug('selected!');
-            if(newVal === 'true') {
-              setSelected(true);
-            } else {
-              setSelected(false);
-            }
-          });*/
-          /*scope.$watch('source', function(newValue, oldValue) {
-            setSelected(newValue.selected);
-            $log.debug('TEST ' + oldValue.selected + ', ' + newValue.selected);
-          });*/
-
-          /*attrs.$observe('source', function(val) {
-            $log.debug(val);
-            setSelected(val.selected);
-            $log.debug('TEST ' + val.selected);
-          });*/
         }
 
         function setSelected(value) {
-          if(value === true || typeof value === 'undefined') {
-            //element.addClass('selected');
-            scope.source.selected = true;
-          } else {
-            //element.removeClass('selected');
-            scope.source.selected = false;
-          }
+          scope.tileGroup.selected = !!((value === true || typeof value === 'undefined'));
         }
 
         function borderClick(event) {
           tileSelector.visible(false);
 
+          tileSelectorCtrl.selectTileGroup(scope.tileGroup.source);
 
-          tileSelectorCtrl.selectTileGroup(scope.source.source);
-
-                    setSelected();
+          setSelected();
         }
 
         function imageClick(event) {
@@ -155,7 +107,7 @@
           setSelected(false);
 
           tileSelectorCtrl.selectTile(
-            scope.source.source,
+            scope.tileGroup.source,
             Math.floor(selector.x / 16),
             Math.floor(selector.y / 16)
           );
@@ -192,8 +144,7 @@
 
       return {
         scope: {
-          source: '=source',
-          onAction: '=onAction'
+          tileGroup: '=tileGroup'
         },
         require: '^r2dTileselector',
         restrict: 'AE',

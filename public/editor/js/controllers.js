@@ -34,7 +34,8 @@
             });
           }
 
-          $scope.tileGroups = tileGroups;
+          // TODO: name this var something else
+          //$scope.tileGroups = tileGroups;
         }
 
         // Load up the game config file
@@ -45,10 +46,10 @@
             $scope.gameConfig = config;
 
             //loadTileSet(config.tileSets[0]);
-            $scope.selected = true;
-            $scope.sources = [];
+
+            $scope.tileGroups = [];
             for(var i = 0; i < sources.length; i++) {
-              $scope.sources.push({
+              $scope.tileGroups.push({
                 source: sources[i],
                 selected: false
               });
