@@ -82,7 +82,6 @@ ul.sourceSelector {
 
 .selector {
   position: absolute;
-  display: none;
   border: 1px solid blue;
   top: 0;
   left: 0;
@@ -92,7 +91,6 @@ ul.sourceSelector {
 
 .selectedItem {
   position: absolute;
-  display: none;
   border: 1px solid $selected;
   top: 0;
   left: 0;

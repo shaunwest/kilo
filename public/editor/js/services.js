@@ -43,6 +43,28 @@
         return resourceLoader('/' + appId + '/sources/demo1');
       };
     });
+
+    $provide.factory('selectorFactory', function() {
+      return function(el) {
+        return {
+          el: el,
+          x: 0,
+          y: 0,
+          setPosition: function(x, y) {
+            this.x = x;
+            this.y = y;
+            this.el.css({left: x, top: y});
+          },
+          toggle: function() {
+            this.el.toggle();
+          },
+          visible: function(value) {
+            (value || typeof value === 'undefined')
+              ? this.el.show() : this.el.hide();
+          }
+        };
+      };
+    });
   }).
     value('version', '0.0.1');
 

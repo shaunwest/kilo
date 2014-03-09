@@ -25,15 +25,16 @@
     }])
     .directive('r2dTileselector', ['$log', function($log) {
       function controller($scope) {
-        function deselectAll() {
+        this.deselectAll = function() {
           angular.forEach($scope.tileGroups, function(source) {
             source.selected = false;
+            source.tileSelected = false;
           });
-        }
+        };
 
         this.selectTileGroup = function(groupId) {
           $log.debug(groupId);
-          deselectAll();
+          this.deselectAll();
         };
 
         this.selectTile = function(groupId, tileX, tileY) {
@@ -43,7 +44,7 @@
 
       return {
         scope: {
-          tileGroups: '=tileGroups'
+          tileGroups: '='
         },
         restrict: 'AE',
         controller: controller,
@@ -51,84 +52,12 @@
         templateUrl: '/editor/templates/tile-selector.html'
       };
     }])
-    .directive('r2dTilegroup', ['$log', function($log) {
+    .directive('r2dTilegroup', ['$log', 'selectorFactory', function($log, selectorFactory) {
       function link(scope, element, attrs, tileSelectorCtrl) {
-        var selector      = createSelector(element.children('.selector')),
-            tileSelector  = createSelector(element.children('.selectedItem'));
+        var selector      = selectorFactory(element.children('.selector')),
+            tileSelector  = selectorFactory(element.children('.selectedItem'));
 
-        function createSelector(el) {
-          return {
-            el: el,
-            x: 0,
-            y: 0,
-            setPosition: function(x, y) {
-              this.x = x;
-              this.y = y;
-              this.el.css({left: x, top: y});
-            },
-            toggle: function() {
-              this.el.toggle();
-            },
-            visible: function(value) {
-              (value || typeof value === 'undefined')
-                ? this.el.show() : this.el.hide();
-            }
-          };
-        }
-
-        function init() {
-          scope.sourcePath  = '/ultradian/sources/' + scope.tileGroup.source;
-
-          scope.imageClick  = imageClick;
-          scope.borderClick = borderClick;
-          scope.mouseMove   = mouseMove;
-          scope.mouseLeave  = mouseLeave;
-          scope.mouseEnter  = mouseEnter;
-
-          getImage(scope.sourcePath);
-        }
-
-        function setSelected(value) {
-          scope.tileGroup.selected = !!((value === true || typeof value === 'undefined'));
-        }
-
-        function borderClick(event) {
-          tileSelector.visible(false);
-
-          tileSelectorCtrl.selectTileGroup(scope.tileGroup.source);
-
-          setSelected();
-        }
-
-        function imageClick(event) {
-          tileSelector.setPosition(selector.x, selector.y);
-          tileSelector.visible();
-
-          setSelected(false);
-
-          tileSelectorCtrl.selectTile(
-            scope.tileGroup.source,
-            Math.floor(selector.x / 16),
-            Math.floor(selector.y / 16)
-          );
-
-          event.stopPropagation();
-        }
-
-        function mouseMove(event) {
-          var offsetX = Math.floor(event.offsetX / 16) * 16,
-              offsetY = Math.floor(event.offsetY / 16) * 16;
-
-          selector.setPosition(offsetX, offsetY);
-        }
-
-        function mouseLeave(event) {
-          selector.toggle();
-        }
-
-        function mouseEnter(event) {
-          selector.toggle();
-        }
+        getImage('/ultradian/sources/' + scope.tileGroup.source);
 
         function getImage(sourcePath) {
           var img = element.children('img:first-child');
@@ -139,12 +68,64 @@
           img.attr('src', sourcePath);
         }
 
-        init();
+        function setSelected(value) {
+          if(value || typeof value === 'undefined') {
+            tileSelectorCtrl.selectTileGroup(scope.tileGroup.source);
+            scope.tileGroup.selected = true;
+          } else {
+            scope.tileGroup.selected = false;
+          }
+        }
+
+        function selectTile(x, y) {
+          tileSelectorCtrl.deselectAll();
+
+          tileSelector.setPosition(x, y);
+          scope.tileGroup.tileSelected = true;
+
+          tileSelectorCtrl.selectTile(
+            scope.tileGroup.source,
+            Math.floor(x / 16),
+            Math.floor(y / 16)
+          );
+        }
+
+        function deselectTile() {
+          scope.tileGroup.tileSelected = false;
+        }
+
+        /// Public Functions
+        scope.borderClick = function(event) {
+          deselectTile();
+          setSelected(true);
+        };
+
+        scope.imageClick = function(event) {
+          selectTile(selector.x, selector.y);
+          setSelected(false);
+
+          event.stopPropagation();
+        };
+
+        scope.mouseMove = function(event) {
+          var offsetX = Math.floor(event.offsetX / 16) * 16,
+              offsetY = Math.floor(event.offsetY / 16) * 16;
+
+          selector.setPosition(offsetX, offsetY);
+        };
+
+        scope.mouseLeave = function(event) {
+          scope.highlighterVisible = false;
+        };
+
+        scope.mouseEnter = function(event) {
+          scope.highlighterVisible = true;
+        };
       }
 
       return {
         scope: {
-          tileGroup: '=tileGroup'
+          tileGroup: '='
         },
         require: '^r2dTileselector',
         restrict: 'AE',

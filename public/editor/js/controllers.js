@@ -51,6 +51,7 @@
             for(var i = 0; i < sources.length; i++) {
               $scope.tileGroups.push({
                 source: sources[i],
+                tileSelected: false,
                 selected: false
               });
             }
