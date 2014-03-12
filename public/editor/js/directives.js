@@ -26,9 +26,9 @@
     .directive('r2dTileselector', ['$log', function($log) {
       function controller($scope) {
         this.deselectAll = function() {
-          angular.forEach($scope.tileGroups, function(source) {
-            source.selected = false;
-            source.tileSelected = false;
+          angular.forEach($scope.tileSet, function(tileGroup) {
+            tileGroup.groupSelected = false;
+            tileGroup.tileSelected = false;
           });
         };
 
@@ -44,7 +44,7 @@
 
       return {
         scope: {
-          tileGroups: '='
+          tileSet: '='
         },
         restrict: 'AE',
         controller: controller,
@@ -55,25 +55,32 @@
     .directive('r2dTilegroup', ['$log', 'selectorFactory', function($log, selectorFactory) {
       function link(scope, element, attrs, tileSelectorCtrl) {
         var selector      = selectorFactory(element.children('.selector')),
-            tileSelector  = selectorFactory(element.children('.selectedItem'));
+            tileSelector  = selectorFactory(element.children('.selectedItem')),
+            tileData      = null;
 
-        getImage('/ultradian/sources/' + scope.tileGroup.source);
+        /*getImage('/ultradian/sources/' + scope.tileGroup.source);
 
         function getImage(sourcePath) {
           var img = element.children('img:first-child');
+
+          scope.ready = false;
           img.load(function() {
             element.width(img[0].width);
             element.height(img[0].height);
+
+            tileData = assetProcessor.tileConverter.makeTiles(img[0]);
           });
           img.attr('src', sourcePath);
-        }
+        }*/
+
+        scope.image = scope.tileGroup.image;
 
         function setSelected(value) {
           if(value || typeof value === 'undefined') {
-            tileSelectorCtrl.selectTileGroup(scope.tileGroup.source);
-            scope.tileGroup.selected = true;
+            tileSelectorCtrl.selectTileGroup(scope.tileGroup.id);
+            scope.tileGroup.groupSelected = true;
           } else {
-            scope.tileGroup.selected = false;
+            scope.tileGroup.groupSelected = false;
           }
         }
 
@@ -84,7 +91,7 @@
           scope.tileGroup.tileSelected = true;
 
           tileSelectorCtrl.selectTile(
-            scope.tileGroup.source,
+            scope.tileGroup.id,
             Math.floor(x / 16),
             Math.floor(y / 16)
           );
@@ -94,7 +101,6 @@
           scope.tileGroup.tileSelected = false;
         }
 
-        /// Public Functions
         scope.borderClick = function(event) {
           deselectTile();
           setSelected(true);

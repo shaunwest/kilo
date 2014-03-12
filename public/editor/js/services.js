@@ -22,6 +22,90 @@
       };
     }]);
 
+    $provide.factory('tileSetService', ['$q', function($q) {
+      var tileSets = null;
+
+      function load(tileSetsData) {
+        var i = 0,
+            tileSetCount = tileSetsData.length;
+
+        tileSets = [];
+
+        for(; i < tileSetCount; i++) {
+          tileSets.push(loadTileSet(tileSetsData[i]));
+        }
+
+        return tileSets;
+      }
+
+      function loadTileSet(tileSetData) {
+        var tileSet = [],
+            sourcesData = tileSetData.sources,
+            sourceCount = sourcesData.length,
+            i = 0;
+
+        for(; i < sourceCount; i++) {
+          loadTileGroup(sourcesData[i].id, '/ultradian/sources/' + sourcesData[i].path).then(function(tileGroup) {
+            tileSet.push(tileGroup);
+          });
+        }
+
+        return tileSet;
+      }
+
+      function loadTileGroup(sourceId, sourcePath) {
+        var deferred = $q.defer(),
+            img = document.createElement('img');
+
+        img.onload = function() {
+          deferred.resolve({
+            id: sourceId,
+            image: img,
+            data: assetProcessor.tileConverter.makeTiles(img),
+            tileSelected: false,
+            groupSelected: false
+          });
+        };
+        img.src = sourcePath;
+
+        return deferred.promise;
+      }
+
+      return {
+        load: load,
+        getTileSets: function() { return tileSets; }
+      };
+    }]);
+
+    $provide.factory('tileGroups', [function() {
+      var tileGroups = null;
+
+      function load(sources) {
+        var i = 0;
+
+        tileGroups = [];
+
+        for(; i < sources.length; i++) {
+          getImage('/ultradian/sources/' + sources[i]);
+        }
+      }
+
+      function getImage(sourcePath) {
+        var img = document.createElement('img');
+        img.onload(function() {
+          tileGroups.push({
+            image: img,
+            data: assetProcessor.tileConverter.makeTiles(img)
+          });
+        });
+        img.src = sourcePath;
+      }
+
+      return {
+        load: load
+      };
+    }]);
+
     $provide.factory('configLoader', function($q, $http) {
       return function(appId) {
         var deferred = $q.defer();
@@ -54,13 +138,6 @@
             this.x = x;
             this.y = y;
             this.el.css({left: x, top: y});
-          },
-          toggle: function() {
-            this.el.toggle();
-          },
-          visible: function(value) {
-            (value || typeof value === 'undefined')
-              ? this.el.show() : this.el.hide();
           }
         };
       };

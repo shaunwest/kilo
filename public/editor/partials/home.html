@@ -25,12 +25,13 @@
       </select>
       <button class="k-button" data-ng-click="sourcesWindow.open()">Add source</button>
       <a href="#">Delete current tile set</a>
+
     </form>
     <div kendo-window="modal" data-k-title="'Tile Sources'" data-k-visible="false" data-k-modal="true" data-k-width="600" data-k-height="400">
       <r2d-sourcesselector sources="remoteSources" on-add-source="addSource"></r2d-sourcesselector>
     </div>
     <div>
-      <r2d-tileselector tile-groups="tileGroups" class="tileSelector"></r2d-tileselector>
+      <r2d-tileselector tile-set="tileSets[0]" class="tileSelector"></r2d-tileselector>
     </div>
   </section>
   <section class="level">

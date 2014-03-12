@@ -6,8 +6,8 @@
   'use strict';
 
   angular.module('editor.controllers', []).
-    controller('HomeCtrl', ['$scope', 'configLoader', 'sourcesList', 'gameId',
-      function($scope, configLoader, sourcesList, gameId) {
+    controller('HomeCtrl', ['$scope', 'configLoader', 'sourcesList', 'tileSetService', 'gameId',
+      function($scope, configLoader, sourcesList, tileSetService, gameId) {
         function addSource(source) {
           var gameConfig  = $scope.gameConfig,
               sources     = gameConfig.hasOwnProperty('sources') ? gameConfig['sources'] : {};
@@ -22,7 +22,7 @@
           gameConfig.sources = sources;
         }
 
-        function loadTileSet(tileSet) {
+        /*function loadTileSet(tileSet) {
           var sources     = tileSet.sources,
               sourceCount = sources.length,
               tileGroups  = [],
@@ -36,25 +36,30 @@
 
           // TODO: name this var something else
           //$scope.tileGroups = tileGroups;
+        }*/
+
+        function createTileGroup(source) {
+          return {
+            id: source.id,
+            source: source.path,
+            tileSelected: false,
+            selected: false
+          };
         }
 
         // Load up the game config file
         configLoader(gameId).then(
           function(config) {
-            var sources = config.tileSets[0].sources;
+            var sources = config.tileSets[0].sources,
+              i = 0;
 
             $scope.gameConfig = config;
+            /*$scope.tileGroups = [];
+            for(; i < sources.length; i++) {
+              $scope.tileGroups.push(createTileGroup(sources[i]));
+            }*/
 
-            //loadTileSet(config.tileSets[0]);
-
-            $scope.tileGroups = [];
-            for(var i = 0; i < sources.length; i++) {
-              $scope.tileGroups.push({
-                source: sources[i],
-                tileSelected: false,
-                selected: false
-              });
-            }
+            $scope.tileSets = tileSetService.load(config.tileSets);
 
             // Get tile sources
             // Convert to tile selectors

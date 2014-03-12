@@ -6,26 +6,42 @@
 var assetProcessor = assetProcessor || {};
 
 assetProcessor.tileConverter = (function() {
+  'use strict';
+
   var tileWidth   = 16,
       tileHeight  = 16;
 
-  function makeTileGroup(assetUrl, callback) {
-    var sourceAsset = new Image(),
-        tileGroup   = [];
+  /*function makeTileGroup(assetUrl, tileGroup) {
+    var sourceAsset = new Image();
+        //tileGroup   = [];
 
-    sourceAsset.src = 'ultradian/sources/' + assetUrl;
     sourceAsset.onload = function() {
       var rowCount  = Math.floor(sourceAsset.height / tileHeight),
           i         = 0;
 
       for(; i < rowCount; i++) {
-        tileGroup.push(getRow(sourceAsset, i));
+        tileGroup.data.push(getRow(sourceAsset, i));
       }
 
-      if(callback) {
-        callback(tileGroup);
-      }
+      tileGroup.ready = true;
+      //if(callback) {
+      //  callback(tileGroup);
+      //}
     };
+
+    sourceAsset.src = 'ultradian/sources/' + assetUrl;
+  }*/
+
+  function makeTiles(image) {
+    var rowCount  = Math.floor(image.height / tileHeight),
+        i         = 0,
+        data      = [];
+
+    for(; i < rowCount; i++) {
+      data.push(getRow(image, i));
+    }
+
+    return data;
   }
 
   function getRow(sourceAsset, row) {
@@ -36,7 +52,7 @@ assetProcessor.tileConverter = (function() {
         i           = 0;
 
     for(; i < tileCount; i++) {
-      tile = document.createElement("canvas");
+      tile = document.createElement('canvas');
       tile.width  = tileWidth;
       tile.height = tileHeight;
 
@@ -55,7 +71,7 @@ assetProcessor.tileConverter = (function() {
   }
 
   return {
-    makeTileGroup: makeTileGroup
+    makeTiles: makeTiles
   };
 
 })();
