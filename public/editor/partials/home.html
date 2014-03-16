@@ -19,13 +19,9 @@
   </section>
   <section class="tiles">
     <form>
-      <label for="tileSetSelect">Tile Set</label>
-      <select data-ng-model="tileSet" data-ng-options="tileSet.name for tileSet in gameConfig.tileSets" id="tileSetSelect" >
-        <option value="">Select One</option>
-      </select>
+      <r2d-tilegroupselector data-selected="selectedTileSet" data-tile-sets="tileSets"></r2d-tilegroupselector>
       <button class="k-button" data-ng-click="sourcesWindow.open()">Add source</button>
       <a href="#">Delete current tile set</a>
-
     </form>
     <div kendo-window="modal" data-k-title="'Tile Sources'" data-k-visible="false" data-k-modal="true" data-k-width="600" data-k-height="400">
       <r2d-sourcesselector sources="remoteSources" on-add-source="addSource"></r2d-sourcesselector>
