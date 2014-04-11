@@ -23,7 +23,7 @@
       }
 
       function loadTileSet(tileSetData) {
-        var setName     = tileSetData.name,
+        var setName   = tileSetData.name,
           setId       = tileSetData.id,
           sourcesData = tileSetData.sources,
           sourceCount = sourcesData.length,

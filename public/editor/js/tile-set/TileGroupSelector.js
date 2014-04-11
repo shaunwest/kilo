@@ -4,10 +4,10 @@
 
 (function() {
   angular.module('editor.directives')
-    .directive('r2dTileselector', ['$log', function($log) {
+    .directive('r2dTilegroupselector', ['$log', function($log) {
       function controller($scope) {
         this.deselectAll = function() {
-          angular.forEach($scope.tileSet, function(tileGroup) {
+          angular.forEach($scope.tileSet.tileGroups, function(tileGroup) {
             tileGroup.groupSelected = false;
             tileGroup.tileSelected = false;
           });
@@ -30,7 +30,7 @@
         restrict: 'AE',
         controller: controller,
         replace: true,
-        templateUrl: '/editor/templates/tile-selector.html'
+        templateUrl: '/editor/js/tile-set/tile-group-selector.html'
       };
     }]);
 })();

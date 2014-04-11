@@ -1,23 +1,23 @@
 /**
- * Created by shaun on 3/16/14.
+ * Created by shaun on 3/26/14.
  */
 
 (function() {
   angular.module('editor.directives')
-    .directive('r2dTilegroupselector', ['$log', function($log) {
+    .directive('r2dLevelselector', [function() {
       function link(scope, element, attrs) {
+        scope.log = function(msg) { console.log(msg) };
       }
 
       return {
         scope: {
           selected: '=',
-          tileSets: '='
+          levels: '='
         },
         restrict: 'AE',
         replace: true,
         link: link,
-        templateUrl: '/editor/templates/tile-group-selector.html'
+        templateUrl: '/editor/templates/level-selector.html'
       };
     }]);
 })();
-

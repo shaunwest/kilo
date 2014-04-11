@@ -1,0 +1,26 @@
+{
+  "engine": "retro2d",
+  "version": "0.0.1",
+  "tileSets": [
+    {
+      "name": "Tile Set 1",
+      "id": "1",
+      "sources": [
+        {"id": 1, "path": "demo1/tree1.png"},
+        {"id": 2, "path": "demo1/blocks.png"}
+      ]
+    }
+  ],
+  "levels": [
+    {
+      "name": "Level 1",
+      "id": "1",
+      "layers": [
+        {
+          "name": "Layer 1",
+          "data": null
+        }
+      ]
+    }
+  ]
+}

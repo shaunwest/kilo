@@ -46,8 +46,10 @@
           configService.getConfig(gameId).then(
             function(config) {
               $scope.tileSets = tileSetService.load(config.tileSets);
-              $scope.selectedTileSet = $scope.tileSets[0];
+              $scope.selectedTileSet = $scope.tileSets[0].id;
               $scope.editorEnabled = true;
+              $scope.levels = config.levels;
+              $scope.selectedLevel = $scope.levels[0].id;
             },
             function(reason) {
               console.log("ERROR: " + reason);

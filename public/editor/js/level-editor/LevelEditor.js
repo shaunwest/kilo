@@ -11,11 +11,11 @@
       }
 
       return {
-        scope: {isEnabled: '=enabled'},
+        scope: {enabled: '='},
         restrict: 'AE',
         replace: true,
         link: link,
-        templateUrl: '/editor/templates/level-editor.html'
+        templateUrl: '/editor/js/level-editor/level-editor.html'
       };
     }]);
 })();

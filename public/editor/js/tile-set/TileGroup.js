@@ -7,23 +7,7 @@
     .directive('r2dTilegroup', ['$log', 'selectorFactory', function($log, selectorFactory) {
       function link(scope, element, attrs, tileSelectorCtrl) {
         var selector      = selectorFactory(element.children('.selector')),
-          tileSelector  = selectorFactory(element.children('.selectedItem')),
-          tileData      = null;
-
-        /*getImage('/ultradian/sources/' + scope.tileGroup.source);
-
-         function getImage(sourcePath) {
-         var img = element.children('img:first-child');
-
-         scope.ready = false;
-         img.load(function() {
-         element.width(img[0].width);
-         element.height(img[0].height);
-
-         tileData = assetProcessor.tileConverter.makeTiles(img[0]);
-         });
-         img.attr('src', sourcePath);
-         }*/
+          tileSelector  = selectorFactory(element.children('.selectedItem'));
 
         scope.image = scope.tileGroup.image;
 
@@ -85,11 +69,11 @@
         scope: {
           tileGroup: '='
         },
-        require: '^r2dTileselector',
+        require: '^r2dTilegroupselector',
         restrict: 'AE',
         replace: true,
         link: link,
-        templateUrl: '/editor/templates/tile-group.html'
+        templateUrl: '/editor/js/tile-set/tile-group.html'
       }
     }]);
 })();
