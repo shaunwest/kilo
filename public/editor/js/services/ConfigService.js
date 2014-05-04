@@ -6,16 +6,16 @@
   'use strict';
 
   angular.module('editor.services')
-    .factory('configService', ['$q', '$http', function($q, $http) {
+    .factory('configService', ['$q', '$http', 'gameId', function($q, $http, gameId) {
       var config = null;
 
-      function getConfig(appId) {
+      function getConfig() {
         var deferred = $q.defer();
 
         if(config) {
           deferred.resolve(config);
         } else {
-          $http({method: 'GET', url: appId + '/config'}).
+          $http({method: 'GET', url: gameId + '/config'}).
             success(function(data, status, headers, config) {
               config = data;
               deferred.resolve(config);
@@ -28,8 +28,13 @@
         return deferred.promise;
       }
 
+      function saveConfig() {
+
+      }
+
       return {
-        getConfig: getConfig
+        getConfig: getConfig,
+        saveConfig: saveConfig
       };
     }]);
 })();

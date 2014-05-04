@@ -4,13 +4,13 @@
 
 var editor = editor || {};
 
-editor.levelRenderer = (function() {
+editor.layerRenderer = (function() {
   'use strict';
   var GROUP_INDEX = 0,
       TILE_INDEX = 1,
       layers = null;
 
-  function createLayer(layerData, tileSet)  {
+  /*function createLayer(layerData, tileSet)  {
     if(!layers) {
       layers = [];
     }
@@ -20,7 +20,7 @@ editor.levelRenderer = (function() {
       tileSet: tileSet,
       data: layerData
     })
-  }
+  }*/
 
   function drawTiles(top, left, tileData, context2d) {
     var groupId   = tileData[GROUP_INDEX],
@@ -38,9 +38,9 @@ editor.levelRenderer = (function() {
 
   function drawTileGroup(top, left, group, context2d) {
     var width = group.length,
-        height = group[0].length,
-        x = 0,
-        y = 0;
+      height = group[0].length,
+      x = 0,
+      y = 0;
 
     for(; x < width; i++) {
       for(; y < height; j++) {
@@ -49,20 +49,19 @@ editor.levelRenderer = (function() {
     }
   }
 
-  function drawLayer(index) {
-    var layer     = layers[index],
-        data      = layer.data,
-        tileSet   = layer.tileSet,
-        width     = data.length,
-        height    = data[0].length,
-        context2d = layer.canvas.getContext('2d'),
-        tileData  = null,
-        groupId   = null,
-        group     = null,
-        tile      = null,
-        tileId    = null,
-        i         = 0,
-        j         = 0;
+  function drawLayer(layer) {
+    var data      = layer.data,
+      tileSet   = layer.tileSet,
+      width     = data.length,
+      height    = data[0].length,
+      context2d = layer.canvas.getContext('2d'),
+      tileData  = null,
+      groupId   = null,
+      group     = null,
+      tile      = null,
+      tileId    = null,
+      i         = 0,
+      j         = 0;
 
     for(; i < width; i++) {
       for(; j < height; j++) {
@@ -72,8 +71,7 @@ editor.levelRenderer = (function() {
   }
 
   return {
-    initLayers: initLayers,
-    draw: draw
+    drawLayer: drawLayer
   };
 })();
 

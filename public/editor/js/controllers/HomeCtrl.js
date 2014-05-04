@@ -29,8 +29,8 @@
         }
 
         function addSource(source) {
-          var gameConfig  = $scope.gameConfig,
-            sources     = gameConfig.hasOwnProperty('sources') ? gameConfig['sources'] : {};
+          var gameConfig = $scope.gameConfig,
+            sources = gameConfig.hasOwnProperty('sources') ? gameConfig['sources'] : {};
 
           if(sources.hasOwnProperty(source)) {
             console.log("Updated: " + source);
@@ -42,14 +42,16 @@
           gameConfig.sources = sources;
         }
 
+        function loadLayers(level) {
+
+        }
+
         function loadConfig() {
-          configService.getConfig(gameId).then(
+          configService.getConfig().then(
             function(config) {
-              $scope.tileSets = tileSetService.load(config.tileSets);
-              $scope.selectedTileSet = $scope.tileSets[0].id;
+              $scope.selectedTileSetId = config.tileSets[0].id;
               $scope.editorEnabled = true;
-              $scope.levels = config.levels;
-              $scope.selectedLevel = $scope.levels[0].id;
+              $scope.selectedLevelId = config.levels[0].id;
             },
             function(reason) {
               console.log("ERROR: " + reason);

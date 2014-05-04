@@ -4,12 +4,17 @@
 
 (function() {
   angular.module('editor.directives')
-    .directive('r2dTilegroup', ['$log', 'selectorFactory', function($log, selectorFactory) {
+    .directive('r2dTilegroup', ['$log', 'configService', 'tileSetService', 'selectorFactory', function($log, configService, tileSetService, selectorFactory) {
       function link(scope, element, attrs, tileSelectorCtrl) {
-        var selector      = selectorFactory(element.children('.selector')),
-          tileSelector  = selectorFactory(element.children('.selectedItem'));
+        var selector = selectorFactory(element.children('.selector')),
+          tileSelector = selectorFactory(element.children('.selectedItem'));
 
-        scope.image = scope.tileGroup.image;
+        tileSetService.getTileGroup(scope.tileSetId, scope.tileGroupId).then(function(tileGroup) {
+          scope.tileGroup = tileGroup;
+          scope.tileGroup.getImage().then(function(image) {
+            scope.image = image;
+          });
+        });
 
         function setSelected(value) {
           if(value || typeof value === 'undefined') {
@@ -67,13 +72,14 @@
 
       return {
         scope: {
-          tileGroup: '='
+          tileSetId: '=',
+          tileGroupId: '='
         },
         require: '^r2dTilegroupselector',
         restrict: 'AE',
         replace: true,
         link: link,
-        templateUrl: '/editor/js/tile-set/tile-group.html'
+        templateUrl: '/editor/js/tiles/tile-group.html'
       }
     }]);
 })();

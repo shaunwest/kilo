@@ -31,6 +31,7 @@
 <script src="/components/angular-kendo-ui/build/angular-kendo.js"></script>
 <% if(devMode) {%>
 <script src="/asset-processor/tile-converter.js"></script>
+<script src="/editor/js/layer-renderer.js"></script>
 <script src="/editor/js/app.js"></script>
 <script src="/editor/js/services/ConfigService.js"></script>
 <script src="/editor/js/services/ResourceLoader.js"></script>
@@ -38,15 +39,16 @@
 <script src="/editor/js/services/SourcesList.js"></script>
 <script src="/editor/js/services/TileGroups.js"></script>
 <script src="/editor/js/services/TileSetService.js"></script>
+<script src="/editor/js/services/ImageService.js"></script>
 <script src="/editor/js/controllers/HomeCtrl.js"></script>
 <script src="/editor/js/controllers/LoginCtrl.js"></script>
 <script src="/editor/js/filters.js"></script>
 <script src="/editor/js/level-editor/LevelEditor.js"></script>
 <script src="/editor/js/directives/SourcesSelector.js"></script>
-<script src="/editor/js/tile-set/TileGroup.js"></script>
-<script src="/editor/js/tile-set/TileGroupSelector.js"></script>
-<script src="/editor/js/tile-set/TileSetSelector.js"></script>
-<script src="/editor/js/directives/LevelSelector.js"></script>
+<script src="/editor/js/tiles/TileGroup.js"></script>
+<script src="/editor/js/tiles/TileGroupSelector.js"></script>
+<script src="/editor/js/tiles/TileSetSelector.js"></script>
+<script src="/editor/js/level-selector/LevelSelector.js"></script>
 <script src="//alcibi:35729/livereload.js"></script>
 <% } else { %>
 <script src="/js/retro2d.min.js"></script>

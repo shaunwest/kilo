@@ -6,7 +6,7 @@
     <ul>
       <li>
         <form>
-          <r2d-levelselector data-selected="selectedLevel" data-levels="levels"></r2d-levelselector>
+          <r2d-levelselector data-selected-id="selectedLevelId"></r2d-levelselector>
         </form>
       </li>
       <li><a href="#">Delete this level</a></li>
@@ -15,7 +15,7 @@
   </section>
   <section class="tiles">
     <form>
-      <r2d-tilesetselector data-selected="selectedTileSet" data-tile-sets="tileSets"></r2d-tilesetselector>
+      <r2d-tilesetselector data-selected-id="selectedTileSetId"></r2d-tilesetselector>
       <button class="k-button" data-ng-click="sourcesWindow.open()">Add source</button>
       <a href="#">Delete current tile set</a>
     </form>
@@ -23,7 +23,7 @@
       <r2d-sourcesselector sources="remoteSources" on-add-source="addSource"></r2d-sourcesselector>
     </div>
     <div>
-      <r2d-tilegroupselector tile-set="tileSets[0]" class="tileSelector"></r2d-tilegroupselector>
+      <r2d-tilegroupselector class="tileSelector"></r2d-tilegroupselector>
     </div>
   </section>
   <section class="level">
@@ -31,6 +31,6 @@
       <label for="backgroundColor">Background Color</label>
       <input id="backgroundColor" type="text">
     </form>
-    <r2d-leveleditor class="levelEditor" enabled="editorEnabled"></r2d-leveleditor>
+    <r2d-leveleditor class="levelEditor" data-enabled="editorEnabled" data-selected="selectedLevelId"></r2d-leveleditor>
   </section>
 </section>

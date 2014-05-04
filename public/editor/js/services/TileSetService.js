@@ -6,69 +6,84 @@
   'use strict';
 
   angular.module('editor.services')
-    .factory('tileSetService', ['$q', function($q) {
-      var tileSets = null;
+    .factory('tileSetService', ['$q', '$filter', '$log', 'imageService', 'configService',
+      function($q, $filter, $log, imageService, configService) {
+        var tileSets = null;
 
-      function load(tileSetsData) {
-        var tileSetCount = tileSetsData.length,
-          i = 0;
+        function createImage(path) {
+          var image = document.createElement('img');
+          image.src = '/ultradian/sources/' + path;
 
-        tileSets = [];
-
-        for(; i < tileSetCount; i++) {
-          tileSets.push(loadTileSet(tileSetsData[i]));
+          return imageService.ready(image);
         }
 
-        return tileSets;
-      }
-
-      function loadTileSet(tileSetData) {
-        var setName   = tileSetData.name,
-          setId       = tileSetData.id,
-          sourcesData = tileSetData.sources,
-          sourceCount = sourcesData.length,
-          tileSet = {
-            id: setId,
-            name: setName,
-            tileGroups: []
-          },
-          i = 0;
-
-        for(; i < sourceCount; i++) {
-          loadTileGroup(sourcesData[i].id, '/ultradian/sources/' + sourcesData[i].path).then(function(tileGroup) {
-            tileSet.tileGroups.push(tileGroup);
-          });
-        }
-
-        return tileSet;
-      }
-
-      function loadTileGroup(sourceId, sourcePath) {
-        var deferred = $q.defer(),
-          img = document.createElement('img');
-
-        img.onload = function() {
-          deferred.resolve({
-            id: sourceId,
-            image: img,
-            data: assetProcessor.tileConverter.makeTiles(img),
+        function createTileGroup(tileGroups, source) {
+          return {
+            id: source.id,
+            getImage: function() { return createImage(source.path); },
+            //data: assetProcessor.tileConverter.makeTiles(image),
             tileSelected: false,
             groupSelected: false
+          };
+        }
+
+        function createTileGroups(sources) {
+          var tileGroups = {},
+            sourcesCount = sources.length,
+            i = 0;
+
+          for(; i < sourcesCount; i++) {
+            tileGroups[sources[i].id] = createTileGroup(tileGroups, sources[i]);
+          }
+
+          return tileGroups;
+        }
+
+        function createTileSet(tileSetConfig) {
+          return {
+            id: tileSetConfig.id,
+            name: tileSetConfig.name,
+            tileGroups: createTileGroups(tileSetConfig.sources)
+          };
+        }
+
+        function getTileSets() {
+          var deferred = $q.defer();
+
+          if(tileSets) {
+            deferred.resolve(tileSets);
+          } else {
+            configService.getConfig().then(function(config) {
+              tileSets = {};
+              angular.forEach(config.tileSets, function(tileSetConfig) {
+                var tileSet = createTileSet(tileSetConfig);
+                tileSets[tileSet.id] = tileSet;
+              });
+              deferred.resolve(tileSets);
+            });
+          }
+
+          return deferred.promise;
+        }
+
+        function getTileSet(tileSetId) {
+          return getTileSets().then(function(tileSets) {
+            return tileSets[tileSetId];
           });
+        }
+
+        function getTileGroup(tileSetId, tileGroupId) {
+          return getTileSet(tileSetId).then(function(tileSet) {
+            return tileSet.tileGroups[tileGroupId];
+          });
+        }
+
+        return {
+          getTileSet: getTileSet,
+          getTileSets: getTileSets,
+          getTileGroup: getTileGroup
         };
-        img.src = sourcePath;
-
-        return deferred.promise;
       }
-
-      /*function addSource(sourceId, sourcePath) {
-       tileSets
-       }*/
-
-      return {
-        load: load,
-        getTileSets: function() { return tileSets; }
-      };
-    }]);
+    ]);
 })();
 

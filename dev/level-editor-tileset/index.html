@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Level Editor Tileset</title>
+  <script src="/dev/retro2dro2d/js/promise.js"></script>
+  <script src="/dev/retro2dro2d/js/http.js"></script>
+  <script src="/dev/retro2dro2d/js/image-loader.js"></script>
+  <script src="js/level-editor-tileset.js"></script>
+  <script>
+    retro2d.http.get('/data/demo-config.json').ready(configReady);
+
+    function configReady(config) {
+      Array.forEach(config.tileSets, function(tileSet) {
+        retro2d.levelEditorTileset(tileSet);
+      });
+    }
+  </script>
+</head>
+<body>
+
+</body>
+</html>

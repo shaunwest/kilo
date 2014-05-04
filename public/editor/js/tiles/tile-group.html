@@ -1,4 +1,4 @@
-<li data-ng-click="borderClick($event)" data-ng-style="{'width': image.width, 'height': image.height}">
+<li data-ng-click="borderClick($event)" data-ng-style="{'width': image.width, 'height': image.height}" data-ng-class="{selected:tileGroup.groupSelected}">
   <img src="{{ image.src }}">
   <div class="selector" data-ng-show="highlighterVisible"></div>
   <div class="selectedItem" data-ng-show="tileGroup.tileSelected"></div>

@@ -1,7 +1,7 @@
 /**
  * Created by shaun on 3/16/14.
  */
-
+// TODO: get rid of this? not sure what it's doing
 (function() {
   'use strict';
 

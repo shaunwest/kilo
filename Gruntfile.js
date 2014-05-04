@@ -6,7 +6,7 @@ module.exports = function(grunt) {
         // Metadata.
         nodePort: 3000,
         public: "public",
-        appJs: "<%= public %>/editor/js",
+        appJs: "<%= public %>",
         pkg: grunt.file.readJSON('package.json'),
         banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
             '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
@@ -19,12 +19,21 @@ module.exports = function(grunt) {
                 options: {
                     port: 3000,
                     hostname: '*',
-                    bases: ['views', 'public'],
+                    bases: ['views', 'public/js/dist'],
                     server: 'app.js',
                     serverreload: true,
                     livereload: true
                 }
             }
+        },
+        watch: {
+          scripts: {
+            files: ['<%= appJs %>/**/*.js'],
+            tasks: ['concat', 'uglify'],
+            options: {
+              spawn: false,
+            },
+          },
         },
         clean: {
             start: {
@@ -145,7 +154,7 @@ module.exports = function(grunt) {
         'clean:start',
         'jshint:public',
         //'nodeunit',
-        'compass:build',
+        //'compass:build',
         'concat',
         'uglify',
         'clean:finish'

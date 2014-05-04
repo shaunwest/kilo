@@ -11,7 +11,10 @@
       }
 
       return {
-        scope: {enabled: '='},
+        scope: {
+          enabled: '=',
+          selected: '='
+        },
         restrict: 'AE',
         replace: true,
         link: link,

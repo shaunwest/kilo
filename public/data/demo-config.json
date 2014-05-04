@@ -4,30 +4,30 @@
   "tileSets": [
     {
       "name": "Tile Set 1",
-      "id": 1,
+      "id": "1",
       "sources": [
-        {"id": 1, "path": "demo1/tree1.png"},
-        {"id": 2, "path": "demo1/blocks.png"}
+        {"id": "1", "path": "demo1/tree1.png"},
+        {"id": "2", "path": "demo1/blocks.png"}
       ]
     },
     {
       "name": "Tile Set 2",
-      "id": 2,
+      "id": "2",
       "sources": [
-        {"id": 1, "path": "demo1/foliage.png"},
-        {"id": 2, "path": "demo1/blocks.png"}
+        {"id": "1", "path": "demo1/foliage.png"},
+        {"id": "2", "path": "demo1/blocks.png"}
       ]
     }
   ],
   "levels": [
     {
       "name": "Level 1",
-      "id": 1,
+      "id": "1",
       "layers": [
         {
           "name": "Layer 1",
-          "tileSet": 1,
-          "data": [[1,0],[1,1],[1,2]]
+          "tileSet": "1",
+          "data": [["1",0],["1",1],["1",2]]
         }
       ]
     }
