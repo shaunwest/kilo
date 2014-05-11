@@ -2,14 +2,9 @@
  * Created by Shaun on 5/1/14.
  */
 
-var retro2d = retro2d || {};
-
-retro2d.promiser = retro2d.injector.resolve(['retro2d'], function(retro2d) {
+jack2d.promiser = jack2d.injector.resolve(['jack2d'], function(jack2d) {
   'use strict';
 
-  /*var callbacks = [],
-    progressCallbacks = [],
-    errorCallbacks = [],*/
   var obj;
 
   function resolve(promise) {
@@ -31,7 +26,7 @@ retro2d.promiser = retro2d.injector.resolve(['retro2d'], function(retro2d) {
   function update(promise) {
     var args = Array.prototype.slice.call(arguments, 1);
     promise.progressCallbacks.forEach(function(callback) {
-      if(retro2d.isFunction(callback)) {
+      if(jack2d.isFunction(callback)) {
         callback.apply(obj, args);
       }
     });
@@ -42,7 +37,7 @@ retro2d.promiser = retro2d.injector.resolve(['retro2d'], function(retro2d) {
   function reject(promise) {
     var args = Array.prototype.slice.call(arguments, 1);
     promise.errorCallbacks.forEach(function(callback) {
-      if(retro2d.isFunction(callback)) {
+      if(jack2d.isFunction(callback)) {
         callback.apply(obj, args);
       }
     });
@@ -50,21 +45,6 @@ retro2d.promiser = retro2d.injector.resolve(['retro2d'], function(retro2d) {
     promise.callbacks.length = 0;
     promise.errorCallbacks.length = 0;
   }
-
-  /*function progress(cb) {
-    progressCallbacks.push(cb);
-    return obj;
-  }
-
-  function error(cb) {
-    errorCallbacks.push(cb);
-    return obj;
-  }
-
-  function ready(cb) {
-    callbacks.push(cb);
-    return obj;
-  }*/
 
   function get() {
     return {

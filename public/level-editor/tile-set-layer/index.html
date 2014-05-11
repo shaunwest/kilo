@@ -3,16 +3,16 @@
 <head>
   <title>Level Editor Tile Layer</title>
   <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
-  <script src="../../js/retro2d.js"></script>
+  <script src="../../js/jack2d.js"></script>
   <script>
     $(document).ready(function() {
-      retro2d.http.get('../../data/demo-config.json').
+      jack2d.http.get('../../data/demo-config.json').
         error(function(statusText, status) {
-          retro2d.log('Error: ' + status + ': ' + statusText);
+          jack2d.log('Error: ' + status + ': ' + statusText);
         }).
         ready(function(config) {
-          retro2d.levelEditorTileset(config.tileSets[0].sources, function(tileSet) {
-            var tileLayer = retro2d.levelEditorTileLayer({
+          jack2d.levelEditorTileset.init(config.tileSets[0].sources, function(tileSet) {
+            var tileLayer = jack2d.levelEditorTileLayer.init({
               tileSet: tileSet,
               layerData: config.levels[0].layers[0].data
             });

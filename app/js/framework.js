@@ -2,32 +2,39 @@
  * Created by Shaun on 5/1/14.
  */
 
-var retro2d = retro2d || {};
+var jack2d = function() {};
 
 (function() {
   'use strict';
 
-  retro2d.isDefined = function(value) {
+  jack2d = function(key, deps, func, scope) {
+    var module = jack2d.injector.resolve(deps, func, scope);
+    jack2d.injector.register(key, module);
+    jack2d[key] = module;
+    return module;
+  };
+
+  jack2d.isDefined = function(value) {
     return (typeof value !== 'undefined');
   };
 
-  retro2d.isFunction = function(value) {
+  jack2d.isFunction = function(value) {
     return (typeof value === 'function');
   };
 
-  retro2d.def = function(value, defaultValue) {
+  jack2d.def = function(value, defaultValue) {
     return (typeof value === 'undefined') ? defaultValue : value;
   };
 
-  retro2d.error = function(message) {
-    throw(message);
+  jack2d.error = function(message) {
+    throw new Error(message);
   };
 
-  retro2d.log = function(message) {
+  jack2d.log = function(message) {
     console.log(message);
   };
 
-  retro2d.injector = {
+  jack2d.injector = {
     dependencies: {},
     register: function(key, value) {
       this.dependencies[key] = value;
@@ -45,6 +52,7 @@ var retro2d = retro2d || {};
       return func.apply(scope || {}, args.concat(Array.prototype.slice.call(arguments, 0)));
     }
   };
+
+  jack2d.injector.register('jack2d', jack2d);
 })();
 
-retro2d.injector.register('retro2d', retro2d);

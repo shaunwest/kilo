@@ -2,15 +2,15 @@
  * Created by shaun on 4/23/14.
  */
 
-var retro2d = retro2d || {};
+var jack2d = jack2d || {};
 
 (function() {
   'use strict';
 
-  retro2d.levelEditorViewport = function(c) {
+  jack2d.levelEditorViewport = function(c) {
     var CHECKER_COLOR = 'rgba(184,184,184,0.5)', // grey
       config = c || {},
-      canvas = config.canvas || retro2d.error('Exception: config property \'canvas\' is required.'),
+      canvas = config.canvas || jack2d.error('Exception: config property \'canvas\' is required.'),
       context = canvas.getContext('2d'),
       tileSize = config.tileSize || 16,
       layers = config.layers,

@@ -26,12 +26,12 @@ var tileSets = [
   }
 ];
 
-retro2d.imageLoader().loadPath('img/tree1.png').ready(function(image) {
+jack2d.imageLoader().loadPath('img/tree1.png').ready(function(image) {
 
 });
 
 
-var levelEditor = retro2d.levelEditorViewport({
+var levelEditor = jack2d.levelEditorViewport({
   tileSize: 48,
   canvas: document.getElementById('myCanvas'),
   layers: levels[0].layers,

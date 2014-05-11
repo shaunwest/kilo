@@ -2,13 +2,13 @@
 <html>
 <head>
   <title>Level Editor Tileset & Tile Layer Demo</title>
-  <script src="../../js/retro2d.js"></script>
+  <script src="../../js/jack2d.js"></script>
   <script>
-    retro2d.http.get('../data/demo-config.json').ready(configReady);
+    jack2d.http.get('../data/demo-config.json').ready(configReady);
 
     function configReady(config) {
       Array.forEach(config.tileSets, function(tileSetConfig) {
-        var tileSet = retro2d.levelEditorTileset(tileSetConfig.sources);
+        var tileSet = jack2d.levelEditorTileset(tileSetConfig.sources);
 
       });
     }

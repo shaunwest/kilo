@@ -3,11 +3,11 @@
 <head>
   <title>HTTP Service</title>
   <script src="../bower-components/jquery/dist/jquery.min.js"></script>
-  <script src="../js/retro2d.js"></script>
+  <script src="../js/jack2d.js"></script>
   <script src="//alcibi:35729/livereload.js"></script>
   <script>
     function httpGet() {
-      retro2d.http.get($('#remote-path').val()).
+      jack2d.http.get($('#remote-path').val(), 'text/plain').
         error(function() {
           $('.demo-config').html('ERROR!');
         }).
