@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Level Editor Tile Layer</title>
+  <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
+  <script src="../../js/retro2d.js"></script>
+  <script>
+    $(document).ready(function() {
+      retro2d.http.get('../../data/demo-config.json').
+        error(function(statusText, status) {
+          retro2d.log('Error: ' + status + ': ' + statusText);
+        }).
+        ready(function(config) {
+          retro2d.levelEditorTileset(config.tileSets[0].sources, function(tileSet) {
+            var tileLayer = retro2d.levelEditorTileLayer({
+              tileSet: tileSet,
+              layerData: config.levels[0].layers[0].data
+            });
+
+            tileLayer.writeToCanvas($('canvas')[0]);
+          });
+        });
+    });
+  </script>
+</head>
+<body>
+<canvas></canvas>
+</body>
+</html>

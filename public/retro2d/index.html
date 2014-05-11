@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HTTP Service</title>
+  <script src="../bower-components/jquery/dist/jquery.min.js"></script>
+  <script src="../js/retro2d.js"></script>
+  <script src="//alcibi:35729/livereload.js"></script>
+  <script>
+    function httpGet() {
+      retro2d.http.get($('#remote-path').val()).
+        error(function() {
+          $('.demo-config').html('ERROR!');
+        }).
+        progress(function(loaded, total) {
+          console.log(((loaded / total) * 100) + '%');
+        }).
+        ready(function(data, status) {
+          $('.status-value').html(status);
+          return (status === 200) ? data : null;
+        }).
+        ready(function(data) {
+          if(data) {
+            $('.demo-config').html(data);
+          }
+        });
+    }
+
+    $(document).ready(function() {
+      httpGet();
+      $('button').on('click', httpGet);
+    });
+  </script>
+  <style>
+    pre {
+      background: black;
+      color: white;
+      display:block;
+      width:500px;
+      height:400px;
+      overflow-y: scroll
+    }
+  </style>
+</head>
+<body>
+<h1>HTTP Get:</h1>
+<form>
+  <label for="remote-path">Remote path</label>
+  <input id="remote-path" type="text" value="../data/demo-config.json">
+  <button type="button">GET</button>
+</form>
+<h2>Status: <span class="status-value"></span></h2>
+<pre class="demo-config"></pre>
+</body>
+</html>

@@ -4,9 +4,8 @@ module.exports = function(grunt) {
     // Project configuration.
     grunt.initConfig({
         // Metadata.
-        nodePort: 3000,
         public: "public",
-        appJs: "<%= public %>",
+        appJs: "app/js",
         pkg: grunt.file.readJSON('package.json'),
         banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
             '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
@@ -14,34 +13,21 @@ module.exports = function(grunt) {
             '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
             ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
         // Task configuration.
-        express: {
-            server: {
-                options: {
-                    port: 3000,
-                    hostname: '*',
-                    bases: ['views', 'public/js/dist'],
-                    server: 'app.js',
-                    serverreload: true,
-                    livereload: true
-                }
-            }
-        },
         watch: {
           scripts: {
-            files: ['<%= appJs %>/**/*.js'],
-            tasks: ['concat', 'uglify'],
+            files: [
+              '<%= appJs %>/**/*.js'
+            ],
+            tasks: ['concat'],
             options: {
               spawn: false,
-            },
-          },
+              livereload: true
+            }
+          }
         },
         clean: {
             start: {
                 src: ["<%= uglify.dist.dest %>"]
-            },
-            finish: {
-                dot: true,
-                src: [".tmp"]
             }
         },
         concat: {
@@ -51,34 +37,11 @@ module.exports = function(grunt) {
             },
             dist: {
                 src: [
-                    '<%= appJs %>/**/*.js'
+                  '<%= appJs %>/framework.js',
+                  '<%= appJs %>/core/**/*.js',
+                  '<%= appJs %>/editor/**/*.js'
                 ],
-                dest: '.tmp/<%= pkg.name %>.js'
-            }
-        },
-        compass: {
-            dist: {
-                options: {
-                    sassDir: 'sass',
-                    cssDir: 'public/css',
-                    environment: 'production',
-                    require: 'singularitygs',
-                }
-            },
-            dev: {
-                options: {
-                    sassDir: 'sass',
-                    cssDir: 'public/css',
-                    require: 'singularitygs',
-                    watch: true
-                }
-            },
-            build: {
-                options: {
-                    sassDir: 'sass',
-                    cssDir: 'public/css',
-                    require: 'singularitygs',
-                }
+                dest: '<%= public %>/js/<%= pkg.name %>.js'
             }
         },
         uglify: {
@@ -95,20 +58,20 @@ module.exports = function(grunt) {
                 curly: true,
                 eqeqeq: true,
                 immed: true,
-                latedef: true,
+                latedef: 'nofunc',
                 newcap: true,
                 noarg: true,
                 sub: true,
                 undef: true,
-                unused: 'vars',     // don't worry about functions
+                unused: false,
                 boss: true,
                 eqnull: true,
                 strict: true,
                 devel: true,        // don't worry about console
+                browser: true,
                 globals: {
                     jQuery: true,
-                    $: true,
-                    angular: true
+                    $: true
                 }
             },
             gruntfile: {
@@ -120,17 +83,6 @@ module.exports = function(grunt) {
             public: {
                 src: ['<%= appJs %>/**/*.js']
             }
-        },
-        nodeunit: {
-            files: ['test/**/*_test.js']
-        },
-        concurrent: {
-            dev: {
-                tasks: ['server', 'compass:dev' ],
-                options: {
-                    logConcurrentOutput: true
-                }
-            }
         }
     });
 
@@ -138,49 +90,31 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-nodeunit');
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-compass');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-concurrent');
-    grunt.loadNpmTasks('grunt-express');
 
 
     grunt.registerTask('target', 'Set the deploy target', function(value){
-        process.env.NODE_ENV = value;
+      process.env.NODE_ENV = value;
     });
 
     grunt.registerTask('build', [
-        'clean:start',
-        'jshint:public',
-        //'nodeunit',
-        //'compass:build',
-        'concat',
-        'uglify',
-        'clean:finish'
-    ]);
-
-    grunt.registerTask('server', [
-        'express',
-        'express-keepalive'
+      'jshint:public',
+      'concat',
+      'uglify'
     ]);
 
     grunt.registerTask('dev', [
-        'target:development',
-        'concurrent:dev'
-    ]);
-
-    grunt.registerTask('debug', [
-        'target:development',
-        'concurrent:debug'
+      'target:development',
+      'build'
     ]);
 
     grunt.registerTask('prod', [
-        'target:production',
-        'nodemon:normal'
+      'target:production',
+      'build'
     ]);
 
     grunt.registerTask('default', [
-        'dev'
+      'dev'
     ]);
 };

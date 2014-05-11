@@ -1,9 +1,0 @@
-<div class="{{ enabled ? 'editorEnabled' : 'editorDisabled' }}">
-    <div ng-hide="enabled">Spinning...</div>
-    <ul ng-hide="!enabled">
-      <li ng-repeat="layer in layers">{{ layer.name }}</li>
-    </ul>
-    <ul>
-      <li ng-repeat="layer in layers"><canvas></canvas></li>
-    </ul>
-</div>

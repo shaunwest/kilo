@@ -1,5 +1,5 @@
 {
-  "title": "Retro 2D Engine",
+  "title": "Retro 2D Core",
   "name": "retro2d",
   "version": "0.0.1",
   "author": {
@@ -13,18 +13,10 @@
     "grunt": "~0.4.2",
     "grunt-contrib-jshint": "~0.7.2",
     "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-nodeunit": "~0.2.2",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-uglify": "~0.2.7",
-    "grunt-nodemon": "~0.2.0",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt-concurrent": "~0.4.3",
-    "grunt-contrib-compass": "~0.7.1",
-    "grunt-express": "~1.2.1"
+    "grunt-contrib-clean": "~0.5.0"
   },
   "dependencies": {
-    "ejs": "~0.8.5",
-    "express": "~3.4.7",
-    "express-partials": "~0.2.0"
   }
 }
