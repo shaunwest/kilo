@@ -1,4 +1,4 @@
-retro2d
-=======
+jack2d
+======
 
-Retro Engine 2D
+Jack2D Engine

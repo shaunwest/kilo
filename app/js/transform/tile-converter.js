@@ -2,7 +2,7 @@
  * Created by shaun on 3/1/14.
  */
 
-jack2d.tileConverter = jack2d.injector.resolve([], function() {
+jack2d('tileConverter', [], function() {
   'use strict';
 
   var config = {},

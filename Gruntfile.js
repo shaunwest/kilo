@@ -37,8 +37,9 @@ module.exports = function(grunt) {
             },
             dist: {
                 src: [
-                  '<%= appJs %>/framework.js',
-                  '<%= appJs %>/core/**/*.js',
+                  '<%= appJs %>/core.js',
+                  '<%= appJs %>/async/**/*.js',
+                  '<%= appJs %>/transform/**/*.js',
                   '<%= appJs %>/editor/**/*.js'
                 ],
                 dest: '<%= public %>/js/<%= pkg.name %>.js'

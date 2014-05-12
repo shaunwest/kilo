@@ -2,7 +2,7 @@
  * Created by Shaun on 5/1/14.
  */
 
-jack2d.promiser = jack2d.injector.resolve(['jack2d'], function(jack2d) {
+jack2d('promiser', ['helper'], function(helper) {
   'use strict';
 
   var obj;
@@ -26,7 +26,7 @@ jack2d.promiser = jack2d.injector.resolve(['jack2d'], function(jack2d) {
   function update(promise) {
     var args = Array.prototype.slice.call(arguments, 1);
     promise.progressCallbacks.forEach(function(callback) {
-      if(jack2d.isFunction(callback)) {
+      if(helper.isFunction(callback)) {
         callback.apply(obj, args);
       }
     });
@@ -37,7 +37,7 @@ jack2d.promiser = jack2d.injector.resolve(['jack2d'], function(jack2d) {
   function reject(promise) {
     var args = Array.prototype.slice.call(arguments, 1);
     promise.errorCallbacks.forEach(function(callback) {
-      if(jack2d.isFunction(callback)) {
+      if(helper.isFunction(callback)) {
         callback.apply(obj, args);
       }
     });

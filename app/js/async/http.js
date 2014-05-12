@@ -2,7 +2,7 @@
  * Created by Shaun on 5/3/14.
  */
 
-jack2d.http = jack2d.injector.resolve(['jack2d'], function(jack2d) {
+jack2d('http', ['promiser'], function(promiser) {
   'use strict';
 
   function parseResponse(contentType, responseText) {
@@ -15,15 +15,15 @@ jack2d.http = jack2d.injector.resolve(['jack2d'], function(jack2d) {
   }
 
   function get(url, targetContentType) {
-    var promise = jack2d.promiser.get(),
+    var promise = promiser.get(),
       req = new XMLHttpRequest();
 
     req.addEventListener('progress', function(event) {
-      jack2d.promiser.update(promise, event.loaded, event.total);
+      promiser.update(promise, event.loaded, event.total);
     }, false);
 
     req.addEventListener('error', function(event) {
-      jack2d.promiser.reject(promise);
+      promiser.reject(promise);
     }, false);
 
     req.onload = function() {
@@ -31,16 +31,16 @@ jack2d.http = jack2d.injector.resolve(['jack2d'], function(jack2d) {
 
       switch(this.status) {
         case 500:
-          jack2d.promiser.reject(promise, this.statusText, this.status);
+          promiser.reject(promise, this.statusText, this.status);
           break;
         case 404:
-          jack2d.promiser.reject(promise, this.statusText, this.status);
+          promiser.reject(promise, this.statusText, this.status);
           break;
         case 304:
-          jack2d.promiser.resolve(promise, parseResponse(contentType, this.responseText), this.status);
+          promiser.resolve(promise, parseResponse(contentType, this.responseText), this.status);
           break;
         default:
-          jack2d.promiser.resolve(promise, parseResponse(contentType, this.responseText), this.status);
+          promiser.resolve(promise, parseResponse(contentType, this.responseText), this.status);
       }
     };
     req.open('get', url, true);
@@ -53,5 +53,3 @@ jack2d.http = jack2d.injector.resolve(['jack2d'], function(jack2d) {
     get: get
   };
 });
-
-

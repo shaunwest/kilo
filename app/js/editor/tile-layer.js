@@ -2,7 +2,7 @@
  * Created by Shaun on 5/7/14.
  */
 
-jack2d.levelEditorTileLayer = jack2d.injector.resolve([], function() {
+jack2d('editorTileLayer', [], function() {
   'use strict';
 
   var obj,

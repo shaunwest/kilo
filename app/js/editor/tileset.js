@@ -2,7 +2,7 @@
  * Created by Shaun on 5/3/14.
  */
 
-jack2d('levelEditorTileset', ['jack2d'], function(jack2d) {
+jack2d('editorTileset', ['helper', 'promisePool', 'imageLoader', 'tileConverter'], function(helper, promisePool, imageLoader, tileConverter) {
   'use strict';
 
   var tileGroupSources,
@@ -10,14 +10,12 @@ jack2d('levelEditorTileset', ['jack2d'], function(jack2d) {
     obj;
 
   function init(sources, ready) {
-    var promisePool = jack2d.promisePool;
-
-    tileGroupSources = sources || jack2d.error('Exception: no tile group sources found in tile set');
+    tileGroupSources = sources || helper.error('Exception: no tile group sources found in tile set');
     tileGroups = {};
     tileGroupSources.forEach(function(tileGroupSource) {
-      var promise = jack2d.imageLoader.loadPath(tileGroupSource.path);
+      var promise = imageLoader.loadPath(tileGroupSource.path);
       promise.ready(function(image) {
-        tileGroups[tileGroupSource.id] = jack2d.tileConverter.makeTiles(image);
+        tileGroups[tileGroupSource.id] = tileConverter.makeTiles(image);
       });
       promisePool.add(promise);
     });
@@ -30,7 +28,7 @@ jack2d('levelEditorTileset', ['jack2d'], function(jack2d) {
   }
 
   function getTileGroup(id) {
-    if(jack2d.isDefined(id)) {
+    if(helper.isDefined(id)) {
       return tileGroups[id];
     }
     return null;
