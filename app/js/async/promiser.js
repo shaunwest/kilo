@@ -46,6 +46,7 @@ jack2d('promiser', ['helper'], function(helper) {
     promise.errorCallbacks.length = 0;
   }
 
+  // get a promise object
   function get() {
     return {
       callbacks: [],

@@ -2,7 +2,8 @@
  * Created by Shaun on 5/3/14.
  */
 
-jack2d('editorTileset', ['helper', 'promisePool', 'imageLoader', 'tileConverter'], function(helper, promisePool, imageLoader, tileConverter) {
+jack2d('editorTileset', ['helper', 'promisePool', 'imageLoader', 'tileConverter'],
+  function(helper, promisePool, imageLoader, tileConverter) {
   'use strict';
 
   var tileGroupSources,
