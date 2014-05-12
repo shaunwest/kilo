@@ -6,14 +6,14 @@
   <script src="../../js/jack2d.js"></script>
   <script>
     jack2d.ready([
-      'http', 'editor.tileset', 'editor.tileLayer', 'helper'],
-      function(http, tileset, tileLayer, helper) {
+      'http', 'editor.tileSetFactory', 'editor.tileLayer', 'helper'],
+      function(http, tileSetFactory, tileLayer, helper) {
         http.get('../../data/demo-config.json').
           error(function(statusText, status) {
             helper.log('Error: ' + status + ': ' + statusText);
           }).
           ready(function(config) {
-            tileset.init(config.tileSets[0].sources, function(tileSet) {
+            tileSetFactory.get(config.tileSets[0].sources).ready(function(tileSet) {
               var layer = tileLayer.createLayer(16, tileSet, config.levels[0].layers[0].data);
               tileLayer.writeToCanvas(layer, $('canvas')[0]);
             });

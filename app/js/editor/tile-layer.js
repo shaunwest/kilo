@@ -5,27 +5,6 @@
 jack2d('editor.tileLayer', function() {
   'use strict';
 
-  var obj;
-    /*tileSize = 16,
-    tileSet,
-    layerData,
-    canvas,
-    context;*/
-
-  /*function init(config) {
-    var c = config || {};
-
-    tileSize = c.tileSize || 16;
-    tileSet = c.tileSet;
-    layerData = c.layerData;
-    canvas = document.createElement('canvas');
-    context = canvas.getContext('2d');
-
-    createLayer(tileSize, tileSet, layerData);
-
-    return obj;
-  }*/
-
   function createLayer(tileSize, tileSet, layerData) {
     var layerWidth = layerData.length,
       layerHeight = layerData[0].length,
@@ -60,10 +39,8 @@ jack2d('editor.tileLayer', function() {
     context.drawImage(layer.canvas, 0, 0);
   }
 
-  obj = {
+  return {
     createLayer: createLayer,
     writeToCanvas: writeToCanvas
   };
-
-  return obj;
 });

@@ -2,52 +2,50 @@
  * Created by Shaun on 5/3/14.
  */
 
-jack2d('editor.tileset', ['helper', 'promisePool', 'imageLoader', 'tileConverter'],
-  function(helper, promisePool, imageLoader, tileConverter) {
+jack2d('editor.tileSetFactory', ['helper', 'promiser', 'promisePooler', 'imageLoader', 'tileConverter'],
+function(helper, promiser, promisePooler, imageLoader, tileConverter) {
   'use strict';
 
-  var tileGroupSources,
-    tileGroups,
-    obj;
+  function get(sources) {
+    var promise = promiser.get(),
+      tileSet = {
+        tileGroups: {},
+        getTileGroup: function(groupId) {
+          return this.tileGroups[groupId];
+        },
+        getTile: function(groupId, tileIndex) {
+          var tileGroup = this.getTileGroup(groupId);
+          if(tileGroup) {
+            return tileGroup[tileIndex];
+          }
+          return null;
+        }
+      };
 
-  function init(sources, ready) {
-    tileGroupSources = sources || helper.error('Exception: no tile group sources found in tile set');
-    tileGroups = {};
-    tileGroupSources.forEach(function(tileGroupSource) {
+    loadImages(tileSet, sources, function() {
+      promiser.resolve(promise, tileSet);
+    });
+
+    return promise;
+  }
+
+  function loadImages(tileSet, sources, ready) {
+    var promisePool = promisePooler.get();
+
+    sources.forEach(function(tileGroupSource) {
       var promise = imageLoader.loadPath(tileGroupSource.path);
       promise.ready(function(image) {
-        tileGroups[tileGroupSource.id] = tileConverter.makeTiles(image);
+        tileSet.tileGroups[tileGroupSource.id] = tileConverter.makeTiles(image);
       });
-      promisePool.add(promise);
+      promisePooler.add(promisePool, promise);
     });
 
     promisePool.ready(function() {
-      ready(obj);
+      ready();
     });
-
-    return obj;
   }
 
-  function getTileGroup(id) {
-    if(helper.isDefined(id)) {
-      return tileGroups[id];
-    }
-    return null;
-  }
-
-  function getTile(groupId, tileIndex) {
-    var tileGroup = getTileGroup(groupId);
-    if(tileGroup && tileGroup[tileIndex]) {
-      return tileGroup[tileIndex];
-    }
-    return null;
-  }
-
-  obj = {
-    init: init,
-    getTileGroup: getTileGroup,
-    getTile: getTile
+  return {
+    get: get
   };
-
-  return obj;
 });
