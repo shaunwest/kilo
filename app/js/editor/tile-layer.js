@@ -2,17 +2,17 @@
  * Created by Shaun on 5/7/14.
  */
 
-jack2d('editorTileLayer', [], function() {
+jack2d('editor.tileLayer', function() {
   'use strict';
 
-  var obj,
-    tileSize = 16,
+  var obj;
+    /*tileSize = 16,
     tileSet,
     layerData,
     canvas,
-    context;
+    context;*/
 
-  function init(config) {
+  /*function init(config) {
     var c = config || {};
 
     tileSize = c.tileSize || 16;
@@ -24,13 +24,16 @@ jack2d('editorTileLayer', [], function() {
     createLayer(tileSize, tileSet, layerData);
 
     return obj;
-  }
+  }*/
 
   function createLayer(tileSize, tileSet, layerData) {
     var layerWidth = layerData.length,
       layerHeight = layerData[0].length,
       width = layerWidth * tileSize,
       height = layerHeight * tileSize,
+      canvas = document.createElement('canvas'),
+      context = canvas.getContext('2d'),
+      layer = {canvas: canvas},
       x, y;
 
     context.clearRect(0, 0, width, height);
@@ -40,6 +43,8 @@ jack2d('editorTileLayer', [], function() {
         drawTile(context, y * tileSize, x * tileSize, tileSize, layerData[x][y], tileSet);
       }
     }
+
+    return layer;
   }
 
   function drawTile(context, px, py, tileSize, tileData, tileSet) {
@@ -50,13 +55,12 @@ jack2d('editorTileLayer', [], function() {
     context.drawImage(image, 0, 0, tileSize, tileSize, px, py, tileSize, tileSize);
   }
 
-  function writeToCanvas(targetCanvas) {
+  function writeToCanvas(layer, targetCanvas) {
     var context = targetCanvas.getContext('2d');
-    context.drawImage(canvas, 0, 0);
+    context.drawImage(layer.canvas, 0, 0);
   }
 
   obj = {
-    init: init,
     createLayer: createLayer,
     writeToCanvas: writeToCanvas
   };

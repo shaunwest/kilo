@@ -9,15 +9,19 @@ var jack2d = function() {};
   var helper = {};
 
   jack2d = function(keyOrDeps, depsOrFunc, funcOrScope, scope) {
-    // getting dependencies
+    /** get dependencies */
     if(helper.isArray(keyOrDeps)) {
       jack2d.injector.resolve(keyOrDeps, depsOrFunc, funcOrScope);
 
-    // registering a new module
+    /** register a new module (with dependencies) */
     } else if(helper.isArray(depsOrFunc) && helper.isFunction(funcOrScope)) {
       jack2d.injector.register(keyOrDeps, depsOrFunc, funcOrScope, scope);
 
-    // getting a module
+    /** register a new module (without dependencies) */
+    } else if(helper.isFunction(depsOrFunc)) {
+      jack2d.injector.register(keyOrDeps, [], depsOrFunc, funcOrScope);
+
+    /** get a module */
     } else if(keyOrDeps) {
       return jack2d.injector.getDependency(keyOrDeps);
     }
@@ -42,7 +46,7 @@ var jack2d = function() {};
     register: function(key, deps, func, scope) {
       this.unresolved[key] = {deps: deps, func: func, scope: scope};
     },
-    setModule: function(key, module) { // save a module without doing dependency resolution
+    setModule: function(key, module) { /** save a module without doing dependency resolution */
       this.modules[key] = module;
     },
     getDependency: function(key) {
@@ -71,31 +75,14 @@ var jack2d = function() {};
     }
   };
 
-  helper.isDefined = function(value) {
-    return (typeof value !== 'undefined');
-  };
+  helper.isDefined = function(value) { return (typeof value !== 'undefined'); };
+  helper.isFunction = function(value) { return (typeof value === 'function'); };
+  helper.isArray = function(value) { return toString.call(value) === "[object Array]"; };
+  helper.def = function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; };
+  helper.error = function(message) { throw new Error(message); };
+  helper.log = function(message) { console.log(message); };
 
-  helper.isFunction = function(value) {
-    return (typeof value === 'function');
-  };
-
-  helper.isArray = function(value) {
-    return toString.call(value) === "[object Array]";
-  };
-
-  helper.def = function(value, defaultValue) {
-    return (typeof value === 'undefined') ? defaultValue : value;
-  };
-
-  helper.error = function(message) {
-    throw new Error(message);
-  };
-
-  helper.log = function(message) {
-    console.log(message);
-  };
-
-  // helper is basic; it doesn't have dependencies to resolve
+  /** helper is basic; it doesn't have dependencies to resolve */
   jack2d.injector.setModule('helper', helper);
 })();
 
