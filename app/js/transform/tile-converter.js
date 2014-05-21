@@ -2,21 +2,14 @@
  * Created by shaun on 3/1/14.
  */
 
-jack2d('tileConverter', [], function() {
+jack2d('tileConverter', ['config'], function(config) {
   'use strict';
 
-  var config = {},
-    tileWidth = 16,
-    tileHeight = 16;
-
-  function setConfig(c) {
-    config = c;
-    tileWidth = config.tileWidth || 16;
-    tileHeight = config.tileHeight || 16;
-  }
+  var DEFAULT_TILE_SIZE = 16;
 
   function makeTiles(image) {
-    var rowCount = Math.floor(image.height / tileHeight),
+    var tileHeight = config.tileHeight || DEFAULT_TILE_SIZE,
+      rowCount = Math.floor(image.height / tileHeight),
       i = 0,
       data = [];
 
@@ -28,12 +21,14 @@ jack2d('tileConverter', [], function() {
   }
 
   function addRow(result, sourceAsset, row) {
-    var tileCount = Math.floor(sourceAsset.width / tileWidth),
+    var tileWidth = config.tileWidth || DEFAULT_TILE_SIZE,
+      tileHeight = config.tileHeight || DEFAULT_TILE_SIZE,
+      tileCount = Math.floor(sourceAsset.width / tileWidth),
       tile = null,
       tileContext = null,
-      i = 0;
+      i;
 
-    for(; i < tileCount; i++) {
+    for(i = 0; i < tileCount; i++) {
       tile = document.createElement('canvas');
       tile.width  = tileWidth;
       tile.height = tileHeight;
@@ -51,7 +46,6 @@ jack2d('tileConverter', [], function() {
   }
 
   return {
-    setConfig: setConfig,
     makeTiles: makeTiles
   };
 });

@@ -2,26 +2,26 @@
 <html>
 <head>
   <title>Level Editor Tile Layer</title>
+  <style>
+    canvas { background: red;}
+  </style>
   <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
   <script src="../../js/jack2d.js"></script>
+  <script src="js/demo.js"></script>
   <script>
-    jack2d.ready([
-      'http', 'editor.tileSetFactory', 'editor.tileLayer', 'helper'],
-      function(http, tileSetFactory, tileLayer, helper) {
-        http.get('../../data/demo-config.json').
-          error(function(statusText, status) {
-            helper.log('Error: ' + status + ': ' + statusText);
-          }).
-          ready(function(config) {
-            tileSetFactory.get(config.tileSets[0].sources).ready(function(tileSet) {
-              var layer = tileLayer.createLayer(16, tileSet, config.levels[0].layers[0].data);
-              tileLayer.writeToCanvas(layer, $('canvas')[0]);
-            });
-          });
+    $(document).ready(function() {
+      var tileSetLayer = jack2d('demo.tileSetLayer');
+      tileSetLayer.getTileLayer().ready(function(tileLayer) {
+        var context = $('canvas')[0].getContext('2d');
+        context.drawImage(tileLayer.canvas, 0, 0);
+        //var viewport = viewportFactory.get($('canvas')[0]);
+        //viewport.add(tileLayer);
+        //viewport.draw(true);
+      })
     });
   </script>
 </head>
 <body>
-<canvas></canvas>
+<canvas width="128" height="128"></canvas>
 </body>
 </html>
