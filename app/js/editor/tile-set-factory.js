@@ -6,7 +6,7 @@ jack2d('editor.tileSetFactory', ['helper', 'promiser', 'promisePooler', 'imageLo
 function(helper, promiser, promisePooler, imageLoader, tileConverter) {
   'use strict';
 
-  function get(sources) {
+  function getTileSet(sources) {
     var promise = promiser.get(),
       tileSet = {
         tileGroups: {},
@@ -46,6 +46,6 @@ function(helper, promiser, promisePooler, imageLoader, tileConverter) {
   }
 
   return {
-    get: get
+    getTileSet: getTileSet
   };
 });

@@ -9,7 +9,7 @@ jack2d('demo.tileSetLayer',
     config.tileWidth = config.tileHeight = 16;
 
     return {
-      getTileLayer: function() {
+      getTileLayers: function() {
         var promise = promiser.get();
 
         http.get('../../data/demo-config.json').
@@ -17,8 +17,11 @@ jack2d('demo.tileSetLayer',
             helper.log('Error: ' + status + ': ' + statusText);
           }).
           ready(function(demoConfig) {
-            tileSetFactory.get(demoConfig.tileSets[0].sources).ready(function(tileSet) {
-              promiser.resolve(promise, tileLayerFactory.get(tileSet, demoConfig.levels[0].layers[0].data));
+            tileSetFactory.getTileSet(demoConfig.tileSets[0].sources).ready(function(tileSet) {
+              var layer1 = tileLayerFactory.getTileLayer(tileSet, demoConfig.levels[0].layers[0].data),
+                layer2 = tileLayerFactory.getTileLayer(tileSet, demoConfig.levels[0].layers[1].data);
+
+              promiser.resolve(promise, layer1, layer2);
             });
           });
 

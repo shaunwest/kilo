@@ -10,10 +10,10 @@ jack2d('tileConverter', ['config'], function(config) {
   function makeTiles(image) {
     var tileHeight = config.tileHeight || DEFAULT_TILE_SIZE,
       rowCount = Math.floor(image.height / tileHeight),
-      i = 0,
-      data = [];
+      data = [],
+      i;
 
-    for(; i < rowCount; i++) {
+    for(i = 0; i < rowCount; i++) {
       addRow(data, image, i);
     }
 

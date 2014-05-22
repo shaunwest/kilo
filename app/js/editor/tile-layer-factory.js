@@ -2,10 +2,10 @@
  * Created by Shaun on 5/7/14.
  */
 
-jack2d('editor.tileLayerFactory', ['config'], function(config) {
+jack2d('editor.tileLayerFactory', ['config', 'helper'], function(config, helper) {
   'use strict';
 
-  function get(tileSet, layerData) {
+  function getTileLayer(tileSet, layerData) {
     var tileWidth = config.tileWidth,// FIXME: needs default value
       tileHeight = config.tileHeight,
       layerWidth = layerData.length,
@@ -31,15 +31,25 @@ jack2d('editor.tileLayerFactory', ['config'], function(config) {
     };
   }
 
+  function getTileGroup(tileData) {
+    return (tileData && helper.isArray(tileData)) ? tileData[0] : null;
+  }
+
+  function getTileIndex(tileData) {
+    return (tileData && helper.isArray(tileData)) ? tileData[1] : null;
+  }
+
   function drawTile(context, px, py, tileData, tileSet) {
-    var tileGroup = tileData[0],
-      tileIndex = tileData[1],
+    var tileGroup = getTileGroup(tileData),
+      tileIndex = getTileIndex(tileData),
       image = tileSet.getTile(tileGroup, tileIndex);
 
-    context.drawImage(image, 0, 0, config.tileWidth, config.tileHeight, px, py, config.tileWidth, config.tileHeight);
+    if(image) {
+      context.drawImage(image, 0, 0, config.tileWidth, config.tileHeight, px, py, config.tileWidth, config.tileHeight);
+    }
   }
 
   return {
-    get: get
+    getTileLayer: getTileLayer
   };
 });

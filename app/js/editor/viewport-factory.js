@@ -14,8 +14,12 @@ jack2d('editor.viewportFactory', ['config'], function(config) {
       add: function(layer) {
         this.layers.push(layer);
       },
+      clear: function() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+      },
       draw: function(checker) {
         var i, layers = this.layers, numLayers = layers.length;
+        this.clear();
         if(checker) {
           drawBackground(canvas);
         }
@@ -37,7 +41,6 @@ jack2d('editor.viewportFactory', ['config'], function(config) {
       offset,
       i, j;
 
-    context.clearRect(0, 0, width, height);
     context.fillStyle = CHECKER_COLOR;
 
     for(i = 0; i < widthInTiles; i++) {

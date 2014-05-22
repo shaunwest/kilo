@@ -1,41 +1,16 @@
 
-var levels = [
-  {
-    "name": "Level 1",
-    "id": "1",
-    "layers": [
-      {
-        "name": "Layer 1",
-        "tileSet": "1",
-        "data": [["1",0],["1",1],["1",2]]
-      }
-    ]
-  }
-];
+jack2d('demo.viewport', ['demo.tileSetLayer', 'editor.viewportFactory'],
+function(tileSetLayer, viewportFactory) {
+  'use strict';
 
-var tileSets = [
-  {
-    "name": "Tile Set 1",
-    "id": "1",
-    "tileGroups": [
-      {
-        "id": "1",
-        "sourcePath": "img/tree1.png"
-      }
-    ]
-  }
-];
-
-jack2d.imageLoader().loadPath('img/tree1.png').ready(function(image) {
-
+  return {
+    createViewport: function(canvas) {
+      tileSetLayer.getTileLayers().ready(function(tileLayer1, tileLayer2) {
+        var viewport = viewportFactory.get(canvas);
+        viewport.add(tileLayer1);
+        viewport.add(tileLayer2);
+        viewport.draw(true);
+      });
+    }
+  };
 });
-
-
-var levelEditor = jack2d.levelEditorViewport({
-  tileSize: 48,
-  canvas: document.getElementById('myCanvas'),
-  layers: levels[0].layers,
-  tileSet: tileSets[0]
-});
-
-

@@ -2,20 +2,22 @@
 <html>
 <head>
   <title>Level Editor Viewport</title>
-  <script src="/app/jack2dro2d/js/util.js"></script>
-  <script src="/app/jack2dro2d/js/promise.js"></script>
-  <script src="/app/jack2dro2d/js/image-loader.js"></script>
-  <script src="/app/jack2dro2d/js/tile-converter.js"></script>
-  <script src="/app/js/editor/level-editor-tileset.js"></script>
-  <script src="../../app/js/editor/level-editor-viewport.js"></script>
+  <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
+  <script src="../../js/jack2d.js"></script>
+  <script src="../tile-set-layer/js/demo.js"></script>
   <script src="js/demo.js"></script>
+  <script>
+    $(document).ready(function() {
+      jack2d('demo.viewport').createViewport($('canvas')[0]);
+    });
+  </script>
   <style>
     canvas {
       border: 1px solid black;
     }
   </style>
 </head>
-<body onResize="levelEditor.refresh()">
-<canvas id="myCanvas" width="384" height="384"></canvas>
+<body>
+<canvas width="128" height="128"></canvas>
 </body>
 </html>

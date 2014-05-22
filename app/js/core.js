@@ -2,14 +2,14 @@
  * Created by Shaun on 5/1/14.
  */
 
-var jack2d = function() {};
+//var jack2d = function() {};
 
-(function() {
+var jack2d = (function() {
   'use strict';
 
-  var config = {};
+  var jack2d, helper, injector, config = {};
 
-  var helper = {
+  helper = {
     isDefined: function(value) { return (typeof value !== 'undefined'); },
     isFunction: function(value) { return (typeof value === 'function'); },
     isArray: function(value) { return toString.call(value) === "[object Array]"; },
@@ -18,7 +18,7 @@ var jack2d = function() {};
     log: function(message) { console.log(message); }
   };
 
-  var injector = {
+  injector = {
     unresolved: {},
     modules: {},
     register: function(key, deps, func, scope) {
@@ -84,5 +84,7 @@ var jack2d = function() {};
     function go() { jack2d(deps, func, scope); }
     ($) ? $(document).ready(go) : go();
   };
+
+  return jack2d;
 })();
 
