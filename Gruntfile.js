@@ -40,6 +40,7 @@ module.exports = function(grunt) {
                   '<%= appJs %>/core.js',
                   '<%= appJs %>/async/**/*.js',
                   '<%= appJs %>/transform/**/*.js',
+                  '<%= appJs %>/canvas/**/*.js',
                   '<%= appJs %>/editor/**/*.js'
                 ],
                 dest: '<%= public %>/js/<%= pkg.name %>.js'

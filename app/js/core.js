@@ -15,7 +15,15 @@ var jack2d = (function() {
     isArray: function(value) { return toString.call(value) === "[object Array]"; },
     def: function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; },
     error: function(message) { throw new Error(message); },
-    log: function(message) { console.log(message); }
+    log: function(message) { console.log(message); },
+    mixin: function(recieve, give) {
+      for(var prop in give) {
+        if(give.hasOwnProperty(prop) && !recieve.hasOwnProperty(prop)) {
+          recieve[prop] = give[prop];
+        }
+      }
+      return recieve;
+    }
   };
 
   injector = {

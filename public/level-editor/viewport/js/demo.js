@@ -6,10 +6,11 @@ function(tileSetLayer, viewportFactory) {
   return {
     createViewport: function(canvas) {
       tileSetLayer.getTileLayers().ready(function(tileLayer1, tileLayer2) {
-        var viewport = viewportFactory.get(canvas);
+        var viewport = viewportFactory.getViewport(canvas);
         viewport.add(tileLayer1);
         viewport.add(tileLayer2);
-        viewport.draw(true);
+        viewport.drawChecker(canvas, 16);
+        viewport.draw();
       });
     }
   };
