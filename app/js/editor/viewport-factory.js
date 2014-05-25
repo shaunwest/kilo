@@ -33,7 +33,7 @@ jack2d('editor.viewportFactory', ['config', 'helper', 'canvas.draw'], function(c
       context: canvas.getContext('2d'),
       layers: []
     };
-    return helper.mixin(viewport, viewportMethods);
+    return helper.augment(viewport, viewportMethods);
   }
 
   return {

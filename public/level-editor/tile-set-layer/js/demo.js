@@ -21,7 +21,7 @@ jack2d('demo.tileSetLayer',
               var layer1 = tileLayerFactory.getTileLayer(tileSet, demoConfig.levels[0].layers[0].data),
                 layer2 = tileLayerFactory.getTileLayer(tileSet, demoConfig.levels[0].layers[1].data);
 
-              promiser.resolve(promise, layer1, layer2);
+              promiser.resolve(promise, layer1.draw(), layer2.draw());
             });
           });
 

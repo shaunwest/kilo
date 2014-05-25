@@ -6,21 +6,30 @@ jack2d('editor.tileSetFactory', ['helper', 'promiser', 'promisePooler', 'imageLo
 function(helper, promiser, promisePooler, imageLoader, tileConverter) {
   'use strict';
 
+  var tileSetMethods = {
+    getTileGroup: function(groupId) {
+      return this.tileGroups[groupId];
+    },
+    getTile: function(groupId, tileIndex) {
+      var tileGroup = this.getTileGroup(groupId);
+      if(tileGroup) {
+        return tileGroup[tileIndex];
+      }
+      return null;
+    }
+  };
+
+  function createTileSet() {
+    var tileSet = {
+      tileGroups: {}
+    };
+
+    return helper.augment(tileSet, tileSetMethods);
+  }
+
   function getTileSet(sources) {
     var promise = promiser.get(),
-      tileSet = {
-        tileGroups: {},
-        getTileGroup: function(groupId) {
-          return this.tileGroups[groupId];
-        },
-        getTile: function(groupId, tileIndex) {
-          var tileGroup = this.getTileGroup(groupId);
-          if(tileGroup) {
-            return tileGroup[tileIndex];
-          }
-          return null;
-        }
-      };
+      tileSet = createTileSet();
 
     loadImages(tileSet, sources, function() {
       promiser.resolve(promise, tileSet);

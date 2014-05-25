@@ -5,30 +5,53 @@
 jack2d('editor.tileLayerFactory', ['config', 'helper'], function(config, helper) {
   'use strict';
 
-  function getTileLayer(tileSet, layerData) {
-    var tileWidth = config.tileWidth,// FIXME: needs default value
-      tileHeight = config.tileHeight,
-      layerWidth = layerData.length,
-      layerHeight = layerData[0].length,
-      pixelWidth = layerWidth * tileWidth,
-      pixelHeight = layerHeight * tileHeight,
-      canvas = document.createElement('canvas'),
-      context = canvas.getContext('2d'),
-      x, y;
+  var tileLayerMethods = {
+    init: function(tileSet, layerData, tileWidth, tileHeight) {
+      this.layerData = layerData;
+      this.tileSet = tileSet;
+      this.tileWidth = tileWidth;
+      this.tileHeight = tileHeight;
+      this.layerWidth = layerData.length;
+      this.layerHeight = layerData[0].length;
+      this.pixelWidth = this.layerWidth * tileWidth;
+      this.pixelHeight = this.layerHeight * tileHeight;
 
-    canvas.width = pixelWidth;
-    canvas.height = pixelHeight;
-    context.clearRect(0, 0, pixelWidth, pixelHeight);
-
-    for(x = 0; x < layerWidth; x++) {
-      for(y = 0; y < layerHeight; y++) {
-        drawTile(context, y * tileHeight, x * tileWidth, layerData[x][y], tileSet);
+      this.canvas.width = this.pixelWidth;
+      this.canvas.height = this.pixelHeight;
+      return this;
+    },
+    refresh: function() {
+      this.init(this.tileSet, this.layerData, this.tileWidth, this.tileHeight);
+      return this;
+    },
+    clear: function() {
+      this.context.clearRect(0, 0, this.pixelWidth, this.pixelHeight);
+      return this;
+    },
+    draw: function() {
+      var x, y;
+      for(x = 0; x < this.layerWidth; x++) {
+        for(y = 0; y < this.layerHeight; y++) {
+          drawTile(this.context, y * this.tileHeight, x * this.tileWidth, this.layerData[x][y], this.tileSet);
+        }
       }
+      return this;
     }
+  };
 
-    return {
-      canvas: canvas
+  function createTileLayer(canvas) {
+    var tileLayer = {
+      canvas: canvas,
+      context: canvas.getContext('2d')
     };
+
+    return helper.augment(tileLayer, tileLayerMethods);
+  }
+
+  function getTileLayer(tileSet, layerData) {
+    var tileLayer = createTileLayer(document.createElement('canvas'));
+
+    return tileLayer.init(tileSet, layerData, config.tileWidth, config.tileHeight);
   }
 
   function getTileGroup(tileData) {

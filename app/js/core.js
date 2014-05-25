@@ -2,8 +2,6 @@
  * Created by Shaun on 5/1/14.
  */
 
-//var jack2d = function() {};
-
 var jack2d = (function() {
   'use strict';
 
@@ -16,7 +14,7 @@ var jack2d = (function() {
     def: function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; },
     error: function(message) { throw new Error(message); },
     log: function(message) { console.log(message); },
-    mixin: function(recieve, give) {
+    augment: function(recieve, give) {
       for(var prop in give) {
         if(give.hasOwnProperty(prop) && !recieve.hasOwnProperty(prop)) {
           recieve[prop] = give[prop];
