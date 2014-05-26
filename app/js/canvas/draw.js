@@ -9,16 +9,18 @@ jack2d('canvas.draw', function() {
 
   function checkerBackground(canvas, size) {
     var width = canvas.width,
-      sizeInCheckers = width / size,
+      height = canvas.height,
+      widthInCheckers = width / size,
+      heightInCheckers = height  / size,
       context = canvas.getContext('2d'),
       offset,
       i, j;
 
     context.fillStyle = CHECKER_COLOR;
 
-    for(i = 0; i < sizeInCheckers; i++) {
+    for(i = 0; i < widthInCheckers; i++) {
       offset = i % 2;
-      for(j = 0; j < sizeInCheckers; j++) {
+      for(j = 0; j < heightInCheckers; j++) {
         if(j % 2 === 0) {
           context.fillRect(i * size, (j + offset) * size, size, size);
         }

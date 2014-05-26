@@ -8,16 +8,18 @@
   <script src="js/demo.js"></script>
   <script>
     $(document).ready(function() {
-      jack2d('demo.viewport').createViewport($('canvas')[0]);
+      jack2d('demo.viewport').createViewport($('#viewport')[0]);
     });
   </script>
   <style>
-    canvas {
+    #viewport {
       border: 1px solid black;
+      width: 128px;
+      height: 128px;
     }
   </style>
 </head>
 <body>
-<canvas width="128" height="128"></canvas>
+<div id="viewport"></div>
 </body>
 </html>

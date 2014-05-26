@@ -7,19 +7,23 @@
   <script src="js/demo.js"></script>
   <script>
     $(document).ready(function() {
-      var tileSetLayer = jack2d('demo.tileSetLayer');
-      tileSetLayer.getTileLayers().ready(function(tileLayer1, tileLayer2) {
-        $('#layer1')[0].getContext('2d').drawImage(tileLayer1.canvas, 0, 0);
-        $('#layer2')[0].getContext('2d').drawImage(tileLayer2.canvas, 0, 0);
+      jack2d('demo.tileSetLayer').
+        getTileLayers().ready(function(tileLayer1, tileLayer2) {
+          $('#layer1')[0].getContext('2d').drawImage(tileLayer1.canvas, 0, 0);
+          $('#layer2')[0].getContext('2d').drawImage(tileLayer2.canvas, 0, 0);
+          $('#tile1')[0].getContext('2d').drawImage(tileLayer1.getTileByPixels(64, 64), 0, 0);
+          $('#tile2')[0].getContext('2d').drawImage(tileLayer2.getTile(0, 7), 0, 0);
       });
     });
   </script>
   <style>
-    canvas { background: red;}
+    canvas { background: red; }
   </style>
 </head>
 <body>
-<canvas id="layer1" width="128" height="128"></canvas>
-<canvas id="layer2" width="128" height="128"></canvas>
+  Layer 1: <canvas id="layer1" width="128" height="128"></canvas>
+  Layer 2: <canvas id="layer2" width="128" height="128"></canvas>
+  getTileByPixels: <canvas id="tile1" width="16" height="16"></canvas>
+  getTile: <canvas id="tile2" width="16" height="16"></canvas>
 </body>
 </html>

@@ -2,29 +2,13 @@
  * Created by Shaun on 5/3/14.
  */
 
-jack2d('editor.tileSetFactory', ['helper', 'promiser', 'promisePooler', 'imageLoader', 'tileConverter'],
-function(helper, promiser, promisePooler, imageLoader, tileConverter) {
+jack2d('editor.tileSetFactory',
+['helper', 'promiser', 'promisePooler', 'imageLoader', 'tileConverter', 'editor.tileSet'],
+function(helper, promiser, promisePooler, imageLoader, tileConverter, tileSet) {
   'use strict';
 
-  var tileSetMethods = {
-    getTileGroup: function(groupId) {
-      return this.tileGroups[groupId];
-    },
-    getTile: function(groupId, tileIndex) {
-      var tileGroup = this.getTileGroup(groupId);
-      if(tileGroup) {
-        return tileGroup[tileIndex];
-      }
-      return null;
-    }
-  };
-
   function createTileSet() {
-    var tileSet = {
-      tileGroups: {}
-    };
-
-    return helper.augment(tileSet, tileSetMethods);
+    return helper.clone(tileSet).init();
   }
 
   function getTileSet(sources) {

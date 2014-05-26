@@ -1,6 +1,11 @@
 /**
  * Created by Shaun on 5/1/14.
+ *
+ * tx/ty = tile coordinates
+ * x/y   = pixel (screen) coordinates
+ *
  */
+
 
 var jack2d = (function() {
   'use strict';
@@ -14,6 +19,15 @@ var jack2d = (function() {
     def: function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; },
     error: function(message) { throw new Error(message); },
     log: function(message) { console.log(message); },
+    clone: function(object) {
+      var newObject = {};
+      for(var prop in object) {
+        if(object.hasOwnProperty(prop)) {
+          newObject[prop] = object[prop];
+        }
+      }
+      return newObject;
+    },
     augment: function(recieve, give) {
       for(var prop in give) {
         if(give.hasOwnProperty(prop) && !recieve.hasOwnProperty(prop)) {
