@@ -4,11 +4,18 @@
   <title>Level Editor Viewport</title>
   <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
   <script src="../../js/jack2d.js"></script>
-  <script src="../tile-set-layer/js/demo.js"></script>
+  <script src="../tile-set/js/demo.js"></script>
+  <script src="../tile-layer/js/demo.js"></script>
   <script src="js/demo.js"></script>
   <script>
     $(document).ready(function() {
-      jack2d('demo.viewport').createViewport($('#viewport')[0]);
+      var viewportDemo = jack2d('demo.viewport');
+      viewportDemo.createViewport($('#viewport')[0]);
+      $('#toggleLayer1').on('click', viewportDemo.toggleLayer1);
+      $('#toggleLayer2').on('click', viewportDemo.toggleLayer2);
+      $('#slideRight').on('click', viewportDemo.slideRight);
+      $('#slideDown').on('click', viewportDemo.slideDown);
+      $('#resetPosition').on('click', viewportDemo.resetPosition);
     });
   </script>
   <style>
@@ -17,9 +24,15 @@
       width: 128px;
       height: 128px;
     }
+    button {float: left; clear: left;}
   </style>
 </head>
 <body>
 <div id="viewport"></div>
+<button id="toggleLayer1">Toggle Layer 1</button>
+<button id="toggleLayer2">Toggle Layer 2</button>
+<button id="slideRight">Viewport Right</button>
+<button id="slideDown">Viewport Down</button>
+<button id="resetPosition">Reset Position</button>
 </body>
 </html>

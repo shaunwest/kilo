@@ -38,6 +38,7 @@ module.exports = function(grunt) {
             dist: {
                 src: [
                   '<%= appJs %>/core.js',
+                  '<%= appJs %>/config/**/*.js',
                   '<%= appJs %>/async/**/*.js',
                   '<%= appJs %>/transform/**/*.js',
                   '<%= appJs %>/canvas/**/*.js',

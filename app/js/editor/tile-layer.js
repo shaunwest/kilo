@@ -2,7 +2,7 @@
  * Created by Shaun on 5/25/14.
  */
 
-jack2d('editor.tileLayer', ['config', 'helper'], function(config, helper) {
+jack2d('editor.tileLayer', ['appConfig', 'helper'], function(appConfig, helper) {
   'use strict';
 
   function getTileGroup(tileData) {
@@ -17,20 +17,6 @@ jack2d('editor.tileLayer', ['config', 'helper'], function(config, helper) {
     var tileGroup = getTileGroup(tileData),
       tileIndex = getTileIndex(tileData);
     return tileSet.getTile(tileGroup, tileIndex);
-  }
-
-  function drawTile(context, x, y, tileData, tileSet) {
-    var image = getTile(tileData, tileSet);
-
-    if(image) {
-      context.drawImage(
-        image,
-        0, 0,
-        config.tileWidth, config.tileHeight,
-        x, y,
-        config.tileWidth, config.tileHeight
-      );
-    }
   }
 
   return {
@@ -62,13 +48,26 @@ jack2d('editor.tileLayer', ['config', 'helper'], function(config, helper) {
       var tx, ty;
       for(tx = 0; tx < this.layerWidth; tx++) {
         for(ty = 0; ty < this.layerHeight; ty++) {
-          drawTile(
-            this.context,
-            ty * this.tileHeight, tx * this.tileWidth,
-            this.layerData[tx][ty],
-            this.tileSet
+          this.drawTile(
+            ty * this.tileHeight,
+            tx * this.tileWidth,
+            this.layerData[tx][ty]
           );
         }
+      }
+      return this;
+    },
+    drawTile: function(x, y, tileData) {
+      var image = getTile(tileData, this.tileSet);
+
+      if(image) {
+        this.context.drawImage(
+          image,
+          0, 0,
+          this.tileWidth, this.tileHeight,
+          x, y,
+          this.tileWidth, this.tileHeight
+        );
       }
       return this;
     },
@@ -80,6 +79,10 @@ jack2d('editor.tileLayer', ['config', 'helper'], function(config, helper) {
     },
     getTile: function(tx, ty) {
       return getTile(this.layerData[ty][tx], this.tileSet);
+    },
+    setTile: function(tx, ty, tileGroupId, tileIndex) {
+      this.layerData[ty][tx] = [tileGroupId, tileIndex];
+      return this;
     }
   };
 });

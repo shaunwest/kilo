@@ -6,11 +6,10 @@
  *
  */
 
-
 var jack2d = (function() {
   'use strict';
 
-  var jack2d, helper, injector, config = {};
+  var jack2d, helper, injector, appConfig = {};
 
   helper = {
     isDefined: function(value) { return (typeof value !== 'undefined'); },
@@ -28,13 +27,13 @@ var jack2d = (function() {
       }
       return newObject;
     },
-    augment: function(recieve, give) {
-      for(var prop in give) {
-        if(give.hasOwnProperty(prop) && !recieve.hasOwnProperty(prop)) {
-          recieve[prop] = give[prop];
+    augment: function(reciever, giver) {
+      for(var prop in giver) {
+        if(giver.hasOwnProperty(prop) && !reciever.hasOwnProperty(prop)) {
+          reciever[prop] = giver[prop];
         }
       }
-      return recieve;
+      return reciever;
     }
   };
 
@@ -75,7 +74,7 @@ var jack2d = (function() {
 
   /** add these basic modules to the injector */
   injector.setModule('helper', helper);
-  injector.setModule('config', config);
+  injector.setModule('appConfig', appConfig);
   injector.setModule('injector', injector);
 
   jack2d = function(keyOrDeps, depsOrFunc, funcOrScope, scope) {
@@ -97,12 +96,6 @@ var jack2d = (function() {
     }
 
     return null;
-  };
-
-  /** a convenience function that combines jack2d DI with jquery 'ready' */
-  jack2d.ready = function(deps, func, scope) {
-    function go() { jack2d(deps, func, scope); }
-    ($) ? $(document).ready(go) : go();
   };
 
   return jack2d;

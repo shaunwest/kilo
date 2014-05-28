@@ -3,11 +3,11 @@
  */
 
 jack2d('editor.viewportFactory',
-['config', 'helper', 'editor.viewport'],
-function(config, helper, viewport) {
+['appConfig', 'helper', 'editor.viewport'],
+function(appConfig, helper, viewport) {
   'use strict';
 
-  function getViewport(container) {
+  return function(container) {
     var canvas = document.createElement('canvas');
 
     container.style.overflow = 'hidden';
@@ -16,10 +16,6 @@ function(config, helper, viewport) {
     container.appendChild(canvas);
 
     return helper.clone(viewport).init(canvas);
-  }
-
-  return {
-    getViewport: getViewport
   };
 });
 

@@ -7,11 +7,7 @@ jack2d('editor.tileSetFactory',
 function(helper, promiser, promisePooler, imageLoader, tileConverter, tileSet) {
   'use strict';
 
-  function createTileSet() {
-    return helper.clone(tileSet).init();
-  }
-
-  function getTileSet(sources) {
+  return function(sources) {
     var promise = promiser.get(),
       tileSet = createTileSet();
 
@@ -20,6 +16,10 @@ function(helper, promiser, promisePooler, imageLoader, tileConverter, tileSet) {
     });
 
     return promise;
+  };
+
+  function createTileSet() {
+    return helper.clone(tileSet).init();
   }
 
   function loadImages(tileSet, sources, ready) {
@@ -37,8 +37,4 @@ function(helper, promiser, promisePooler, imageLoader, tileConverter, tileSet) {
       ready();
     });
   }
-
-  return {
-    getTileSet: getTileSet
-  };
 });

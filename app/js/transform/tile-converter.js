@@ -2,13 +2,13 @@
  * Created by shaun on 3/1/14.
  */
 
-jack2d('tileConverter', ['config'], function(config) {
+jack2d('tileConverter', ['appConfig'], function(appConfig) {
   'use strict';
 
   var DEFAULT_TILE_SIZE = 16;
 
   function makeTiles(image) {
-    var tileHeight = config.tileHeight || DEFAULT_TILE_SIZE,
+    var tileHeight = appConfig.tileHeight || DEFAULT_TILE_SIZE,
       rowCount = Math.floor(image.height / tileHeight),
       data = [],
       i;
@@ -21,8 +21,8 @@ jack2d('tileConverter', ['config'], function(config) {
   }
 
   function addRow(result, sourceAsset, row) {
-    var tileWidth = config.tileWidth || DEFAULT_TILE_SIZE,
-      tileHeight = config.tileHeight || DEFAULT_TILE_SIZE,
+    var tileWidth = appConfig.tileWidth || DEFAULT_TILE_SIZE,
+      tileHeight = appConfig.tileHeight || DEFAULT_TILE_SIZE,
       tileCount = Math.floor(sourceAsset.width / tileWidth),
       tile = null,
       tileContext = null,

@@ -27,6 +27,9 @@ jack2d('editor.viewport', ['helper', 'canvas.draw'], function(helper, canvasDraw
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
       return this;
     },
+    getLayer: function(layerIndex) {
+      return this.layers[layerIndex];
+    },
     hideLayer: function(layerIndex) {
       this.layers[layerIndex].visible = false;
       return this;
