@@ -18,6 +18,12 @@ var jack2d = (function() {
     def: function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; },
     error: function(message) { throw new Error(message); },
     log: function(message) { console.log(message); },
+    call: function(context, func) {
+      var args = Array.prototype.slice.call(arguments, 2);
+      return function() {
+        func.apply(context, (args.length > 0) ? args : arguments);
+      };
+    },
     clone: function(object) {
       var newObject = {};
       for(var prop in object) {

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sprites</title>
+  <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
+  <script src="../../js/jack2d.js"></script>
+  <script>
+    $(document).ready(function() {
+      'use strict';
+
+      var $frames = $('#frames'),
+        $fps = $('#fps'),
+        $animation = $('#animation'),
+        $runLeft = $('#runLeft'),
+        $runRight = $('#runRight'),
+        $punchLeft = $('#punchLeft'),
+        $punchRight = $('#punchRight'),
+        $stop = $('#stop'),
+        $play = $('#play'),
+        animationContext = $animation[0].getContext('2d');
+
+      jack2d(['spriteFactory', 'spriteAnimationFactory', 'chrono'], function(spriteFactory, spriteAnimationFactory, chrono) {
+        spriteFactory('img/player48.png').
+          ready(function(sprite) {
+            /** get a sequence of sprites and append to DOM */
+            sprite.getFrameSequence(2, true).forEach(function(frame) {
+              $frames.append(frame);
+            });
+
+            /** play an animation sequence */
+            var spriteAnimation = spriteAnimationFactory(sprite);
+            spriteAnimation.playSequence(2, true).frameDone(function() {
+              animationContext.clearRect(0, 0, 48, 48);
+              animationContext.drawImage(spriteAnimation.getCurrentFrame(), 0, 0);
+            });
+            $runLeft.on('click', function() { spriteAnimation.playSequence(2, false); });
+            $runRight.on('click', function() { spriteAnimation.playSequence(2, true); });
+            $punchLeft.on('click', function() { spriteAnimation.playSequence(8, false); });
+            $punchRight.on('click', function() { spriteAnimation.playSequence(8, true); });
+            $stop.on('click', function() { spriteAnimation.stop(); });
+            $play.on('click', function() { spriteAnimation.play(); });
+
+            /** show FPS */
+            chrono.frame(function() { $fps.text(chrono.getFps()) }).start();
+          });
+      });
+    });
+  </script>
+</head>
+<body>
+<div id="fps"></div>
+<div id="frames"></div>
+<div>
+  <canvas id="animation" width="48" height="48"></canvas>
+</div>
+<button id="punchLeft">Punch Left</button>
+<button id="runLeft">Run Left</button>
+<button id="runRight">Run Right</button>
+<button id="punchRight">Punch Right</button>
+<button id="stop">Stop</button>
+<button id="play">Play</button>
+</body>
+</html>

@@ -1,6 +1,15 @@
 {
   "engine": "jack2d",
   "version": "0.0.1",
+  "spriteSets": [
+    {
+      "name": "Sprite Set 1",
+      "id": "1",
+      "spriteSheets": [
+        {"id": "player", "path": "img/player.png"}
+      ]
+    }
+  ],
   "tileSets": [
     {
       "name": "Tile Set 1",
