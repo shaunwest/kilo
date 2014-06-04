@@ -7,8 +7,8 @@
   <script src="js/demo.js"></script>
   <script>
     $(document).ready(function() {
-      jack2d('demo.tileSet').getTileSet().ready(function(tileSet) {
-        tileSet.getTileGroup('1').forEach(function(tile) {
+      jack2d('demo.tileSet').getTileSet().then(function(data) {
+        data.tileSet.getTileGroup('1').forEach(function(tile) {
           $('body').append(tile);
         });
       });

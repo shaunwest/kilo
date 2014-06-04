@@ -7,10 +7,10 @@ function(tileLayerDemo, viewportFactory) {
 
   return {
     createViewport: function(canvas) {
-      tileLayerDemo.getTileLayers().ready(function(tileLayer1, tileLayer2) {
+      tileLayerDemo.getTileLayers().then(function(layers) {
         viewport = viewportFactory(canvas).
-          addLayer(tileLayer1).
-          addLayer(tileLayer2).
+          addLayer(layers.layer1).
+          addLayer(layers.layer2).
           checker(16).
           draw();
       });

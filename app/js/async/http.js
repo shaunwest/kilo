@@ -29,9 +29,9 @@ jack2d('http', ['helper'], function(helper) {
         }, false);
       }
 
-      req.addEventListener('error', function(event) {
-        reject();
-      }, false);
+      req.onerror = function(event) {
+        reject(Error('Jack2d: Network error.'));
+      };
 
       req.onload = function() {
         var contentType = contentTypeOrOnProgress || this.getResponseHeader('content-type');
@@ -50,6 +50,7 @@ jack2d('http', ['helper'], function(helper) {
             resolve({data: parseResponse(contentType, this.responseText), status: this.status});
         }
       };
+
       req.open('get', url, true);
       req.send();
     });

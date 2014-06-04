@@ -10,15 +10,15 @@
     $(document).ready(function() {
       var demo = jack2d('demo.tileLayer');
 
-      demo.getTileLayers().ready(function(tileLayer1, tileLayer2) {
-        $('#layer1')[0].getContext('2d').drawImage(tileLayer1.canvas, 0, 0);
-        $('#layer2')[0].getContext('2d').drawImage(tileLayer2.canvas, 0, 0);
-        $('#tile1')[0].getContext('2d').drawImage(tileLayer1.getTileByPixels(75, 36), 0, 0);
-        $('#tile2')[0].getContext('2d').drawImage(tileLayer2.getTile(0, 7), 0, 0);
+      demo.getTileLayers().then(function(layers) {
+        $('#layer1')[0].getContext('2d').drawImage(layers.layer1.canvas, 0, 0);
+        $('#layer2')[0].getContext('2d').drawImage(layers.layer2.canvas, 0, 0);
+        $('#tile1')[0].getContext('2d').drawImage(layers.layer1.getTileByPixels(75, 36), 0, 0);
+        $('#tile2')[0].getContext('2d').drawImage(layers.layer2.getTile(0, 7), 0, 0);
 
         $('#updateTile').on('click', function() {
           demo.updateTile();
-          $('#layer1')[0].getContext('2d').drawImage(tileLayer1.draw().canvas, 0, 0);
+          $('#layer1')[0].getContext('2d').drawImage(layers.layer1.draw().canvas, 0, 0);
         });
       });
     });

@@ -11,7 +11,9 @@
 
       jack2d(['http'], function(http) {
         function onProgress(loaded, total) {
-          console.log(((loaded / total) * 100) + '%');
+          if(total > 0) {
+            console.log(((loaded / total) * 100) + '%');
+          }
         }
 
         function httpGet() {
@@ -19,8 +21,8 @@
             then(function(response) {
               $('.status-value').html(response.status);
               return (response.status === 200) ? response.data : null;
-            }, function() { // error
-              $('.demo-config').html('ERROR!');
+            }, function(response) {
+              $('.demo-config').html('ERROR! ' + response.statusText);
             }).
             then(function(data) {
               if(data) {
