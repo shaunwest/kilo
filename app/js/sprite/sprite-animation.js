@@ -62,6 +62,7 @@ jack2d('spriteAnimation', ['helper', 'chrono'], function(helper, chrono) {
     },
 
     playSequence: function(frameSetIndex, reversed) {
+      chrono.start();
       this.reversed = reversed;
       if(frameSetIndex !== this.frameSetIndex) {
         this.frameSetIndex = frameSetIndex;

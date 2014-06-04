@@ -27,7 +27,7 @@ function(helper, promiser, promisePooler, imageLoader, tileConverter, tileSet) {
 
     sources.forEach(function(tileGroupSource) {
       var promise = imageLoader.loadPath(tileGroupSource.path);
-      promise.ready(function(image) {
+      promise.then(function(image) {
         tileSet.tileGroups[tileGroupSource.id] = tileConverter.makeTiles(image);
       });
       promisePooler.add(promisePool, promise);

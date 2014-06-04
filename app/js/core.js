@@ -14,7 +14,7 @@ var jack2d = (function() {
   helper = {
     isDefined: function(value) { return (typeof value !== 'undefined'); },
     isFunction: function(value) { return (typeof value === 'function'); },
-    isArray: function(value) { return toString.call(value) === "[object Array]"; },
+    isArray: function(value) { return Object.prototype.toString.call(value) === "[object Array]"; },
     def: function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; },
     error: function(message) { throw new Error(message); },
     log: function(message) { console.log(message); },

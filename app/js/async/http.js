@@ -2,7 +2,7 @@
  * Created by Shaun on 5/3/14.
  */
 
-jack2d('http', ['promiser'], function(promiser) {
+jack2d('http', ['helper'], function(helper) {
   'use strict';
 
   function parseResponse(contentType, responseText) {
@@ -14,39 +14,45 @@ jack2d('http', ['promiser'], function(promiser) {
     }
   }
 
-  function get(url, targetContentType) {
-    var promise = promiser.get(),
-      req = new XMLHttpRequest();
+  function get(url, contentTypeOrOnProgress, onProgress) {
+    return new Promise(function(resolve, reject) {
+      var req = new XMLHttpRequest();
 
-    req.addEventListener('progress', function(event) {
-      promiser.update(promise, event.loaded, event.total);
-    }, false);
-
-    req.addEventListener('error', function(event) {
-      promiser.reject(promise);
-    }, false);
-
-    req.onload = function() {
-      var contentType = targetContentType || this.getResponseHeader('content-type');
-
-      switch(this.status) {
-        case 500:
-          promiser.reject(promise, this.statusText, this.status);
-          break;
-        case 404:
-          promiser.reject(promise, this.statusText, this.status);
-          break;
-        case 304:
-          promiser.resolve(promise, parseResponse(contentType, this.responseText), this.status);
-          break;
-        default:
-          promiser.resolve(promise, parseResponse(contentType, this.responseText), this.status);
+      if(helper.isFunction(contentTypeOrOnProgress)) {
+        onProgress = contentTypeOrOnProgress;
+        contentTypeOrOnProgress = null;
       }
-    };
-    req.open('get', url, true);
-    req.send();
 
-    return promise;
+      if(onProgress) {
+        req.addEventListener('progress', function(event) {
+          onProgress(event.loaded, event.total);
+        }, false);
+      }
+
+      req.addEventListener('error', function(event) {
+        reject();
+      }, false);
+
+      req.onload = function() {
+        var contentType = contentTypeOrOnProgress || this.getResponseHeader('content-type');
+
+        switch(this.status) {
+          case 500:
+            reject({statusText: this.statusText, status: this.status});
+            break;
+          case 404:
+            reject({statusText: this.statusText, status: this.status});
+            break;
+          case 304:
+            resolve({data: parseResponse(contentType, this.responseText), status: this.status});
+            break;
+          default:
+            resolve({data: parseResponse(contentType, this.responseText), status: this.status});
+        }
+      };
+      req.open('get', url, true);
+      req.send();
+    });
   }
 
   return {

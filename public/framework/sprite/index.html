@@ -41,7 +41,7 @@
             $play.on('click', function() { spriteAnimation.play(); });
 
             /** show FPS */
-            chrono.frame(function() { $fps.text(chrono.getFps()) }).start();
+            chrono.frame(function() { $fps.text(chrono.getFps()) });
           });
       });
     });

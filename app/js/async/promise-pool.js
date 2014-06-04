@@ -6,7 +6,7 @@ jack2d('promisePooler', ['helper'], function(helper) {
   'use strict';
 
   function add(promisePool, promise) {
-    promise.ready(function() {
+    promise.then(function() {
       promisePool.count--;
       if(promisePool.count === 0 && helper.isFunction(promisePool.readyCallback)) {
         promisePool.readyCallback();

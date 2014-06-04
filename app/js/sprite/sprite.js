@@ -12,12 +12,15 @@ jack2d('sprite', ['spriteSheetParser', 'imageLoader'], function(spriteSheetParse
       var self = this;
       this.spriteSheetPath = spriteSheetPath;
       this.delay = DEFAULT_DELAY;
-      imageLoader.loadPath(spriteSheetPath).ready(function(image) {
-        self.spriteSheet = image;
-        self.frameSet = spriteSheetParser.parse(image);
-        self.frameSetReversed = spriteSheetParser.parse(image, true);
-        self.readyCallback(self);
-      });
+      imageLoader.loadPath(spriteSheetPath).
+        then(function(image) {
+          self.spriteSheet = image;
+          self.frameSet = spriteSheetParser.parse(image);
+          self.frameSetReversed = spriteSheetParser.parse(image, true);
+          self.readyCallback(self);
+        }, function() {
+          console.log('Jack2D: Error loading sprite sheet at \'' + spriteSheetPath + '\'');
+        });
       return this;
     },
     ready: function(callback) {

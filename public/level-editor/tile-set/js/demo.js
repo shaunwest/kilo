@@ -13,17 +13,16 @@ function(appConfig, helper, http, promiser, tileSetFactory, configDecorator) {
 
       var promise = promiser.get();
 
-      http.get('../../data/demo-config.json').
-        error(function(statusText, status) {
-          helper.log('Error: ' + status + ': ' + statusText);
-        }).
-        ready(function(config) {
-          var demoConfig = configDecorator(config);
+      http.get('../../data/demo-config.json').then(
+        function(response) {
+          var demoConfig = configDecorator(response.data);
           tileSetFactory(demoConfig.getSources('1')).ready(function(tileSet) {
             promiser.resolve(promise, tileSet, demoConfig);
           });
+        },
+        function(response) {
+          helper.log('Error: ' + response.status + ': ' + response.statusText);
         });
-
       return promise;
     }
   };

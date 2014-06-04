@@ -2,7 +2,7 @@
  * Created by Shaun on 5/1/14.
  */
 
-jack2d('imageLoader', ['promiser'], function(promiser) {
+jack2d('imageLoader', [], function() {
   'use strict';
 
   var IMAGE_WAIT_INTERVAL = 100;
@@ -16,15 +16,20 @@ jack2d('imageLoader', ['promiser'], function(promiser) {
   }
 
   function loadImage(image) {
-    var promise = promiser.get(),
-      intervalId = setInterval(function() {
-        if(image.complete) {
-          clearInterval(intervalId);
-          promiser.resolve(promise, image);
-        }
-      }, IMAGE_WAIT_INTERVAL);
+    return new Promise(function(resolve, reject) {
+      var intervalId = setInterval(
+        function() {
+          if(image.complete) {
+            clearInterval(intervalId);
+            resolve(image);
+          }
+        }, IMAGE_WAIT_INTERVAL);
 
-    return promise;
+      image.onerror = function() {
+        clearInterval(intervalId);
+        reject();
+      };
+    });
   }
 
   return {

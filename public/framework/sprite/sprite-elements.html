@@ -1,0 +1,59 @@
+<link rel="import" href="../../bower-components/polymer/polymer.html">
+<polymer-element name="jack2d-sprite" attributes="src">
+  <template>
+    <div id="frames"></div>
+  </template>
+  <script>
+    Polymer('jack2d-sprite', {
+      src: '',
+      ready: function() {
+        var frames = this.$.frames,
+          sourcePath = this.src;
+
+        jack2d(['spriteFactory'],
+        function(spriteFactory) {
+          spriteFactory(sourcePath).
+            ready(function(sprite) {
+              sprite.getFrameSequence(2).forEach(function(frame) {
+                frames.appendChild(frame);
+              });
+            });
+        });
+      }
+    });
+  </script>
+</polymer-element>
+<polymer-element name="jack2d-sprite-animation" attributes="src width height sequenceId reversed">
+  <template>
+    <canvas id="animation" width="{{ width }}" height="{{ height }}"></canvas>
+  </template>
+  <script>
+    Polymer('jack2d-sprite-animation', {
+      src: '',
+      width: 16,
+      height: 16,
+      sequenceId: 0,
+      reversed: false,
+      ready: function() {
+        var animationContext = this.$.animation.getContext('2d'),
+          sourcePath = this.src,
+          width = this.width,
+          height = this.height,
+          sequenceId = this.sequenceId,
+          reversed = this.reversed;
+
+        jack2d(['spriteFactory', 'spriteAnimationFactory'],
+        function(spriteFactory, spriteAnimationFactory) {
+          spriteFactory(sourcePath).
+            ready(function(sprite) {
+              var spriteAnimation = spriteAnimationFactory(sprite);
+              spriteAnimation.playSequence(sequenceId, reversed).frameDone(function() {
+                animationContext.clearRect(0, 0, width, height);
+                animationContext.drawImage(spriteAnimation.getCurrentFrame(), 0, 0);
+              });
+            });
+        });
+      }
+    });
+  </script>
+</polymer-element>
