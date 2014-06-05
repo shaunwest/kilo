@@ -3,15 +3,15 @@
  */
 
 jack2d('editor.tileSetFactory',
-['helper', 'promisePooler', 'imageLoader', 'tileConverter', 'editor.tileSet'],
-function(helper, promisePooler, imageLoader, tileConverter, tileSet) {
+['helper', 'imageLoader', 'tileConverter', 'editor.tileSet'],
+function(helper, imageLoader, tileConverter, tileSet) {
   'use strict';
 
   return function(sources) {
     return new Promise(function(resolve, reject) {
       var  tileSet = createTileSet();
 
-      loadImages(tileSet, sources, function() {
+      loadImages(tileSet, sources).then(function() {
         resolve(tileSet);
       });
     });
@@ -21,19 +21,16 @@ function(helper, promisePooler, imageLoader, tileConverter, tileSet) {
     return helper.clone(tileSet).init();
   }
 
-  function loadImages(tileSet, sources, ready) {
-    var promisePool = promisePooler.get();
-
+  function loadImages(tileSet, sources) {
+    var promises = [];
     sources.forEach(function(tileGroupSource) {
       var promise = imageLoader.loadPath(tileGroupSource.path);
       promise.then(function(image) {
         tileSet.tileGroups[tileGroupSource.id] = tileConverter.makeTiles(image);
       });
-      promisePooler.add(promisePool, promise);
+      promises.push(promise);
     });
 
-    promisePool.ready(function() {
-      ready();
-    });
+    return Promise.all(promises);
   }
 });
