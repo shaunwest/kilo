@@ -11,8 +11,13 @@ jack2d('spriteAnimation', ['helper', 'chrono'], function(helper, chrono) {
       this.reversed = false;
       this.frameSetIndex = -1;
       this.frameSpeedMult = 62.5; // FIXME
+      this.onSequenceComplete = null;
+      this.onAnimationChange = null;
+      this.onFrameComplete = null;
       this.stop();
-      chrono.frame(helper.call(this, this.update));
+      if(!this.chronoId) {
+        this.chronoId = chrono.register(helper.call(this, this.update));
+      }
       return this;
     },
 

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hash Array</title>
+  <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
+  <script src="../../js/jack2d.js"></script>
+  <script>
+    $(document).ready(function() {
+      'use strict';
+
+      function print(ha) {
+        console.log(ha.items.join(', '));
+      }
+
+      jack2d(['HashArray'], function(HashArray) {
+        var ha = new HashArray();
+        ha.add('one', 1);
+        ha.add('two', 2);
+        ha.add('three', 3);
+        print(ha);
+
+        ha.remove('two');
+        print(ha);
+
+        console.log(ha.get('two'));
+        console.log(ha.get('three'));
+        console.log(ha.idMap);
+
+        ha.removeAll();
+        print(ha);
+        console.log(ha.idMap);
+        console.log(ha.items);
+      });
+    });
+  </script>
+</head>
+<body>
+Output in console
+</body>
+</html>

@@ -39,11 +39,11 @@ module.exports = function(grunt) {
                 src: [
                   '<%= appJs %>/polyfill/**/*.js',
                   '<%= appJs %>/core.js',
+                  '<%= appJs %>/core/**/*.js',
                   '<%= appJs %>/config/**/*.js',
                   '<%= appJs %>/async/**/*.js',
                   '<%= appJs %>/transform/**/*.js',
                   '<%= appJs %>/canvas/**/*.js',
-                  '<%= appJs %>/time/**/*.js',
                   '<%= appJs %>/sprite/**/*.js',
                   '<%= appJs %>/editor/**/*.js'
                 ],

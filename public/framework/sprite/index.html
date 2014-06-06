@@ -22,13 +22,13 @@
       jack2d(['spriteFactory', 'spriteAnimationFactory', 'chrono'], function(spriteFactory, spriteAnimationFactory, chrono) {
         spriteFactory('img/player48.png').
           ready(function(sprite) {
-            /** get a sequence of sprites and append to DOM */
+            /** get a sequence of sprite frames and append to DOM */
             sprite.getFrameSequence(2, true).forEach(function(frame) {
               $frames.append(frame);
             });
 
             /** play an animation sequence */
-            var spriteAnimation = spriteAnimationFactory(sprite);
+            var spriteAnimation = spriteAnimationFactory.get(sprite);
             spriteAnimation.playSequence(2, true).frameDone(function() {
               animationContext.clearRect(0, 0, 48, 48);
               animationContext.drawImage(spriteAnimation.getCurrentFrame(), 0, 0);
@@ -41,7 +41,7 @@
             $play.on('click', function() { spriteAnimation.play(); });
 
             /** show FPS */
-            chrono.frame(function() { $fps.text(chrono.getFps()) });
+            chrono.register(function() { $fps.text(chrono.getFps()) });
           });
       });
     });

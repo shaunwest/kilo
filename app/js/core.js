@@ -17,7 +17,6 @@ var jack2d = (function() {
     isArray: function(value) { return Object.prototype.toString.call(value) === "[object Array]"; },
     def: function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; },
     error: function(message) { throw new Error(message); },
-    log: function(message) { console.log(message); },
     call: function(context, func) {
       var args = Array.prototype.slice.call(arguments, 2);
       return function() {

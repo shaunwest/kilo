@@ -9,13 +9,20 @@
       'use strict';
 
       var $fps = $('#fps'),
-        $elapsed = $('#elapsed');
+        $elapsed = $('#elapsed'),
+        $unRegister = $("#unregister");
 
       jack2d(['chrono'], function(chrono) {
-        chrono.frame(function(elapsed) {
+        var chronoId = chrono.register(function(elapsed) {
           $fps.text(chrono.getFps());
           $elapsed.text(elapsed);
-        }).start();
+        });
+
+        chrono.start();
+
+        $unRegister.on('click', function() {
+          chrono.unRegister(chronoId);
+        });
       });
     });
   </script>
@@ -23,5 +30,6 @@
 <body>
 FPS: <span id="fps"></span>
 Elapsed: <span id="elapsed"></span>
+<button id="unregister">Un-register Callback</button>
 </body>
 </html>

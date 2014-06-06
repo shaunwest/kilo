@@ -5,7 +5,20 @@
 jack2d('spriteAnimationFactory', ['helper', 'spriteAnimation'], function(helper, spriteAnimation) {
   'use strict';
 
-  return function(sprite) {
-    return helper.clone(spriteAnimation).init(sprite);
+  var spriteAnimations = [];
+
+  function get(sprite) {
+    return (spriteAnimations.length > 0) ?
+      spriteAnimations.shift().init(sprite) :
+      helper.clone(spriteAnimation).init(sprite);
+  }
+
+  function free(spriteAnimation) {
+    spriteAnimations.push(spriteAnimation);
+  }
+
+  return {
+    get: get,
+    free: free
   };
 });

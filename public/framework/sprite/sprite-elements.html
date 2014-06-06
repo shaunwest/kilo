@@ -1,23 +1,26 @@
 <link rel="import" href="../../bower-components/polymer/polymer.html">
-<polymer-element name="jack2d-sprite" attributes="src">
+<polymer-element name="jack2d-sprite" attributes="src sequenceId">
   <template>
     <div id="frames"></div>
   </template>
   <script>
     Polymer('jack2d-sprite', {
       src: '',
+      sequenceId: 0,
       ready: function() {
         var frames = this.$.frames,
-          sourcePath = this.src;
+          sourcePath = this.src,
+          sequenceId = this.sequenceId;
 
         jack2d(['spriteFactory'],
         function(spriteFactory) {
-          spriteFactory(sourcePath).
-            ready(function(sprite) {
-              sprite.getFrameSequence(2).forEach(function(frame) {
-                frames.appendChild(frame);
-              });
+          function onReady(sprite) {
+            sprite.getFrameSequence(sequenceId).forEach(function(frame) {
+              frames.appendChild(frame);
             });
+          }
+
+          spriteFactory(sourcePath).ready(onReady);
         });
       }
     });
@@ -46,7 +49,7 @@
         function(spriteFactory, spriteAnimationFactory) {
           spriteFactory(sourcePath).
             ready(function(sprite) {
-              var spriteAnimation = spriteAnimationFactory(sprite);
+              var spriteAnimation = spriteAnimationFactory.get(sprite);
               spriteAnimation.playSequence(sequenceId, reversed).frameDone(function() {
                 animationContext.clearRect(0, 0, width, height);
                 animationContext.drawImage(spriteAnimation.getCurrentFrame(), 0, 0);

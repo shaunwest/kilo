@@ -2,7 +2,7 @@
  * Created by Shaun on 5/31/14.
  */
 
-jack2d('chrono', [], function() {
+jack2d('chrono', ['HashArray'], function(HashArray) {
   'use strict';
 
   var ONE_SECOND = 1000,
@@ -11,7 +11,8 @@ jack2d('chrono', [], function() {
     ticks,
     running,
     elapsedSeconds,
-    frameCallbacks,
+    registeredCallbacks,
+    lastRegisteredId,
     oneSecondTimerId,
     frameTimerId,
     lastUpdateTime,
@@ -22,29 +23,21 @@ jack2d('chrono', [], function() {
     actualFps = 0;
     ticks = 0;
     elapsedSeconds = 0;
-    frameCallbacks = [];
+    lastRegisteredId = 0;
+    registeredCallbacks = new HashArray();
     running = false;
     lastUpdateTime = new Date();
     return obj;
   }
 
-  function frame(callback) {
-    frameCallbacks.push(callback);
-    return obj;
+  function register(callback) {
+    var id = lastRegisteredId++;
+    registeredCallbacks.add(id, callback);
+    return id;
   }
 
-  function removeFrameCallback(callback) {
-    var numCallbacks = frameCallbacks.length,
-      i;
-
-    for(i = 0; i < numCallbacks; i++) {
-      if(frameCallbacks[i] === callback) {
-        frameCallbacks.splice(i, 1);
-        return obj;
-      }
-    }
-
-    return obj;
+  function unRegister(id) {
+    registeredCallbacks.remove(id);
   }
 
   function requestNextFrame() {
@@ -52,7 +45,7 @@ jack2d('chrono', [], function() {
   }
 
   function start() {
-    if(!running && frameCallbacks.length > 0) {
+    if(!running && registeredCallbacks.items.length > 0) {
       running = true;
       oneSecondTimerId = window.setInterval(onOneSecond, ONE_SECOND);
       onFrame();
@@ -77,9 +70,11 @@ jack2d('chrono', [], function() {
   }
 
   function executeFrameCallbacks(elapsed) {
-    var i, numCallbacks = frameCallbacks.length;
+    var items = registeredCallbacks.items,
+      numCallbacks = items.length,
+      i;
     for(i = 0; i < numCallbacks; i++) {
-      frameCallbacks[i](elapsed);
+      items[i](elapsed);
     }
   }
 
@@ -106,8 +101,8 @@ jack2d('chrono', [], function() {
     reset: reset,
     start: start,
     stop: stop,
-    frame: frame,
-    removeFrameCallback: removeFrameCallback,
+    register: register,
+    unRegister: unRegister,
     getFps: function() { return actualFps; }
   };
 
