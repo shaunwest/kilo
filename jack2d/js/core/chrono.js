@@ -6,6 +6,8 @@ jack2d('chrono', ['HashArray'], function(HashArray) {
   'use strict';
 
   var ONE_SECOND = 1000,
+    wholeMultiplier = 62.5,
+    tenthMultiplier = 6.25,
     targetFps,
     actualFps,
     ticks,
@@ -17,6 +19,14 @@ jack2d('chrono', ['HashArray'], function(HashArray) {
     frameTimerId,
     lastUpdateTime,
     obj;
+
+  init();
+
+  function init() {
+    reset();
+    start();
+    return obj;
+  }
 
   function reset() {
     targetFps = 60;
@@ -38,6 +48,7 @@ jack2d('chrono', ['HashArray'], function(HashArray) {
 
   function unRegister(id) {
     registeredCallbacks.remove(id);
+    return obj;
   }
 
   function requestNextFrame() {
@@ -45,7 +56,7 @@ jack2d('chrono', ['HashArray'], function(HashArray) {
   }
 
   function start() {
-    if(!running && registeredCallbacks.items.length > 0) {
+    if(!running) {
       running = true;
       oneSecondTimerId = window.setInterval(onOneSecond, ONE_SECOND);
       onFrame();
@@ -97,16 +108,34 @@ jack2d('chrono', ['HashArray'], function(HashArray) {
     elapsedSeconds++;
   }
 
+  function getFps() {
+    return actualFps;
+  }
+
+  function getSeconds() {
+    return elapsedSeconds;
+  }
+
+  function getWholeMultiplier() {
+    return wholeMultiplier;
+  }
+
+  function getTenthMultiplier() {
+    return tenthMultiplier;
+  }
+
   obj = {
+    init: init,
     reset: reset,
     start: start,
     stop: stop,
     register: register,
     unRegister: unRegister,
-    getFps: function() { return actualFps; }
+    getFps: getFps,
+    getSeconds: getSeconds,
+    getWholeMultiplier: getWholeMultiplier,
+    getTenthMultiplier: getTenthMultiplier
   };
-
-  reset();
 
   return obj;
 });

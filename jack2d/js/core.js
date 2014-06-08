@@ -32,7 +32,9 @@ var jack2d = (function() {
       }
       return newObject;
     },
-    augment: function(reciever, giver) {
+    augment: function(giver, reciever) {
+      giver = giver || {};
+      reciever = reciever || {};
       for(var prop in giver) {
         if(giver.hasOwnProperty(prop) && !reciever.hasOwnProperty(prop)) {
           reciever[prop] = giver[prop];

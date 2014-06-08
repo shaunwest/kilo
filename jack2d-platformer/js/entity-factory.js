@@ -5,20 +5,22 @@
 jack2d('platformer.entityFactory', ['helper', 'platformer.entity'], function(helper, entity) {
   'use strict';
 
-  var entities = [];
+  var entities = [],
+  obj = {
+    get: get,
+    free: free
+  };
 
   function get(props) {
     return (entities.length > 0) ?
-      entities.shift().init(props) :
-      helper.clone(entity).init(props);
+      entities.shift().init() :
+      helper.clone(helper.augment(props, entity)).init();
   }
 
   function free(entity) {
     entities.push(entity);
+    return obj;
   }
 
-  return {
-    get: get,
-    free: free
-  };
+  return obj;
 });

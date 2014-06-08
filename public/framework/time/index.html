@@ -10,26 +10,39 @@
 
       var $fps = $('#fps'),
         $elapsed = $('#elapsed'),
-        $unRegister = $("#unregister");
+        $totalSeconds = $('#counter'),
+        $unRegisterCounter = $("#unregisterCounter"),
+        $unRegisterFps = $("#unregisterFps");
 
       jack2d(['chrono'], function(chrono) {
-        var chronoId = chrono.register(function(elapsed) {
+        var totalSeconds = 0;
+        var fpsId = chrono.register(function(elapsed) {
           $fps.text(chrono.getFps());
           $elapsed.text(elapsed);
         });
 
+        var counterId = chrono.register(function(elapsed) {
+          $totalSeconds.text(totalSeconds += elapsed);
+        });
+
         chrono.start();
 
-        $unRegister.on('click', function() {
-          chrono.unRegister(chronoId);
+        $unRegisterFps.on('click', function() {
+          chrono.unRegister(fpsId);
+        });
+
+        $unRegisterCounter.on('click', function() {
+          chrono.unRegister(counterId);
         });
       });
     });
   </script>
 </head>
 <body>
-FPS: <span id="fps"></span>
-Elapsed: <span id="elapsed"></span>
-<button id="unregister">Un-register Callback</button>
+<div>FPS: <span id="fps"></span>
+Elapsed: <span id="elapsed"></span></div>
+<div><button id="unregisterFps">Un-register FPS Callback</button></div>
+<div>Total Seconds: <span id="counter"></span></div>
+<div><button id="unregisterCounter">Un-register Counter Callback</button></div>
 </body>
 </html>

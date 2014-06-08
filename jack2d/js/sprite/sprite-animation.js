@@ -2,22 +2,19 @@
  * Created by Shaun on 5/31/14.
  */
 
-jack2d('spriteAnimation', ['helper', 'chrono'], function(helper, chrono) {
+jack2d('spriteAnimation', ['helper', 'chronoObject'], function(helper, chronoObject) {
   'use strict';
 
-  return {
+  return helper.augment(chronoObject, {
     init: function(sprite) {
       this.sprite = sprite;
       this.reversed = false;
       this.frameSetIndex = -1;
-      this.frameSpeedMult = 62.5; // FIXME
       this.onSequenceComplete = null;
       this.onAnimationChange = null;
       this.onFrameComplete = null;
       this.stop();
-      if(!this.chronoId) {
-        this.chronoId = chrono.register(helper.call(this, this.update));
-      }
+      this.onFrame(this.update);
       return this;
     },
 
@@ -45,7 +42,7 @@ jack2d('spriteAnimation', ['helper', 'chrono'], function(helper, chrono) {
         this.processFrame();
         this.currentStep = 0;
       } else {
-        this.currentStep += (secondsElapsed * this.frameSpeedMult);
+        this.currentStep += (secondsElapsed * this.chrono.getWholeMultiplier());
       }
     },
 
@@ -67,7 +64,6 @@ jack2d('spriteAnimation', ['helper', 'chrono'], function(helper, chrono) {
     },
 
     playSequence: function(frameSetIndex, reversed) {
-      chrono.start();
       this.reversed = reversed;
       if(frameSetIndex !== this.frameSetIndex) {
         this.frameSetIndex = frameSetIndex;
@@ -119,5 +115,5 @@ jack2d('spriteAnimation', ['helper', 'chrono'], function(helper, chrono) {
     getCurrentFrame: function() {
       return this.sprite.getFrame(this.frameSetIndex, this.sequenceIndex, this.reversed);
     }
-  };
+  });
 });
