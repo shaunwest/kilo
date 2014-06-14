@@ -8,9 +8,14 @@ jack2d('spriteAnimationFactory', ['helper', 'spriteAnimation'], function(helper,
   var spriteAnimations = [];
 
   function get(sprite) {
-    return (spriteAnimations.length > 0) ?
-      spriteAnimations.shift().init(sprite) :
-      helper.clone(spriteAnimation).init(sprite);
+    return unCache(sprite) || helper.clone(spriteAnimation).initSprite(sprite);
+  }
+
+  function unCache(sprite) {
+    if(spriteAnimations.length > 0) {
+      return spriteAnimations.shift().initSprite(sprite);
+    }
+    return null;
   }
 
   function free(spriteAnimation) {

@@ -20,7 +20,7 @@
             });
           }
 
-          spriteFactory(sourcePath).ready(onReady);
+          spriteFactory(sourcePath).spriteSheetReady(onReady);
         });
       }
     });
@@ -48,7 +48,7 @@
         jack2d(['spriteFactory', 'spriteAnimationFactory'],
         function(spriteFactory, spriteAnimationFactory) {
           spriteFactory(sourcePath).
-            ready(function(sprite) {
+            spriteSheetReady(function(sprite) {
               var spriteAnimation = spriteAnimationFactory.get(sprite);
               spriteAnimation.playSequence(sequenceId, reversed).frameDone(function() {
                 animationContext.clearRect(0, 0, width, height);

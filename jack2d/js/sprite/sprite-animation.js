@@ -5,16 +5,30 @@
 jack2d('spriteAnimation', ['helper', 'chronoObject'], function(helper, chronoObject) {
   'use strict';
 
-  return helper.augment(chronoObject, {
-    init: function(sprite) {
+  return helper.mixin(chronoObject, {
+    initSprite: function(sprite) {
       this.sprite = sprite;
+      return this.resetSprite();
+    },
+
+    resetSprite: function() {
       this.reversed = false;
       this.frameSetIndex = -1;
       this.onSequenceComplete = null;
       this.onAnimationChange = null;
       this.onFrameComplete = null;
       this.stop();
-      this.onFrame(this.update);
+      this.onFrame(function(deltaSeconds) {
+        if(!this.playing) {
+          return;
+        }
+        if(this.currentStep >= this.sprite.getDelay()) {
+          this.processFrame();
+          this.currentStep = 0;
+        } else {
+          this.currentStep += (deltaSeconds * this.chrono.getWholeMultiplier());
+        }
+      });
       return this;
     },
 
@@ -31,19 +45,6 @@ jack2d('spriteAnimation', ['helper', 'chronoObject'], function(helper, chronoObj
     sequenceChange: function(callback) {
       this.onAnimationChange = callback;
       return this;
-    },
-
-    update: function(secondsElapsed) {
-      if(!this.playing) {
-        return;
-      }
-
-      if(this.currentStep >= this.sprite.getDelay()) {
-        this.processFrame();
-        this.currentStep = 0;
-      } else {
-        this.currentStep += (secondsElapsed * this.chrono.getWholeMultiplier());
-      }
     },
 
     processFrame: function() {

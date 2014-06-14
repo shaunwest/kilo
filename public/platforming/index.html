@@ -1,84 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Platforming Entity</title>
-  <style>
-    #box {
-      position: absolute;
-      background: red;
-      top: 0;
-      left: 0;
-      width: 50px;
-      height: 50px;
-    }
-  </style>
+  <title>Platforming Demo</title>
   <script src="../bower-components/jquery/dist/jquery.min.js"></script>
   <script src="../js/jack2d.js"></script>
-  <script src="../js/jack2d-platformer.js"></script>
   <script>
     $(document).ready(function() {
       'use strict';
 
-      jack2d(['platformer.entityFactory', 'chrono'], function(entityFactory, chrono) {
-        var entity = entityFactory.get(),
-          $xy = $('#xy'),
-          $box = $('#box'),
-          $velocity = $('#velocity'),
-          $fps = $('#fps');
+      jack2d(['entityFactory', 'spriteFactory', 'spriteAnimationFactory'],
+      function(entityFactory, spriteFactory, spriteAnimationFactory) {
 
-        chrono.register(function() {
-          $xy.text(entity.x + ', ' + entity.y);
-          $fps.text(chrono.getFps());
-          $velocity.text('Velocity: ' + entity.velocityX + ', ' + entity.velocityY);
-          $box.css('top', entity.y);
-          $box.css('left', entity.x);
-        });
-
-        $('#velocity100').on('click', function() {
-          entity.velocityX = 50;
-        });
-
-        $('#accelDir').on('click', function() {
-          entity.accelerationY = -entity.accelerationY;
-        });
-
-        $('#stopVel').on('click', function() {
-          entity.velocityY = 0;
-          entity.velocityX = 0;
-        });
-
-        $('#accelerate').on('click', function() {
-          entity.accelerationX++;
-          entity.accelerationY++;
-        });
-
-        $('#decelerate').on('click', function() {
-          entity.accelerationX--;
-          entity.accelerationY--;
-        });
-
-        $('#stopAccel').on('click', function() {
-          entity.accelerationY = 0;
-          entity.accelerationX = 0;
-        });
       });
     });
   </script>
 </head>
 <body>
-<div id="box"></div>
-<div id="fps"></div>
-<div>
-  <button id="velocity100">Velocity 100</button>
-  <button id="accelerate">Accelerate</button>
-  <button id="decelerate">Decelerate</button>
-</div>
-<div>
-  <button id="accelDir">Acceleration Negative</button>
-  <button id="stopVel">Velocity Zero</button>
-  <button id="stopAccel">Acceleration Zero</button>
-</div>
-<div id="xy"></div>
-<div id="velocity"></div>
 </body>
 </html>

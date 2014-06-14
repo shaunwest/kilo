@@ -32,13 +32,25 @@ var jack2d = (function() {
       }
       return newObject;
     },
-    augment: function(giver, reciever) {
-      giver = giver || {};
+    mixin: function(giver, reciever) {
       reciever = reciever || {};
-      for(var prop in giver) {
-        if(giver.hasOwnProperty(prop) && !reciever.hasOwnProperty(prop)) {
-          reciever[prop] = giver[prop];
-        }
+      if(helper.isArray(giver)) {
+        giver.forEach(function(obj) {
+          merge(obj, reciever);
+        });
+      } else {
+        merge(giver, reciever);
+      }
+
+      function merge(giver, reciever) {
+        giver = giver || {};
+        Object.keys(giver).forEach(function(prop) {
+          if(reciever.hasOwnProperty(prop)) {
+            helper.error('Jack2d: Failed to merge mixin. Method \'' + prop + '\' caused a name collision.');
+          } else {
+            reciever[prop] = giver[prop];
+          }
+        });
       }
       return reciever;
     }

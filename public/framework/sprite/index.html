@@ -12,7 +12,7 @@
 
       jack2d(['spriteFactory', 'spriteAnimationFactory', 'chrono'], function(spriteFactory, spriteAnimationFactory, chrono) {
         spriteFactory('img/player48.png').
-          ready(function(sprite) {
+          spriteSheetReady(function(sprite) {
             /** get a sequence of sprite frames and append to DOM */
             sprite.getFrameSequence(2, true).forEach(function(frame) {
               $('#frames').append(frame);

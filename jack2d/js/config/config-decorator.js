@@ -1,5 +1,7 @@
 /**
  * Created by Shaun on 5/26/14.
+ *
+ * Think about: breaking levels into their own separate json files; tile sets and sprite sets too
  */
 
 jack2d('configDecorator', ['helper'], function(helper) {
@@ -39,7 +41,7 @@ jack2d('configDecorator', ['helper'], function(helper) {
         var layer = getByIndex(level.layers, layerIndex);
         if(layer) {
           return layer;
-          /*return helper.augment(layer, { //FIXME: this set tile method should be in tileSet
+          /*return helper.mixin(layer, { //FIXME: this set tile method should be in tileSet
             setTile: function(tileX, tileY, tileGroupId, tileIndex) {
               layer.data[tileY][tileX] = [tileGroupId, tileIndex];
             }

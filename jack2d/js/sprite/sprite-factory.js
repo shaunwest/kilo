@@ -6,6 +6,6 @@ jack2d('spriteFactory', ['helper', 'sprite'], function(helper, sprite) {
   'use strict';
 
   return function(tileSheetPath) {
-    return helper.clone(sprite).init(tileSheetPath);
+    return helper.clone(sprite).initSpriteSheet(tileSheetPath);
   };
 });

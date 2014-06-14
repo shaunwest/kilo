@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Keys</title>
+  <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
+  <script src="../../js/jack2d.js"></script>
+  <script src="demo.js"></script>
+  <script>
+    $(document).ready(function() {
+      'use strict';
+      jack2d(['keysDemo'], function(keysDemo) {
+        keysDemo.onInput(function(inputs) {
+          if(inputs.left) {
+            console.log('left!');
+          }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+</body>
+</html>

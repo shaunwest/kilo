@@ -1,5 +1,8 @@
 /**
  * Created by Shaun on 5/31/14.
+ *
+ * This is a Jack2d-specific sprite sheet format. Look at creating
+ * a more generic sprite sheet handler
  */
 
 jack2d('sprite',
@@ -10,7 +13,7 @@ function(helper, spriteSheetParser, imageLoader) {
   var DEFAULT_DELAY = 5;
 
   return {
-    init: function(spriteSheetPath) {
+    initSpriteSheet: function(spriteSheetPath) {
       this.spriteSheetPath = spriteSheetPath;
       this.delay = DEFAULT_DELAY;
       imageLoader.loadPath(spriteSheetPath).
@@ -24,12 +27,12 @@ function(helper, spriteSheetParser, imageLoader) {
         }));
       return this;
     },
-    ready: function(callback) {
+    spriteSheetReady: function(callback) {
       this.readyCallback = callback;
       return this;
     },
-    refresh: function() {
-      this.init(this.spriteSheetPath);
+    refreshSpriteSheet: function() {
+      this.initSpriteSheet(this.spriteSheetPath);
       return this;
     },
     getSpriteSheet: function() {
