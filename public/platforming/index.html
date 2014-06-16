@@ -4,17 +4,44 @@
   <title>Platforming Demo</title>
   <script src="../bower-components/jquery/dist/jquery.min.js"></script>
   <script src="../js/jack2d.js"></script>
+  <script src="../js/jack2d-platformer.js"></script>
   <script>
     $(document).ready(function() {
       'use strict';
+      var animationContext = $('#animation')[0].getContext('2d'),
+        player = jack2d.mixin(['platformer.entity', 'spriteAnimation', 'input'], {});
 
-      jack2d(['entityFactory', 'spriteFactory', 'spriteAnimationFactory'],
-      function(entityFactory, spriteFactory, spriteAnimationFactory) {
-
-      });
+      player.
+        setControlScheme({
+          left: {key: 37},
+          right: {key: 39},
+          up: {key: 38},
+          down: {key: 40}
+        }).
+        onInput(function(inputs) {
+          if(inputs.left) {
+            this.playSequence(2, 'left');
+          } else if(inputs.right) {
+            this.playSequence(2, 'right');
+          } else {
+            this.playSequence(0);
+          }
+        }).
+        doPhysics().
+        loadSpriteSheet('img/player48.png').
+        frameDone(function() {
+          var frame = this.getCurrentFrame();
+          if(frame) {
+            animationContext.clearRect(0, 0, 48, 48);
+            animationContext.drawImage(frame, 0, 0);
+          }
+        });
     });
   </script>
 </head>
 <body>
+<div>
+  <canvas id="animation" width="48" height="48"></canvas>
+</div>
 </body>
 </html>

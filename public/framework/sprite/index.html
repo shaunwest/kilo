@@ -11,31 +11,28 @@
       var animationContext = $('#animation')[0].getContext('2d');
 
       jack2d(['spriteFactory', 'spriteAnimationFactory', 'chrono'], function(spriteFactory, spriteAnimationFactory, chrono) {
-        spriteFactory('img/player48.png').
-          spriteSheetReady(function(sprite) {
-            /** get a sequence of sprite frames and append to DOM */
-            sprite.getFrameSequence(2, true).forEach(function(frame) {
-              $('#frames').append(frame);
-            });
+        /** play an animation sequence */
+        spriteAnimationFactory.get('img/player48.png').spriteSheetReady(function(spriteAnimation) {
+          spriteAnimation.getFrameSequence(2, true).forEach(function(frame) {
+           $('#frames').append(frame);
+           });
 
-            /** play an animation sequence */
-            var spriteAnimation = spriteAnimationFactory.get(sprite);
-            spriteAnimation.playSequence(2, true).frameDone(function() {
-              animationContext.clearRect(0, 0, 48, 48);
-              animationContext.drawImage(spriteAnimation.getCurrentFrame(), 0, 0);
-            });
-
-            /** control animations */
-            $('#runLeft').on('click', function() { spriteAnimation.playSequence(2, false); });
-            $('#runRight').on('click', function() { spriteAnimation.playSequence(2, true); });
-            $('#punchLeft').on('click', function() { spriteAnimation.playSequence(8, false); });
-            $('#punchRight').on('click', function() { spriteAnimation.playSequence(8, true); });
-            $('#stop').on('click', function() { spriteAnimation.stop(); });
-            $('#play').on('click', function() { spriteAnimation.play(); });
-
-            /** show FPS */
-            chrono.register(function() { $('#fps').text(chrono.getFps()) });
+          spriteAnimation.playSequence(2, true).frameDone(function() {
+            animationContext.clearRect(0, 0, 48, 48);
+            animationContext.drawImage(spriteAnimation.getCurrentFrame(), 0, 0);
           });
+
+          /** control animations */
+          $('#runLeft').on('click', function() { spriteAnimation.playSequence(2, 'left'); });
+          $('#runRight').on('click', function() { spriteAnimation.playSequence(2, 'right'); });
+          $('#punchLeft').on('click', function() { spriteAnimation.playSequence(8, 'left'); });
+          $('#punchRight').on('click', function() { spriteAnimation.playSequence(8, 'right'); });
+          $('#stop').on('click', function() { spriteAnimation.stop(); });
+          $('#play').on('click', function() { spriteAnimation.play(); });
+        });
+
+        /** show FPS */
+        chrono.register(function() { $('#fps').text(chrono.getFps()) });
       });
     });
   </script>

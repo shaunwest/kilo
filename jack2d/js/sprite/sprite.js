@@ -13,14 +13,16 @@ function(helper, spriteSheetParser, imageLoader) {
   var DEFAULT_DELAY = 5;
 
   return {
-    initSpriteSheet: function(spriteSheetPath) {
+    loadSpriteSheet: function(spriteSheetPath) {
       this.spriteSheetPath = spriteSheetPath;
+      this.spriteSheetLoaded = false;
       this.delay = DEFAULT_DELAY;
       imageLoader.loadPath(spriteSheetPath).
         then(helper.call(this, function(image) {
           this.spriteSheet = image;
           this.frameSet = spriteSheetParser.parse(image);
           this.frameSetReversed = spriteSheetParser.parse(image, true);
+          this.spriteSheetLoaded = true;
           this.readyCallback(this);
         }), helper.call(this, function() {
           console.error('Jack2D: Error loading sprite sheet at \'' + spriteSheetPath + '\'');
@@ -32,27 +34,30 @@ function(helper, spriteSheetParser, imageLoader) {
       return this;
     },
     refreshSpriteSheet: function() {
-      this.initSpriteSheet(this.spriteSheetPath);
+      this.loadSpriteSheet(this.spriteSheetPath);
       return this;
     },
     getSpriteSheet: function() {
       return this.spriteSheet;
     },
-    getFrameSet: function(reversed) {
-      return (reversed) ? this.frameSetReversed : this.frameSet;
+    getFrameSet: function(direction) {
+      if(this.spriteSheetLoaded) {
+        return (direction === 'right') ? this.frameSetReversed : this.frameSet;
+      }
+      return null;
     },
     getDelay: function() {
       return this.delay;
     },
-    getFrameSequence: function(frameSetIndex, reversed) {
-      var frameSequence = this.getFrameSet(reversed)[frameSetIndex];
-      if(frameSequence) {
-        return frameSequence;
+    getFrameSequence: function(frameSetIndex, direction) {
+      var frameSet = this.getFrameSet(direction);
+      if(frameSet && frameSet[frameSetIndex]) {
+        return frameSet[frameSetIndex];
       }
       return null;
     },
-    getFrame: function(frameSetIndex, frameIndex, reversed) {
-      var frameSequence = this.getFrameSequence(frameSetIndex, reversed);
+    getFrame: function(frameSetIndex, frameIndex, direction) {
+      var frameSequence = this.getFrameSequence(frameSetIndex, direction);
       if(frameSequence && frameSequence[frameIndex]) {
         return frameSequence[frameIndex];
       }

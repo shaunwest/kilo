@@ -2,33 +2,34 @@
  * Created by Shaun on 5/31/14.
  */
 
-jack2d('spriteAnimation', ['helper', 'chronoObject'], function(helper, chronoObject) {
+jack2d('spriteAnimation', ['helper', 'chrono'], function(helper, chrono) {
   'use strict';
 
-  return helper.mixin(chronoObject, {
-    initSprite: function(sprite) {
-      this.sprite = sprite;
-      return this.resetSprite();
-    },
-
-    resetSprite: function() {
-      this.reversed = false;
+  return helper.mixin(['chronoObject', 'sprite'], {
+    initAnimation: function() {
+      this.direction = 'left';
       this.frameSetIndex = -1;
-      this.onSequenceComplete = null;
-      this.onAnimationChange = null;
-      this.onFrameComplete = null;
+      this.animationReady = true;
       this.stop();
       this.onFrame(function(deltaSeconds) {
-        if(!this.playing) {
+        if(!this.spriteSheetLoaded || !this.playing) {
           return;
         }
-        if(this.currentStep >= this.sprite.getDelay()) {
+        if(this.currentStep >= this.getDelay()) {
           this.processFrame();
           this.currentStep = 0;
         } else {
-          this.currentStep += (deltaSeconds * this.chrono.getWholeMultiplier());
+          this.currentStep += (deltaSeconds * chrono.getWholeMultiplier());
         }
       });
+      return this;
+    },
+
+    resetAnimation: function() {
+      this.onSequenceComplete = null;
+      this.onAnimationChange = null;
+      this.onFrameComplete = null;
+      this.initAnimation();
       return this;
     },
 
@@ -52,7 +53,7 @@ jack2d('spriteAnimation', ['helper', 'chronoObject'], function(helper, chronoObj
         this.onFrameComplete(this.sequenceIndex);
       }
 
-      if(++this.sequenceIndex >= this.sprite.getFrameSequence(this.frameSetIndex).length) {
+      if(++this.sequenceIndex >= this.getFrameSequence(this.frameSetIndex).length) {
         this.sequenceIndex = this.startFrame;
         if(this.onSequenceComplete) {
           this.onSequenceComplete();
@@ -64,9 +65,15 @@ jack2d('spriteAnimation', ['helper', 'chronoObject'], function(helper, chronoObj
       }
     },
 
-    playSequence: function(frameSetIndex, reversed) {
-      this.reversed = reversed;
-      if(frameSetIndex !== this.frameSetIndex) {
+    playSequence: function(frameSetIndex, direction) {
+      if(!this.animationReady) {
+        this.initAnimation();
+      }
+      if(!helper.isDefined(direction)) {
+        direction = this.direction;
+      }
+      if(frameSetIndex !== this.frameSetIndex || this.direction !== direction) {
+        this.direction = direction;
         this.frameSetIndex = frameSetIndex;
         this.stop();
 
@@ -78,13 +85,13 @@ jack2d('spriteAnimation', ['helper', 'chronoObject'], function(helper, chronoObj
       return this;
     },
 
-    play: function(reversed) {
-      this.playSequence(this.frameSetIndex, reversed || this.reversed);
+    play: function(direction) {
+      this.playSequence(this.frameSetIndex, direction || this.direction);
       return this;
     },
 
-    playOnce: function(reversed) {
-      this.play(reversed);
+    playOnce: function(direction) {
+      this.play(direction);
       this.stopOnComplete = true;
       return this;
     },
@@ -114,7 +121,7 @@ jack2d('spriteAnimation', ['helper', 'chronoObject'], function(helper, chronoObj
     },
 
     getCurrentFrame: function() {
-      return this.sprite.getFrame(this.frameSetIndex, this.sequenceIndex, this.reversed);
+      return this.getFrame(this.frameSetIndex, this.sequenceIndex, this.direction);
     }
   });
 });

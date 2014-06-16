@@ -15,6 +15,7 @@ var jack2d = (function() {
     isDefined: function(value) { return (typeof value !== 'undefined'); },
     isFunction: function(value) { return (typeof value === 'function'); },
     isArray: function(value) { return Object.prototype.toString.call(value) === "[object Array]"; },
+    isString: function(value) { return Object.prototype.toString.call(value) === "[object String]"; },
     def: function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; },
     error: function(message) { throw new Error(message); },
     call: function(context, func) {
@@ -32,13 +33,19 @@ var jack2d = (function() {
       }
       return newObject;
     },
-    mixin: function(giver, reciever) {
+    mixin: function(giver, reciever, exceptionOnCollisions) {
       reciever = reciever || {};
       if(helper.isArray(giver)) {
         giver.forEach(function(obj) {
+          if(helper.isString(obj)) {
+            obj = injector.getDependency(obj);
+          }
           merge(obj, reciever);
         });
       } else {
+        if(helper.isString(giver)) {
+          giver = injector.getDependency(giver);
+        }
         merge(giver, reciever);
       }
 
@@ -46,7 +53,9 @@ var jack2d = (function() {
         giver = giver || {};
         Object.keys(giver).forEach(function(prop) {
           if(reciever.hasOwnProperty(prop)) {
-            helper.error('Jack2d: Failed to merge mixin. Method \'' + prop + '\' caused a name collision.');
+            (exceptionOnCollisions) ?
+              helper.error('Jack2d: Failed to merge mixin. Method \'' + prop + '\' caused a name collision.') :
+              console.log('Jack2d: Merged \'' + prop + '\'');
           } else {
             reciever[prop] = giver[prop];
           }
@@ -116,6 +125,8 @@ var jack2d = (function() {
 
     return null;
   };
+
+  jack2d.mixin = helper.mixin;
 
   return jack2d;
 })();

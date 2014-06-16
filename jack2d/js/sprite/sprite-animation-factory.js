@@ -7,13 +7,13 @@ jack2d('spriteAnimationFactory', ['helper', 'spriteAnimation'], function(helper,
 
   var spriteAnimations = [];
 
-  function get(sprite) {
-    return unCache(sprite) || helper.clone(spriteAnimation).initSprite(sprite);
+  function get(spriteSheetPath) {
+    return (unCache() || helper.clone(spriteAnimation)).loadSpriteSheet(spriteSheetPath);
   }
 
-  function unCache(sprite) {
+  function unCache() {
     if(spriteAnimations.length > 0) {
-      return spriteAnimations.shift().initSprite(sprite);
+      return spriteAnimations.shift();
     }
     return null;
   }

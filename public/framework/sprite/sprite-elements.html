@@ -47,9 +47,8 @@
 
         jack2d(['spriteFactory', 'spriteAnimationFactory'],
         function(spriteFactory, spriteAnimationFactory) {
-          spriteFactory(sourcePath).
-            spriteSheetReady(function(sprite) {
-              var spriteAnimation = spriteAnimationFactory.get(sprite);
+          spriteAnimationFactory.get(sourcePath).
+            spriteSheetReady(function(spriteAnimation) {
               spriteAnimation.playSequence(sequenceId, reversed).frameDone(function() {
                 animationContext.clearRect(0, 0, width, height);
                 animationContext.drawImage(spriteAnimation.getCurrentFrame(), 0, 0);
