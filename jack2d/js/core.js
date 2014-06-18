@@ -13,9 +13,6 @@ var jack2d = (function() {
 
   helper = {
     isDefined: function(value) { return (typeof value !== 'undefined'); },
-    isFunction: function(value) { return (typeof value === 'function'); },
-    isArray: function(value) { return Object.prototype.toString.call(value) === "[object Array]"; },
-    isString: function(value) { return Object.prototype.toString.call(value) === "[object String]"; },
     def: function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; },
     error: function(message) { throw new Error(message); },
     call: function(context, func) {
@@ -32,6 +29,9 @@ var jack2d = (function() {
         }
       }
       return newObject;
+    },
+    create: function(source) {
+      return this.mixin(source);
     },
     mixin: function(giver, reciever, exceptionOnCollisions) {
       reciever = reciever || {};
@@ -53,9 +53,11 @@ var jack2d = (function() {
         giver = giver || {};
         Object.keys(giver).forEach(function(prop) {
           if(reciever.hasOwnProperty(prop)) {
-            (exceptionOnCollisions) ?
-              helper.error('Jack2d: Failed to merge mixin. Method \'' + prop + '\' caused a name collision.') :
+            if(exceptionOnCollisions) {
+              helper.error('Jack2d: Failed to merge mixin. Method \'' + prop + '\' caused a name collision.');
+            } else {
               console.log('Jack2d: Merged \'' + prop + '\'');
+            }
           } else {
             reciever[prop] = giver[prop];
           }
@@ -64,6 +66,13 @@ var jack2d = (function() {
       return reciever;
     }
   };
+
+  ['Array', 'Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'].
+    forEach(function(name) {
+      helper['is' + name] = function(obj) {
+        return Object.prototype.toString.call(obj) === '[object ' + name + ']';
+      };
+    });
 
   injector = {
     unresolved: {},
@@ -127,6 +136,7 @@ var jack2d = (function() {
   };
 
   jack2d.mixin = helper.mixin;
+  jack2d.create = helper.create;
 
   return jack2d;
 })();

@@ -13,14 +13,18 @@
       jack2d(['spriteFactory', 'spriteAnimationFactory', 'chrono'], function(spriteFactory, spriteAnimationFactory, chrono) {
         /** play an animation sequence */
         spriteAnimationFactory.get('img/player48.png').spriteSheetReady(function(spriteAnimation) {
-          spriteAnimation.getFrameSequence(2, true).forEach(function(frame) {
-           $('#frames').append(frame);
-           });
+          spriteAnimation.
+            getFrameSequence(2, true).
+            forEach(function(frame) {
+              $('#frames').append(frame);
+            });
 
-          spriteAnimation.playSequence(2, true).frameDone(function() {
-            animationContext.clearRect(0, 0, 48, 48);
-            animationContext.drawImage(spriteAnimation.getCurrentFrame(), 0, 0);
-          });
+          spriteAnimation.
+            playSequence(2, true).
+            onFrameDone(function() {
+              animationContext.clearRect(0, 0, 48, 48);
+              animationContext.drawImage(spriteAnimation.getCurrentFrame(), 0, 0);
+            });
 
           /** control animations */
           $('#runLeft').on('click', function() { spriteAnimation.playSequence(2, 'left'); });

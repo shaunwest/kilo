@@ -49,6 +49,7 @@ function(helper, spriteSheetParser, imageLoader) {
     getDelay: function() {
       return this.delay;
     },
+    // TODO: look into adding some caching to getFrame and getFrameSequence
     getFrameSequence: function(frameSetIndex, direction) {
       var frameSet = this.getFrameSet(direction);
       if(frameSet && frameSet[frameSetIndex]) {

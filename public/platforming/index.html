@@ -14,9 +14,7 @@
       player.
         setControlScheme({
           left: {key: 37},
-          right: {key: 39},
-          up: {key: 38},
-          down: {key: 40}
+          right: {key: 39}
         }).
         onInput(function(inputs) {
           if(inputs.left) {
@@ -29,7 +27,7 @@
         }).
         doPhysics().
         loadSpriteSheet('img/player48.png').
-        frameDone(function() {
+        onFrameDone(function() {
           var frame = this.getCurrentFrame();
           if(frame) {
             animationContext.clearRect(0, 0, 48, 48);

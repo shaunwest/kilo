@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Helper</title>
+  <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
+  <script src="../../js/jack2d.js"></script>
+  <script>
+    jack2d(['helper'], function(helper) {
+      console.log('All true:');
+      console.log(helper.isFunction(function() {}));
+      console.log(helper.isArray([]));
+      console.log(helper.isString('hello'));
+      console.log(helper.isNumber(123));
+      console.log(helper.isDefined('hello'));
+      console.log(helper.isArguments(arguments));
+      console.log(helper.isDate(new Date()));
+      console.log(helper.isRegExp(/123hello/));
+
+      console.log('All false:');
+      console.log(helper.isFunction({}));
+      console.log(helper.isArray(123));
+      console.log(helper.isString(123));
+      console.log(helper.isNumber('hello'));
+      console.log(helper.isDefined());
+      console.log(helper.isArguments([]));
+      console.log(helper.isDate([]));
+      console.log(helper.isRegExp([]));
+    });
+  </script>
+</head>
+<body>
+Check the console.
+</body>
+</html>
