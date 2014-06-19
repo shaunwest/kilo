@@ -5,11 +5,19 @@
   <script src="../bower-components/jquery/dist/jquery.min.js"></script>
   <script src="../js/jack2d.js"></script>
   <script src="../js/jack2d-platformer.js"></script>
+  <style>
+    #animation { position: absolute; }
+    #debugContainer {right: 0;}
+  </style>
   <script>
     $(document).ready(function() {
       'use strict';
-      var animationContext = $('#animation')[0].getContext('2d'),
-        player = jack2d.mixin(['platformer.entity', 'spriteAnimation', 'input'], {});
+      var $animation = $('#animation'),
+        animationContext = $animation[0].getContext('2d'),
+        player = jack2d.mixin(['platformer.entity', 'spriteAnimation', 'input']),
+        debug = jack2d('debug');
+
+      debug.container($('#debugContainer')[0]);
 
       player.
         setControlScheme({
@@ -19,26 +27,34 @@
         onInput(function(inputs) {
           if(inputs.left) {
             this.playSequence(2, 'left');
+            this.velocityX = -150;
           } else if(inputs.right) {
             this.playSequence(2, 'right');
+            this.velocityX = 150;
           } else {
             this.playSequence(0);
           }
         }).
-        doPhysics().
+        physics().
         loadSpriteSheet('img/player48.png').
-        onFrameDone(function() {
+        onAnimationFrameDone(function() {
           var frame = this.getCurrentFrame();
           if(frame) {
             animationContext.clearRect(0, 0, 48, 48);
             animationContext.drawImage(frame, 0, 0);
           }
+        }).
+        onFrame(function() {
+          debug.print('pos', 'Pos: ' + this.x + ', ' + this.y);
+          debug.print('vel', 'Vel: ' + this.velocityX.toFixed(2) + ', ' + this.velocityY.toFixed(2));
+          $animation.css('left', this.x);
         });
     });
   </script>
 </head>
 <body>
 <div>
+  <div id="debugContainer"></div>
   <canvas id="animation" width="48" height="48"></canvas>
 </div>
 </body>

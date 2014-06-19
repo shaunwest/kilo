@@ -49,7 +49,7 @@
         spriteAnimation.
           loadSpriteSheet(sourcePath).
           playSequence(sequenceId, direction).
-          onFrameDone(function() {
+          onAnimationFrameDone(function() {
             animationContext.clearRect(0, 0, width, height);
             animationContext.drawImage(this.getCurrentFrame(), 0, 0);
           });

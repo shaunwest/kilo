@@ -6,19 +6,19 @@ jack2d('platformer.physicsObject', ['helper', 'chronoObject'], function(helper, 
   'use strict';
 
   return helper.mixin(chronoObject, {
-    doPhysics: function(ready) {
+    physics: function(ready) {
       this.x = 0;
       this.y = 0;
       this.velocityX = 0;
       this.velocityY = 0;
-      this.frictionX = 0.5;
-      this.frictionY = 0.5;
+      this.frictionX = 0.1;
+      this.frictionY = 0.1;
       this.accelerationX = 0;
       this.accelerationY = 0;
       this.onFrame(function(deltaSeconds) {
         this.calculateVelocity(deltaSeconds);
-        this.x += this.velocityX * deltaSeconds;
-        this.y += this.velocityY * deltaSeconds;
+        this.x += Math.round(this.velocityX * deltaSeconds);
+        this.y += Math.round(this.velocityY * deltaSeconds);
       });
       if(helper.isFunction(ready)) {
         ready(this);

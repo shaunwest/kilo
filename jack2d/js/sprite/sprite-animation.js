@@ -38,7 +38,7 @@ jack2d('spriteAnimation', ['helper', 'chrono'], function(helper, chrono) {
       return this;
     },
 
-    onFrameDone: function(callback) {
+    onAnimationFrameDone: function(callback) {
       this.onFrameComplete = callback;
       return this;
     },
