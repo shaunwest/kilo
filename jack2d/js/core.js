@@ -52,15 +52,18 @@ var jack2d = (function() {
       function merge(giver, reciever) {
         giver = giver || {};
         Object.keys(giver).forEach(function(prop) {
+          if(!helper.isFunction(giver[prop])) {
+            return;
+          }
           if(reciever.hasOwnProperty(prop)) {
             if(exceptionOnCollisions) {
-              helper.error('Jack2d: Failed to merge mixin. Method \'' + prop + '\' caused a name collision.');
+              helper.error('Jack2d: Failed to merge mixin. Method \'' +
+                prop + '\' caused a name collision.');
             } else {
               console.log('Jack2d: Merged \'' + prop + '\'');
             }
-          } else {
-            reciever[prop] = giver[prop];
           }
+          reciever[prop] = giver[prop];
         });
       }
       return reciever;
@@ -128,7 +131,7 @@ var jack2d = (function() {
       injector.register(keyOrDeps, [], depsOrFunc, funcOrScope);
 
     /** get a module */
-    } else if(keyOrDeps) {
+    } else if(keyOrDeps && !helper.isDefined(depsOrFunc)) {
       return injector.getDependency(keyOrDeps);
     }
 

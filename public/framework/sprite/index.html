@@ -21,7 +21,7 @@
 
           spriteAnimation.
             playSequence(2, true).
-            onAnimationFrameDone(function() {
+            onAnimationFrame(function() {
               animationContext.clearRect(0, 0, 48, 48);
               animationContext.drawImage(spriteAnimation.getCurrentFrame(), 0, 0);
             });
