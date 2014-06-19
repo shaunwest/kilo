@@ -26,18 +26,20 @@
         }).
         onInput(function(inputs) {
           if(inputs.left) {
-            this.playSequence(2, 'left');
-            this.velocityX = -150;
+            this.
+              playSequence(2, 'left').
+              velocityX = -150;
           } else if(inputs.right) {
-            this.playSequence(2, 'right');
-            this.velocityX = 150;
+            this.
+              playSequence(2, 'right').
+              velocityX = 150;
           } else {
             this.playSequence(0);
           }
         }).
         physics().
         loadSpriteSheet('img/player48.png').
-        onAnimationFrameDone(function() {
+        onAnimationFrame(function() {
           var frame = this.getCurrentFrame();
           if(frame) {
             animationContext.clearRect(0, 0, 48, 48);
@@ -45,9 +47,13 @@
           }
         }).
         onFrame(function() {
-          debug.print('pos', 'Pos: ' + this.x + ', ' + this.y);
-          debug.print('vel', 'Vel: ' + this.velocityX.toFixed(2) + ', ' + this.velocityY.toFixed(2));
-          $animation.css('left', this.x);
+          debug.
+            print('pos', 'Pos: ' + this.x + ', ' + this.y).
+            print('vel', 'Vel: ' + this.velocityX.toFixed(2) + ', ' + this.velocityY.toFixed(2));
+
+          $animation.
+            css('left', this.x).
+            css('top', this.y);
         });
     });
   </script>

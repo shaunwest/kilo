@@ -11,8 +11,8 @@ jack2d('platformer.physicsObject', ['helper', 'chronoObject'], function(helper, 
       this.y = 0;
       this.velocityX = 0;
       this.velocityY = 0;
-      this.frictionX = 0.1;
-      this.frictionY = 0.1;
+      this.frictionX = 0.015;
+      this.frictionY = 1;
       this.accelerationX = 0;
       this.accelerationY = 0;
       this.onFrame(function(deltaSeconds) {
@@ -33,10 +33,10 @@ jack2d('platformer.physicsObject', ['helper', 'chronoObject'], function(helper, 
         this.velocityY = 0;
       }
       this.velocityX += this.accelerationX * deltaSeconds;
-      this.velocityX *= Math.pow(this.frictionX, deltaSeconds);
+      this.velocityX *= Math.pow(this.frictionX / 100, deltaSeconds);
 
       this.velocityY += this.accelerationY * deltaSeconds;
-      this.velocityY *= Math.pow(this.frictionY, deltaSeconds);
+      this.velocityY *= Math.pow(this.frictionY / 100, deltaSeconds);
     }
   });
 });

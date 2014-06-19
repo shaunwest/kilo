@@ -15,8 +15,12 @@ jack2d('spriteAnimation', ['helper', 'chrono'], function(helper, chrono) {
         if(!this.spriteSheetLoaded || !this.playing) {
           return;
         }
-        if(this.currentStep >= this.getDelay()) {
+
+        if(this.currentStep === 0) {
           this.processFrame();
+        }
+
+        if(this.currentStep >= this.getDelay()) {
           this.currentStep = 0;
         } else {
           this.currentStep += (deltaSeconds * chrono.getWholeMultiplier());
@@ -38,7 +42,7 @@ jack2d('spriteAnimation', ['helper', 'chrono'], function(helper, chrono) {
       return this;
     },
 
-    onAnimationFrameDone: function(callback) {
+    onAnimationFrame: function(callback) {
       this.onFrameComplete = callback;
       return this;
     },
