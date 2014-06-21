@@ -11,6 +11,7 @@
       width: 50px;
       height: 50px;
     }
+    #debugContainer {top: 0; right: 0;}
   </style>
   <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
   <script src="../../js/jack2d.js"></script>
@@ -19,31 +20,35 @@
     $(document).ready(function() {
       'use strict';
 
-      jack2d(['platformer.entityFactory', 'chrono'], function(entityFactory, chrono) {
+      jack2d(['platformer.entityFactory', 'chrono', 'debug'], function(entityFactory, chrono, debug) {
         var entity = entityFactory.get(),
-          $xy = $('#xy'),
           $box = $('#box'),
-          $velocity = $('#velocity'),
-          $fps = $('#fps');
+          $velocity = $('#velocity');
+
+        debug.container($('#debugContainer')[0]);
 
         chrono.register(function() {
-          $xy.text(entity.x + ', ' + entity.y);
-          $fps.text(chrono.getFps());
           $velocity.text('Velocity: ' + entity.velocityX + ', ' + entity.velocityY);
           $box.css('top', entity.y);
           $box.css('left', entity.x);
+
+          debug.
+            print('fps', 'FPS: ' + chrono.getFps()).
+            print('pos', 'Pos: ' + entity.x + ', ' + entity.y).
+            print('vel', 'Vel: ' + entity.velocityX.toFixed(2) + ', ' + entity.velocityY.toFixed(2)).
+            print('accel', 'Acc: ' + entity.accelerationX.toFixed(2) + ', ' + entity.accelerationY.toFixed(2));
         });
 
         $('#velocityX').on('click', function() {
-          entity.velocityX = 100;
+          entity.velocityX = 150;
         });
 
         $('#negVelocityX').on('click', function() {
-          entity.velocityX = -100;
+          entity.velocityX = -150;
         });
 
         $('#velocityY').on('click', function() {
-          entity.velocityY = 100;
+          entity.velocityY = 150;
         });
 
         $('#accelDir').on('click', function() {
@@ -56,18 +61,18 @@
         });
 
         $('#accelerate').on('click', function() {
-          entity.accelerationX++;
-          entity.accelerationY++;
+          entity.accelerationX+=10;
+          entity.accelerationY+=10;
         });
 
         $('#decelerate').on('click', function() {
-          entity.accelerationX--;
-          entity.accelerationY--;
+          entity.accelerationX-=10;
+          entity.accelerationY-=10;
         });
 
         $('#stopAccel').on('click', function() {
-          entity.accelerationY = 0;
           entity.accelerationX = 0;
+          entity.accelerationY = 0;
         });
       });
     });
@@ -88,7 +93,6 @@
   <button id="stopVel">Velocity Zero</button>
   <button id="stopAccel">Acceleration Zero</button>
 </div>
-<div id="xy"></div>
-<div id="velocity"></div>
+<div id="debugContainer"></div>
 </body>
 </html>

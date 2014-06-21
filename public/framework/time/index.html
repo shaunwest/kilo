@@ -29,10 +29,12 @@
 
         $unRegisterFps.on('click', function() {
           chrono.unRegister(fpsId);
+          console.log('Registered function count: ' + chrono.registeredCount());
         });
 
         $unRegisterCounter.on('click', function() {
           chrono.unRegister(counterId);
+          console.log('Registered function count: ' + chrono.registeredCount());
         });
       });
     });

@@ -40,22 +40,27 @@ var jack2d = (function() {
           if(helper.isString(obj)) {
             obj = injector.getDependency(obj);
           }
-          merge(obj, reciever);
+          mergeObjects(obj, reciever);
         });
       } else {
         if(helper.isString(giver)) {
           giver = injector.getDependency(giver);
         }
-        merge(giver, reciever);
+        mergeObjects(giver, reciever);
       }
 
-      function merge(giver, reciever) {
+      function mergeObjects(giver, reciever) {
         giver = giver || {};
+        if(giver.__mixin === false) {
+          console.log('Jack2d: Can\'t mixin object because it\'s disallowed.');
+          return;
+        }
         Object.keys(giver).forEach(function(prop) {
           if(!helper.isFunction(giver[prop])) {
+            // we don't want to merge state, so
+            // only allow functions.
             return;
-          }
-          if(reciever.hasOwnProperty(prop)) {
+          } else if(reciever.hasOwnProperty(prop)) {
             if(exceptionOnCollisions) {
               helper.error('Jack2d: Failed to merge mixin. Method \'' +
                 prop + '\' caused a name collision.');

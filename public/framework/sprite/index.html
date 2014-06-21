@@ -12,7 +12,7 @@
 
       jack2d(['spriteFactory', 'spriteAnimationFactory', 'chrono'], function(spriteFactory, spriteAnimationFactory, chrono) {
         /** play an animation sequence */
-        spriteAnimationFactory.get('img/player48.png').spriteSheetReady(function(spriteAnimation) {
+        spriteAnimationFactory.get('img/player48.png').onSpriteSheetReady(function(spriteAnimation) {
           spriteAnimation.
             getFrameSequence(2, true).
             forEach(function(frame) {

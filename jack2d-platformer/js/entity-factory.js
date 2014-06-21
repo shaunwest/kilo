@@ -12,12 +12,12 @@ jack2d('platformer.entityFactory', ['helper', 'platformer.entity'], function(hel
   };
 
   function get(props) {
-    return helper.clone(helper.mixin(props, unCache() || entity)).doPhysics();
+    return helper.clone(helper.mixin(props, unCache() || entity)).physics();
   }
 
   function unCache() {
     if(entities.length > 0) {
-      return entities.shift().doPhysics();
+      return entities.shift().physics();
     }
     return null;
   }

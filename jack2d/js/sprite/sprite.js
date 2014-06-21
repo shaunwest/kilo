@@ -23,14 +23,16 @@ function(helper, spriteSheetParser, imageLoader) {
           this.frameSet = spriteSheetParser.parse(image);
           this.frameSetReversed = spriteSheetParser.parse(image, true);
           this.spriteSheetLoaded = true;
-          this.readyCallback(this);
+          if(helper.isFunction(this.spriteSheetReady)) {
+            this.spriteSheetReady(this);
+          }
         }), helper.call(this, function() {
-          console.error('Jack2D: Error loading sprite sheet at \'' + spriteSheetPath + '\'');
+          console.error('Jack2d: Error loading sprite sheet at \'' + spriteSheetPath + '\'');
         }));
       return this;
     },
-    spriteSheetReady: function(callback) {
-      this.readyCallback = callback;
+    onSpriteSheetReady: function(callback) {
+      this.spriteSheetReady = callback;
       return this;
     },
     refreshSpriteSheet: function() {

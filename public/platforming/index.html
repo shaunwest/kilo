@@ -7,14 +7,14 @@
   <script src="../js/jack2d-platformer.js"></script>
   <style>
     #animation { position: absolute; }
-    #debugContainer {right: 0;}
+    #debugContainer {top: 0; right: 0;}
   </style>
   <script>
     $(document).ready(function() {
       'use strict';
       var $animation = $('#animation'),
         animationContext = $animation[0].getContext('2d'),
-        player = jack2d.mixin(['platformer.entity', 'spriteAnimation', 'input']),
+        player = jack2d.mixin(['platformer.physicsObject', 'spriteAnimation', 'input']),
         debug = jack2d('debug');
 
       debug.container($('#debugContainer')[0]);
@@ -28,16 +28,18 @@
           if(inputs.left) {
             this.
               playSequence(2, 'left').
-              velocityX = -150;
+              setVelocityX(-150);
           } else if(inputs.right) {
             this.
               playSequence(2, 'right').
-              velocityX = 150;
-          } else {
+              setVelocityX(150);
+          } else if(Math.abs(this.velocityX) < 40) { // TODO: is there a way this can be calculated?
             this.playSequence(0);
           }
         }).
-        physics().
+        physics(function() {
+          this.y = 100;
+        }).
         loadSpriteSheet('img/player48.png').
         onAnimationFrame(function() {
           var frame = this.getCurrentFrame();
