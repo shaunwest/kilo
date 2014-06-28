@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>UI Demo</title>
+  <style>
+    #hotSpot {width: 100px; height: 100px; background: lightseagreen;}
+  </style>
+  <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
+  <script src="../../js/jack2d.js"></script>
+  <script>
+    jack2d(['uiFactory'], function(uiFactory) {
+      uiFactory.
+        getHotSpot('#hotSpot').
+        onTap(function() {
+          console.log('My Hot Spot was tapped!');
+        });
+    });
+  </script>
+</head>
+<body>
+<div id="hotSpot">
+  My Hot Spot
+</div>
+</body>
+</html>

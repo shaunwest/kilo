@@ -25,18 +25,18 @@
           $box = $('#box'),
           $velocity = $('#velocity');
 
-        debug.container($('#debugContainer')[0]);
+        debug.targetElement('#debugContainer').
+          livePrint(function(print) {
+            print('fps', 'FPS: ' + chrono.getFps());
+            print('pos', 'Pos: ' + entity.x + ', ' + entity.y);
+            print('vel', 'Vel: ' + entity.velocityX.toFixed(2) + ', ' + entity.velocityY.toFixed(2));
+            print('acc', 'Acc: ' + entity.accelerationX.toFixed(2) + ', ' + entity.accelerationY.toFixed(2));
+          });
 
         chrono.register(function() {
           $velocity.text('Velocity: ' + entity.velocityX + ', ' + entity.velocityY);
           $box.css('top', entity.y);
           $box.css('left', entity.x);
-
-          debug.
-            print('fps', 'FPS: ' + chrono.getFps()).
-            print('pos', 'Pos: ' + entity.x + ', ' + entity.y).
-            print('vel', 'Vel: ' + entity.velocityX.toFixed(2) + ', ' + entity.velocityY.toFixed(2)).
-            print('accel', 'Acc: ' + entity.accelerationX.toFixed(2) + ', ' + entity.accelerationY.toFixed(2));
         });
 
         $('#velocityX').on('click', function() {

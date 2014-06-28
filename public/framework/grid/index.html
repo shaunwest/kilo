@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Grid Demo</title>
+  <style>
+    #gridContainer {
+      position: absolute;
+      border: 1px solid black;
+      top: 0;
+      right: 0;
+      width: 400px;
+      height: 400px;
+    }
+    #myObj1, #myObj2 {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: red;
+    }
+  </style>
+  <script src="../../js/jack2d.js"></script>
+  <script>
+    var CELL_SIZE = 100,
+      myObj1 = {x: 0, y: 0, width: 16, height: 16},
+      myObj2 = {x: 225, y: 125, width: 16, height: 16};
+
+    jack2d(['doc', 'debug', 'helper', 'grid', 'canvas', 'element'], function(doc, debug, helper, grid, canvas, element) {
+      var visualGrid = helper.mixin(grid, canvas);
+
+      visualGrid.
+        el('#gridViewer').
+        setDimensions(CELL_SIZE, 4, 4).
+        addObject(myObj1).
+        addObject(myObj2).
+        checkerBackground(CELL_SIZE).
+        click(function(event) {
+          console.log((event.offsetX) + ', ' + (event.offsetY));
+        });
+
+      doc.getElement('#myObj1').then(function(element) {
+        element.style.left = myObj1.x + 'px';
+        element.style.top = myObj1.y + 'px';
+      });
+
+      doc.getElement('#myObj2').then(function(element) {
+        element.style.left = myObj2.x + 'px';
+        element.style.top = myObj2.y + 'px';
+      });
+
+      //console.log(grid.getObjects(myObj1.cells));
+
+      debug.targetElement('#output').livePrint(function(print) {
+        print('myObj1', '<p>myObj1:<br>' + helper.printObject(myObj1.cells) + '</p>');
+        print('myObj2', '<p>myObj2:<br>' + helper.printObject(myObj2.cells) + '</p>');
+      });
+    });
+  </script>
+</head>
+<body>
+<div id="output"></div>
+<div id="gridContainer">
+  <canvas id="gridViewer" width="400" height="400"></canvas>
+  <div id="myObj1"></div>
+  <div id="myObj2"></div>
+</div>
+</body>
+</html>

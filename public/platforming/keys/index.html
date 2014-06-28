@@ -4,12 +4,25 @@
   <title>Keys</title>
   <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
   <script src="../../js/jack2d.js"></script>
-  <script src="demo.js"></script>
   <script>
     $(document).ready(function() {
       'use strict';
-      jack2d(['keysDemo'], function(keysDemo) {
-        keysDemo.onInput(function(inputs) {
+
+      var KEY_LEFT = 37,
+        KEY_UP = 38,
+        KEY_RIGHT = 39,
+        KEY_DOWN = 40,
+        $hotSpot = $('#hotSpot');
+
+      jack2d(['inputFactory'], function(inputFactory) {
+        var input = inputFactory({
+          left: {key: KEY_LEFT, element: $hotSpot[0]},
+          right: {key: KEY_RIGHT},
+          up: {key: KEY_UP},
+          down: {key: KEY_DOWN}
+        });
+
+        input.onInput(function(inputs) {
           if(inputs.left) {
             console.log('left!');
           }
@@ -20,5 +33,8 @@
 </head>
 <body>
 Hit the left arrow and check the console.
+<div id="hotSpot">
+  Or click here!
+</div>
 </body>
 </html>

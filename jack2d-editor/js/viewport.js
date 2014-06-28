@@ -56,7 +56,7 @@ jack2d('editor.viewport', ['helper', 'canvas.draw'], function(helper, canvasDraw
       }
 
       if(this.checkerSize) {
-        canvasDraw.checkerBackground(this.canvas, this.checkerSize);
+        canvasDraw.checkerBackground(this.canvas, this.checkerSize); //FIXME update to new spec
       }
 
       if(helper.isDefined(layerIndex)) {

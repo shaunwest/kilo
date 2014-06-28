@@ -47,8 +47,9 @@ module.exports = function(grunt) {
             '<%= coreJs %>/config/**/*.js',
             '<%= coreJs %>/async/**/*.js',
             '<%= coreJs %>/transform/**/*.js',
-            '<%= coreJs %>/canvas/**/*.js',
+            '<%= coreJs %>/html/**/*.js',
             '<%= coreJs %>/sprite/**/*.js',
+            '<%= coreJs %>/ui/**/*.js',
             '<%= coreJs %>/physics-platformer/**/*.js'
           ],
           dest: '<%= public %>/js/<%= pkg.name %>.js'

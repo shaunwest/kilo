@@ -13,6 +13,7 @@ var jack2d = (function() {
 
   helper = {
     isDefined: function(value) { return (typeof value !== 'undefined'); },
+    isObject: function(value) { return (value !== null && typeof value === 'object'); },
     def: function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; },
     error: function(message) { throw new Error(message); },
     call: function(context, func) {
@@ -32,6 +33,15 @@ var jack2d = (function() {
     },
     create: function(source) {
       return this.mixin(source);
+    },
+    printObject: function(obj) {
+      var prop, str = '';
+      for(prop in obj) {
+        if(obj.hasOwnProperty(prop) && !helper.isFunction(obj[prop])) {
+         str += prop + ': ' + obj[prop] + '<br>';
+        }
+      }
+      return str;
     },
     mixin: function(giver, reciever, exceptionOnCollisions) {
       reciever = reciever || {};

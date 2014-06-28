@@ -17,7 +17,10 @@
         player = jack2d.mixin(['platformer.physicsObject', 'spriteAnimation', 'input']),
         debug = jack2d('debug');
 
-      debug.container($('#debugContainer')[0]);
+      debug.targetElement('#debugContainer').livePrint(function(print) {
+        print('pos', 'Pos: ' + player.x + ', ' + player.y);
+        print('vel', 'Vel: ' + player.velocityX.toFixed(2) + ', ' + player.velocityY.toFixed(2));
+      });
 
       player.
         setControlScheme({
@@ -49,10 +52,6 @@
           }
         }).
         onFrame(function() {
-          debug.
-            print('pos', 'Pos: ' + this.x + ', ' + this.y).
-            print('vel', 'Vel: ' + this.velocityX.toFixed(2) + ', ' + this.velocityY.toFixed(2));
-
           $animation.
             css('left', this.x).
             css('top', this.y);
