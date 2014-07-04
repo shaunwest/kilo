@@ -45,7 +45,9 @@
           sequenceId = this.sequenceId,
           direction = this.direction;
 
-        var spriteAnimation = jack2d.create('spriteAnimation');
+        var jackObj = jack2d('obj'),
+          spriteAnimation = jackObj.clone(jack2d('spriteAnimation'));
+
         spriteAnimation.
           loadSpriteSheet(sourcePath).
           playSequence(sequenceId, direction).

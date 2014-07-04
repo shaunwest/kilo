@@ -2,10 +2,10 @@
  * Created by Shaun on 5/31/14.
  */
 
-jack2d('spriteAnimation', ['helper', 'chrono'], function(helper, chrono) {
+jack2d('spriteAnimation', ['helper', 'obj', 'chrono'], function(helper, obj, chrono) {
   'use strict';
 
-  return helper.mixin(['chronoObject', 'sprite'], {
+  return obj.mixin(['chronoObject', 'sprite'], {
     initAnimation: function() {
       this.direction = 'left';
       this.frameSetIndex = -1;

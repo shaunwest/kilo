@@ -2,13 +2,13 @@
  * Created by Shaun on 5/31/14.
  */
 
-jack2d('spriteAnimationFactory', ['helper', 'spriteAnimation'], function(helper, spriteAnimation) {
+jack2d('spriteAnimationFactory', ['obj', 'spriteAnimation'], function(obj, spriteAnimation) {
   'use strict';
 
   var spriteAnimations = [];
 
   function get(spriteSheetPath) {
-    return (unCache() || helper.clone(spriteAnimation)).loadSpriteSheet(spriteSheetPath);
+    return (unCache() || obj.clone(spriteAnimation)).loadSpriteSheet(spriteSheetPath);
   }
 
   function unCache() {

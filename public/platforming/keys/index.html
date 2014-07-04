@@ -2,39 +2,36 @@
 <html>
 <head>
   <title>Keys</title>
-  <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
   <script src="../../js/jack2d.js"></script>
   <script>
-    $(document).ready(function() {
+    jack2d(['input', 'doc'], function(input, doc) {
       'use strict';
 
-      var KEY_LEFT = 37,
-        KEY_UP = 38,
-        KEY_RIGHT = 39,
-        KEY_DOWN = 40,
-        $hotSpot = $('#hotSpot');
+      input.onInputUpdate(function(inputs) {
+        if(inputs[input.LEFT]) {
+          console.log('left!');
+        } else {
+          console.log('not left!');
+        }
 
-      jack2d(['inputFactory'], function(inputFactory) {
-        var input = inputFactory({
-          left: {key: KEY_LEFT, element: $hotSpot[0]},
-          right: {key: KEY_RIGHT},
-          up: {key: KEY_UP},
-          down: {key: KEY_DOWN}
-        });
+        if(inputs[input.RIGHT]) {
+          console.log('right!');
+        } else {
+          console.log('not right!');
+        }
 
-        input.onInput(function(inputs) {
-          if(inputs.left) {
-            console.log('left!');
-          }
-        });
-      });
+        if(inputs[input.INTERACT]) {
+          console.log('interact!');
+        } else {
+          console.log('not interact!');
+        }
+        console.log('--------------');
+      })
     });
   </script>
 </head>
 <body>
-Hit the left arrow and check the console.
-<div id="hotSpot">
-  Or click here!
-</div>
+Hit the left arrow or touch/click and check the console.
+<div id="killInput">Click me to kill input</div>
 </body>
 </html>

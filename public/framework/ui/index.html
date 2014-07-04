@@ -5,14 +5,13 @@
   <style>
     #hotSpot {width: 100px; height: 100px; background: lightseagreen;}
   </style>
-  <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
   <script src="../../js/jack2d.js"></script>
   <script>
-    jack2d(['uiFactory'], function(uiFactory) {
-      uiFactory.
-        getHotSpot('#hotSpot').
-        onTap(function() {
-          console.log('My Hot Spot was tapped!');
+    jack2d(['obj', 'element'], function(obj, element) {
+      obj.clone(element).
+        el('#hotSpot').
+        onInteract(function() {
+          console.log('My Hot Spot!');
         });
     });
   </script>

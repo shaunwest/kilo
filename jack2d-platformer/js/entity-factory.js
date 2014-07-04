@@ -2,17 +2,18 @@
  * Created by Shaun on 6/4/14.
  */
 
-jack2d('platformer.entityFactory', ['helper', 'platformer.entity'], function(helper, entity) {
+// TODO: create a generic object pool module
+jack2d('platformer.entityFactory', ['obj', 'platformer.entity'], function(obj, entity) {
   'use strict';
 
   var entities = [],
-  obj = {
+  publicMethods = {
     get: get,
     free: free
   };
 
   function get(props) {
-    return helper.clone(helper.mixin(props, unCache() || entity)).physics();
+    return obj.clone(obj.mixin(props, unCache() || entity)).physics();
   }
 
   function unCache() {
@@ -24,8 +25,8 @@ jack2d('platformer.entityFactory', ['helper', 'platformer.entity'], function(hel
 
   function free(entity) {
     entities.push(entity);
-    return obj;
+    return publicMethods;
   }
 
-  return obj;
+  return publicMethods;
 });

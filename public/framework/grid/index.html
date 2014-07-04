@@ -17,6 +17,16 @@
       height: 16px;
       background: red;
     }
+    #output {
+      font-family: courier, sans-serif;
+      position: absolute;
+      background-color: rgba(0,0,0,0.7);
+      color: #ffffff;
+      margin: 0;
+      padding: 10px;
+      z-index: 99999;
+      border: 2px solid #222222;
+    }
   </style>
   <script src="../../js/jack2d.js"></script>
   <script>
@@ -24,8 +34,10 @@
       myObj1 = {x: 0, y: 0, width: 16, height: 16},
       myObj2 = {x: 225, y: 125, width: 16, height: 16};
 
-    jack2d(['doc', 'debug', 'helper', 'grid', 'canvas', 'element'], function(doc, debug, helper, grid, canvas, element) {
-      var visualGrid = helper.mixin(grid, canvas);
+    jack2d(['debug', 'obj', 'grid', 'canvas', 'element'], function(debug, obj, grid, canvas, element) {
+      var visualGrid = obj.mixin(grid, canvas),
+        obj1 = obj.clone(element).el('#myObj1'),
+        obj2 = obj.clone(element).el('#myObj2');
 
       visualGrid.
         el('#gridViewer').
@@ -33,25 +45,20 @@
         addObject(myObj1).
         addObject(myObj2).
         checkerBackground(CELL_SIZE).
-        click(function(event) {
+        onTap(function(event) {
           console.log((event.offsetX) + ', ' + (event.offsetY));
+        }).
+        onFrame(function() {
+          obj1.setStyle('left', myObj1.x + 'px').setStyle('top', myObj1.y + 'px');
+          obj2.setStyle('left', myObj2.x + 'px').setStyle('top', myObj2.y + 'px');
         });
-
-      doc.getElement('#myObj1').then(function(element) {
-        element.style.left = myObj1.x + 'px';
-        element.style.top = myObj1.y + 'px';
-      });
-
-      doc.getElement('#myObj2').then(function(element) {
-        element.style.left = myObj2.x + 'px';
-        element.style.top = myObj2.y + 'px';
-      });
 
       //console.log(grid.getObjects(myObj1.cells));
 
-      debug.targetElement('#output').livePrint(function(print) {
-        print('myObj1', '<p>myObj1:<br>' + helper.printObject(myObj1.cells) + '</p>');
-        print('myObj2', '<p>myObj2:<br>' + helper.printObject(myObj2.cells) + '</p>');
+      // FIXME: debug in other demos
+      debug.el('#output').livePrint(function(print) {
+        print('myObj1', '<p>myObj1:<br>' + obj.print(myObj1.cells) + '</p>');
+        print('myObj2', '<p>myObj2:<br>' + obj.print(myObj2.cells) + '</p>');
       });
     });
   </script>

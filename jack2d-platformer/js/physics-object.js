@@ -2,10 +2,10 @@
  * Created by Shaun on 6/7/14.
  */
 
-jack2d('platformer.physicsObject', ['helper', 'chronoObject'], function(helper, chronoObject) {
+jack2d('platformer.physicsObject', ['helper', 'obj', 'chronoObject'], function(helper, obj, chronoObject) {
   'use strict';
 
-  return helper.mixin(chronoObject, {
+  return obj.mixin(chronoObject, {
     physics: function(ready) {
       this.x = 0;
       this.y = 0;

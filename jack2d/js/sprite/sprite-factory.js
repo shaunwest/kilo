@@ -2,10 +2,10 @@
  * Created by Shaun on 5/31/14.
  */
 
-jack2d('spriteFactory', ['helper', 'sprite'], function(helper, sprite) {
+jack2d('spriteFactory', ['obj', 'sprite'], function(obj, sprite) {
   'use strict';
 
   return function(tileSheetPath) {
-    return helper.clone(sprite).loadSpriteSheet(tileSheetPath);
+    return obj.clone(sprite).loadSpriteSheet(tileSheetPath);
   };
 });

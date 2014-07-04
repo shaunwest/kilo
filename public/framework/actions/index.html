@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Actions Demo</title>
+  <style>
+    div {width:100px; height:100px; background:#008800; margin:5px;}
+  </style>
+  <script src="../../js/jack2d.js"></script>
+  <script>
+    jack2d(['obj', 'actionObject', 'input', 'doc'], function(obj, actionObject, input, doc) {
+      'use strict';
+
+      var myActionObj = obj.clone(actionObject);
+
+      doc.onDocumentReady().then(function() {
+        myActionObj.setActions({
+          left: {key: input.LEFT, element: doc.$('#leftButton')},
+          right: {key: input.RIGHT, element: doc.$('#rightButton')},
+          up: {key: input.UP, element: doc.$('#upButton')},
+          down: {key: input.DOWN, element: doc.$('#downButton')}
+        }).
+          actions.
+          up(function(event) {
+            console.log('up!');
+          }).
+          left(function() {
+            console.log('left!');
+          }).
+          down(function() {
+            console.log('down!');
+          }).
+          right(function() {
+            console.log('right!');
+          });
+      });
+    });
+  </script>
+</head>
+<body>
+<div id="upButton">UP</div>
+<div id="leftButton">LEFT </div>
+<div id="rightButton">RIGHT</div>
+<div id="downButton">DOWN</div>
+</body>
+</html>

@@ -2,7 +2,7 @@
  * Created by Shaun on 6/22/14.
  */
 
-jack2d('deferred', ['helper'], function(helper) {
+jack2d('proxy', ['helper'], function(helper) {
   'use strict';
 
   var deferredObjects,
@@ -19,18 +19,26 @@ jack2d('deferred', ['helper'], function(helper) {
     lastDeferredId = 0;
   }
 
-  function deferAll(obj) {
+  function defer(objOrFunc) {
+    if(helper.isFunction(objOrFunc)){
+      return deferFunction(objOrFunc);
+    } else {
+      return deferObject(objOrFunc);
+    }
+  }
+
+  function deferObject(obj) {
     Object.keys(obj).forEach(function(prop) {
       if(!helper.isFunction(obj[prop])) {
         return;
       }
-      obj[prop] = defer(obj[prop]);
+      obj[prop] = deferFunction(obj[prop]);
     });
 
     return obj;
   }
 
-  function defer(func) {
+  function deferFunction(func) {
     if(!helper.isFunction(func)) {
       return func;
     }
@@ -53,20 +61,19 @@ jack2d('deferred', ['helper'], function(helper) {
   }
 
   function executeDeferred(context) {
-      var deferredFunctions = deferredObjects[context.deferredId],
-        deferredFunctionCount = deferredFunctions.length,
-        i;
+    var deferredFunctions = deferredObjects[context.deferredId],
+      func, args;
 
-    // FIXME: do while with pop
-    for(i = 0; i < deferredFunctionCount; i+=2) {
-      deferredFunctions[i].apply(context, deferredFunctions[i+1]);
+    while(deferredFunctions.length > 0) {
+      func = deferredFunctions.shift();
+      args = deferredFunctions.shift();
+      func.apply(context, args);
     }
 
     context.executedDeferred = true;
   }
 
   return {
-    deferAll: deferAll,
     defer: defer,
     executeDeferred: executeDeferred
   };

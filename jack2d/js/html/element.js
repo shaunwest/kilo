@@ -3,7 +3,7 @@
  */
 
 
-jack2d('element', ['helper', 'doc', 'deferred'], function(helper, doc, deferred) {
+jack2d('element', ['helper', 'doc', 'proxy', 'input'], function(helper, doc, proxy, input) {
   'use strict';
 
   return {
@@ -12,14 +12,31 @@ jack2d('element', ['helper', 'doc', 'deferred'], function(helper, doc, deferred)
 
       promise.then(helper.call(this, function(element) {
         this.element = element;
-        deferred.executeDeferred(this);
-      }), function() {
-        // error
+        //input.addAction('tap', {element: element});
+        proxy.executeDeferred(this);
+      }), function(error) {
+        console.log(error);
       });
 
-      //this.el.promise = promise; // doesn't work because el.promise isn't set until el() gets called...
       return this;
-    }
+    },
+    setStyle: proxy.defer(function(prop, value) {
+      this.element.style[prop] = value;
+      return this;
+    }),
+    /*click: proxy.defer(function(callback) {
+      this.element.addEventListener('click', callback, false);
+      return this;
+    })*/
+    onInteract: proxy.defer(function(callback) {
+      var element = this.element;
+      input.onInputUpdate(function(inputs) {
+        if(inputs.interact && inputs.interact.target === element) {
+          callback(element);
+        }
+      });
+      return this;
+    })
   };
 });
 
