@@ -14,10 +14,10 @@
 
       doc.onDocumentReady().then(function() {
         myActionObj.setActions({
-          left: {key: input.LEFT, element: doc.$('#leftButton')},
-          right: {key: input.RIGHT, element: doc.$('#rightButton')},
-          up: {key: input.UP, element: doc.$('#upButton')},
-          down: {key: input.DOWN, element: doc.$('#downButton')}
+          left: {key: input.LEFT, element: doc.el('#leftButton')},
+          right: {key: input.RIGHT, element: doc.el('#rightButton')},
+          up: {key: input.UP, element: doc.el('#upButton')},
+          down: {key: input.DOWN, element: doc.el('#downButton')}
         }).
           actions.
           up(function(event) {

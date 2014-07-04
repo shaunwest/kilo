@@ -7,9 +7,8 @@
   </style>
   <script src="../../js/jack2d.js"></script>
   <script>
-    jack2d(['obj', 'element'], function(obj, element) {
-      obj.clone(element).
-        el('#hotSpot').
+    jack2d(['elementFactory'], function(elFactory) {
+      elFactory('#hotSpot').
         onInteract(function() {
           console.log('My Hot Spot!');
         });

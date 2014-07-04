@@ -23,7 +23,7 @@ jack2d('doc', ['helper'], function(helper) {
     });
   }
 
-  function $(elementOrSelector) {
+  function el(elementOrSelector) {
     var results = (documentReady()) ?
       document.querySelectorAll(elementOrSelector) :
       helper.error('Jack2d: Can\'t select elements because document is not ready');
@@ -55,7 +55,7 @@ jack2d('doc', ['helper'], function(helper) {
     getElement: getElement,
     documentReady: documentReady,
     onDocumentReady: onDocumentReady,
-    $: $
+    el: el
   };
 
 });

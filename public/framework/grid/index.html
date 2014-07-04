@@ -34,10 +34,11 @@
       myObj1 = {x: 0, y: 0, width: 16, height: 16},
       myObj2 = {x: 225, y: 125, width: 16, height: 16};
 
-    jack2d(['debug', 'obj', 'grid', 'canvas', 'element'], function(debug, obj, grid, canvas, element) {
+    jack2d(['debug', 'obj', 'grid', 'canvas', 'elementFactory'],
+    function(debug, obj, grid, canvas, elFactory) {
       var visualGrid = obj.mixin(grid, canvas),
-        obj1 = obj.clone(element).el('#myObj1'),
-        obj2 = obj.clone(element).el('#myObj2');
+        obj1 = elFactory('#myObj1'),
+        obj2 = elFactory('#myObj2');
 
       visualGrid.
         el('#gridViewer').
@@ -45,7 +46,7 @@
         addObject(myObj1).
         addObject(myObj2).
         checkerBackground(CELL_SIZE).
-        onTap(function(event) {
+        onInteract(function(event) {
           console.log((event.offsetX) + ', ' + (event.offsetY));
         }).
         onFrame(function() {
@@ -55,7 +56,6 @@
 
       //console.log(grid.getObjects(myObj1.cells));
 
-      // FIXME: debug in other demos
       debug.el('#output').livePrint(function(print) {
         print('myObj1', '<p>myObj1:<br>' + obj.print(myObj1.cells) + '</p>');
         print('myObj2', '<p>myObj2:<br>' + obj.print(myObj2.cells) + '</p>');

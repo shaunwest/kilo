@@ -12,7 +12,6 @@ jack2d('element', ['helper', 'doc', 'proxy', 'input'], function(helper, doc, pro
 
       promise.then(helper.call(this, function(element) {
         this.element = element;
-        //input.addAction('tap', {element: element});
         proxy.executeDeferred(this);
       }), function(error) {
         console.log(error);
@@ -24,15 +23,11 @@ jack2d('element', ['helper', 'doc', 'proxy', 'input'], function(helper, doc, pro
       this.element.style[prop] = value;
       return this;
     }),
-    /*click: proxy.defer(function(callback) {
-      this.element.addEventListener('click', callback, false);
-      return this;
-    })*/
     onInteract: proxy.defer(function(callback) {
       var element = this.element;
       input.onInputUpdate(function(inputs) {
         if(inputs.interact && inputs.interact.target === element) {
-          callback(element);
+          callback(inputs.interact);
         }
       });
       return this;
