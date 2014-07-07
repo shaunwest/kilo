@@ -10,12 +10,18 @@ jack2d('element', ['helper', 'doc', 'proxy', 'input'], function(helper, doc, pro
     el: function(elementOrSelector) {
       var promise = doc.getElement(elementOrSelector);
 
-      promise.then(helper.call(this, function(element) {
-        this.element = element;
-        proxy.executeDeferred(this);
-      }), function(error) {
-        console.log(error);
-      });
+      if(helper.isString(elementOrSelector)) {
+        this.elementSelector = elementOrSelector;
+      }
+
+      promise.then(
+        function(element) {
+          this.element = element;
+          proxy.executeDeferred(this);
+        }.bind(this),
+        function(error) {
+          console.log(error);
+        });
 
       return this;
     },
@@ -24,10 +30,14 @@ jack2d('element', ['helper', 'doc', 'proxy', 'input'], function(helper, doc, pro
       return this;
     }),
     onInteract: proxy.defer(function(callback) {
-      var element = this.element;
-      input.onInputUpdate(function(inputs) {
+      var element = this.element,
+        contextCallback = callback.bind(this);
+
+      input.onInputUpdate(function(inputs, ended) {
         if(inputs.interact && inputs.interact.target === element) {
-          callback(inputs.interact);
+          contextCallback(inputs.interact, false);
+        } else if(ended.interact && ended.interact.target === element) {
+          contextCallback(ended.interact, true);
         }
       });
       return this;

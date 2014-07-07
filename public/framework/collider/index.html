@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Collider Demo</title>
+  <style>
+    #visualCollider {
+      position: absolute;
+      border: 1px solid black;
+      top: 0;
+      left: 0;
+      width: 400px;
+      height: 400px;
+    }
+  </style>
+  <script src="../../js/jack2d.js"></script>
+  <script>
+    jack2d(['obj', 'liveElementFactory'], function(obj, $el) {
+      var myObj1 = $el('#myObj1', {x: 0, y: 0, width: 16, height: 16});
+
+      var VisualCollider = obj.mixin(['grid', 'canvas']).
+        el('#visualCollider').
+        setGrid(100, 4, 4).
+        checkerBackground(100);
+
+      VisualCollider.addObject(myObj1);
+
+    });
+  </script>
+</head>
+<body>
+  <canvas id="visualCollider" width="400" height="400"></canvas>
+</body>
+</html>

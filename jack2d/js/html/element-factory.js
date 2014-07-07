@@ -6,7 +6,7 @@ jack2d('elementFactory', ['obj', 'element'], function(obj, element) {
   'use strict';
 
   return function(elementOrSelector) {
-    var newElement = obj.clone(element);
+    var newElement = obj.create(element);
     return (elementOrSelector) ?
       newElement.el(elementOrSelector) :
       newElement;

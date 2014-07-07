@@ -2,7 +2,8 @@
  * Created by Shaun on 6/17/14.
  */
 
-jack2d('debug', ['helper', 'obj', 'proxy', 'chronoObject', 'element'], function(helper, obj, proxy, chronoObject, element){
+jack2d('debug', ['helper', 'obj', 'proxy', 'chronoObject', 'element'],
+function(helper, obj, proxy, chronoObject, element){
   'use strict';
 
   return obj.mixin([chronoObject, element], proxy.defer({

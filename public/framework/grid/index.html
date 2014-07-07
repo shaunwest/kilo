@@ -13,10 +13,14 @@
     }
     #myObj1, #myObj2 {
       position: absolute;
+      top: 0;
+      left: 0;
       width: 16px;
       height: 16px;
-      background: red;
+      pointer-events: none; /* should use a more universally compatible solution */
     }
+    #myObj1 { background: red; z-index: 1}
+    #myObj2 { background: blue; }
     #output {
       font-family: courier, sans-serif;
       position: absolute;
@@ -30,31 +34,28 @@
   </style>
   <script src="../../js/jack2d.js"></script>
   <script>
-    var CELL_SIZE = 100,
-      myObj1 = {x: 0, y: 0, width: 16, height: 16},
-      myObj2 = {x: 225, y: 125, width: 16, height: 16};
+    var CELL_SIZE = 100;
 
-    jack2d(['debug', 'obj', 'grid', 'canvas', 'elementFactory'],
-    function(debug, obj, grid, canvas, elFactory) {
-      var visualGrid = obj.mixin(grid, canvas),
-        obj1 = elFactory('#myObj1'),
-        obj2 = elFactory('#myObj2');
+    jack2d(['debug', 'obj', 'grid', 'canvas', 'liveElementFactory'],
+    function(debug, obj, grid, canvas, $el) {
+      var myObj1 = $el('#myObj1', {x: 0, y: 0, width: 16, height: 16}),
+        myObj2 = $el('#myObj2', {x: 250, y: 150, width: 16, height: 16});
 
-      visualGrid.
+      // Create a visual grid
+      obj.mixin(grid, canvas).
         el('#gridViewer').
-        setDimensions(CELL_SIZE, 4, 4).
+        setGrid(CELL_SIZE, 4, 4).
+        checkerBackground().
         addObject(myObj1).
         addObject(myObj2).
-        checkerBackground(CELL_SIZE).
-        onInteract(function(event) {
-          console.log((event.offsetX) + ', ' + (event.offsetY));
-        }).
-        onFrame(function() {
-          obj1.setStyle('left', myObj1.x + 'px').setStyle('top', myObj1.y + 'px');
-          obj2.setStyle('left', myObj2.x + 'px').setStyle('top', myObj2.y + 'px');
+        onInteract(function(event, ended) {
+          myObj1.x = event.offsetX;
+          myObj1.y = event.offsetY;
+          if(ended) {
+            console.log('Nearby Objects:');
+            console.log(this.getNearby(myObj1));
+          }
         });
-
-      //console.log(grid.getObjects(myObj1.cells));
 
       debug.el('#output').livePrint(function(print) {
         print('myObj1', '<p>myObj1:<br>' + obj.print(myObj1.cells) + '</p>');

@@ -16,7 +16,7 @@ var jack2d = (function() {
     isObject: function(value) { return (value !== null && typeof value === 'object'); },
     def: function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; },
     error: function(message) { throw new Error(message); },
-    uCaseFirst: function capitaliseFirstLetter(string) {
+    uCaseFirst: function(string) {
       return (string) ? string.charAt(0).toUpperCase() + string.slice(1) : null;
     },
     call: function(context, func) {

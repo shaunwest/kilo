@@ -8,10 +8,11 @@ jack2d('canvas', ['obj', 'element', 'proxy'], function(obj, element, proxy) {
   var CHECKER_COLOR = 'rgba(184,184,184,0.5)'; // grey
 
   return obj.mixin(element, proxy.defer({
-    checkerBackground: function(size) {
+    checkerBackground: function(checkerSize) {
       var canvas = this.element,
         width = canvas.width,
         height = canvas.height,
+        size = checkerSize || this.cellSize,
         widthInCheckers = width / size,
         heightInCheckers = height  / size,
         context = canvas.getContext('2d'),

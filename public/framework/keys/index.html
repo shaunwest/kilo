@@ -7,26 +7,27 @@
     jack2d(['input', 'elementFactory'], function(input, elFactory) {
       'use strict';
 
-      var inputId = input.onInputUpdate(function(inputs) {
+      var inputId = input.onInputUpdate(function(inputs, ended) {
         if(inputs[input.LEFT]) {
           console.log('left!');
-        } else {
+        } else if(ended[input.LEFT]) {
           console.log('not left!');
         }
 
         if(inputs[input.RIGHT]) {
           console.log('right!');
-        } else {
+        } else if(ended[input.RIGHT]) {
           console.log('not right!');
         }
 
         if(inputs[input.INTERACT]) {
           console.log('interact!');
-        } else {
+        } else if(ended[input.INTERACT]) {
           console.log('not interact!');
         }
         console.log('--------------');
       });
+
 
       elFactory('#killInput').onInteract(function() {
         input.cancelOnInputUpdate(inputId);

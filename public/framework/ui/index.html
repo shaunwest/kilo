@@ -7,10 +7,12 @@
   </style>
   <script src="../../js/jack2d.js"></script>
   <script>
-    jack2d(['elementFactory'], function(elFactory) {
-      elFactory('#hotSpot').
-        onInteract(function() {
-          console.log('My Hot Spot!');
+    jack2d(['elementFactory'], function($el) {
+      $el('#hotSpot').
+        onInteract(function(inputs, ended) {
+          if(!ended) {
+            console.log('My Hot Spot!');
+          }
         });
     });
   </script>
