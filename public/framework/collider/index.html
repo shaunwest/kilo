@@ -3,31 +3,87 @@
 <head>
   <title>Collider Demo</title>
   <style>
-    #visualCollider {
+    #colliderContainer {
       position: absolute;
       border: 1px solid black;
-      top: 0;
       left: 0;
       width: 400px;
       height: 400px;
     }
+    #myObj1, #myObj2, #myObj3 {
+      position: absolute;
+      pointer-events: none;
+    }
+    #myObj1 { background: red; z-index: 1;}
+    #myObj2, #myObj3 { background: blue;}
   </style>
   <script src="../../js/jack2d.js"></script>
   <script>
-    jack2d(['obj', 'liveElementFactory'], function(obj, $el) {
-      var myObj1 = $el('#myObj1', {x: 0, y: 0, width: 16, height: 16});
+    var CELL_SIZE = 100,
+      NUM_CELLS = 4,
+      WORLD_SIZE = CELL_SIZE * NUM_CELLS,
+      MOVE_SPEED = 4;
 
-      var VisualCollider = obj.mixin(['grid', 'canvas']).
+    jack2d(['obj', 'liveElementFactory', 'input'], function(obj, $el, input) {
+      var myObj1 = $el('#myObj1', obj.mixin(['colliderObject', 'resolverObject'], {
+          x: 0,
+          y: 0,
+          width: 16,
+          height: 16
+        })),
+        myObj2 = $el('#myObj2', {x: 200, y: 200, width: 16, height: 16}),
+        myObj3 = $el('#myObj3', {x: 216, y: 200, width: 16, height: 16});
+
+      obj.mixin(['collider', 'canvas']).
         el('#visualCollider').
-        setGrid(100, 4, 4).
-        checkerBackground(100);
+        setGrid(CELL_SIZE, NUM_CELLS).
+        checkerBackground().
+        setWorldBounds(WORLD_SIZE).
+        addObjects(myObj1, myObj2, myObj3).
+        onInteract(function(event) {
+          myObj1.x = event.offsetX - myObj1.width / 2;
+          myObj1.y = event.offsetY - myObj1.height / 2;
+        });
 
-      VisualCollider.addObject(myObj1);
+      myObj1.
+        onBoundaryCollision(function() {
+          console.log('Bounds Collision!');
+        }).
+        onObjectXCollision(function(targetObj, diffX) {
+          this.resolveX(targetObj, diffX);
+        }).
+        onObjectYCollision(function(targetObj, diffX, diffY) {
+          this.resolveY(targetObj, diffY);
+        }).
+        onCollisionsDone(function() {
+          this.x += this.moveDeltaX;
+          this.y += this.moveDeltaY;
+          this.moveDeltaX = 0;
+          this.moveDeltaY = 0;
+        });
 
+      input.onInputUpdate(function(inputs) {
+        if(inputs[input.LEFT]) {
+          myObj1.moveX(-MOVE_SPEED);
+        } else if(inputs[input.RIGHT]) {
+          myObj1.moveX(MOVE_SPEED);
+        }
+
+        if(inputs[input.UP]) {
+          myObj1.moveY(-MOVE_SPEED);
+        } else if(inputs[input.DOWN]) {
+          myObj1.moveY(MOVE_SPEED);
+        }
+      });
     });
   </script>
 </head>
 <body>
-  <canvas id="visualCollider" width="400" height="400"></canvas>
+  <div id="colliderContainer">
+    <canvas id="visualCollider" width="400" height="400"></canvas>
+    <div id="myObj1"></div>
+    <div id="myObj2"></div>
+    <div id="myObj3"></div>
+  </div>
 </body>
 </html>

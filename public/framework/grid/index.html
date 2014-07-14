@@ -6,24 +6,19 @@
     #gridContainer {
       position: absolute;
       border: 1px solid black;
-      top: 0;
       right: 0;
       width: 400px;
       height: 400px;
     }
     #myObj1, #myObj2 {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 16px;
-      height: 16px;
       pointer-events: none; /* should use a more universally compatible solution */
     }
     #myObj1 { background: red; z-index: 1}
     #myObj2 { background: blue; }
     #output {
-      font-family: courier, sans-serif;
       position: absolute;
+      font-family: courier, sans-serif;
       background-color: rgba(0,0,0,0.7);
       color: #ffffff;
       margin: 0;
@@ -34,23 +29,26 @@
   </style>
   <script src="../../js/jack2d.js"></script>
   <script>
-    var CELL_SIZE = 100;
+    var CELL_SIZE = 100,
+      NUM_CELLS = 4;
+
+    var obj1Model = {x: 0, y: 0, width: 16, height: 16};
 
     jack2d(['debug', 'obj', 'grid', 'canvas', 'liveElementFactory'],
     function(debug, obj, grid, canvas, $el) {
-      var myObj1 = $el('#myObj1', {x: 0, y: 0, width: 16, height: 16}),
+      var myObj1 = $el('#myObj1', obj1Model),
         myObj2 = $el('#myObj2', {x: 250, y: 150, width: 16, height: 16});
 
       // Create a visual grid
       obj.mixin(grid, canvas).
         el('#gridViewer').
-        setGrid(CELL_SIZE, 4, 4).
+        setGrid(CELL_SIZE, NUM_CELLS).
         checkerBackground().
         addObject(myObj1).
         addObject(myObj2).
         onInteract(function(event, ended) {
-          myObj1.x = event.offsetX;
-          myObj1.y = event.offsetY;
+          myObj1.x = event.offsetX - myObj1.width / 2;
+          myObj1.y = event.offsetY - myObj1.height / 2;
           if(ended) {
             console.log('Nearby Objects:');
             console.log(this.getNearby(myObj1));
