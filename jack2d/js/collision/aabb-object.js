@@ -2,7 +2,7 @@
  * Created by Shaun on 7/8/14.
  */
 
-jack2d('AABBObject', [], function() {
+jack2d('AABBObject', ['math'], function(math) {
   'use strict';
 
   return {
@@ -83,6 +83,16 @@ jack2d('AABBObject', [], function() {
       if(this.collisionsDoneCallback) {
         this.collisionsDoneCallback();
       }
+    },
+    checkBoundsCollisions: function(boundaries) {
+      if(this.boundaryCollisionCallback) {
+        this.computeAABB();
+        if(!math.containsRect(this.bounds, boundaries)) {
+          console.log('Bounds Collision!!!');
+          this.boundaryCollisionCallback();
+        }
+      }
+      return this;
     },
     checkCollisions: function(targetObject) {
       var diffX, diffY;
