@@ -50,6 +50,8 @@ var jack2d = (function() {
         if(module) {
           module = this.modules[key] = this.resolve(module.deps, module.func, module.scope);
           delete this.unresolved[key];
+        } else {
+          console.log('Jack2d: module \'' + key + '\' not found');
         }
       }
       return module;
@@ -62,7 +64,7 @@ var jack2d = (function() {
         if(module) {
           args.push(module);
         } else {
-          helper.error('Can\'t resolve ' + dep);
+          helper.error('Jack2d: Can\'t resolve ' + dep);
         }
       }
       return func.apply(scope || {}, args.concat(Array.prototype.slice.call(arguments, 0)));

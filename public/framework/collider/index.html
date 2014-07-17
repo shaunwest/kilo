@@ -25,18 +25,19 @@
       MOVE_SPEED = 4;
 
     jack2d(['obj', 'liveElementFactory', 'input'], function(obj, $el, input) {
-      var myObj1 = $el('#myObj1', obj.mixin(['colliderObject', 'resolverObject'], {
+      var myObj1 = $el('#myObj1', obj.mixin(['AABBObject'], {
+          moveDeltaX: 0,
+          moveDeltaY: 0,
           x: 0,
           y: 0,
           width: 16,
           height: 16
         })),
-        myObj2 = $el('#myObj2', {x: 200, y: 200, width: 16, height: 16}),
-        myObj3 = $el('#myObj3', {x: 216, y: 200, width: 16, height: 16});
+        myObj2 = $el('#myObj2', obj.mixin(['AABBObject'], {moveDeltaX: 0, moveDeltaY: 0, x: 200, y: 200, width: 16, height: 16})),
+        myObj3 = $el('#myObj3', obj.mixin(['AABBObject'], {moveDeltaX: 0, moveDeltaY: 0, x: 216, y: 200, width: 16, height: 16}));
 
       obj.mixin(['collider', 'canvas']).
         el('#visualCollider').
-        setGrid(CELL_SIZE, NUM_CELLS).
         checkerBackground().
         setWorldBounds(WORLD_SIZE).
         addObjects(myObj1, myObj2, myObj3).
@@ -48,18 +49,6 @@
       myObj1.
         onBoundaryCollision(function() {
           console.log('Bounds Collision!');
-        }).
-        onObjectXCollision(function(targetObj, diffX) {
-          this.resolveX(targetObj, diffX);
-        }).
-        onObjectYCollision(function(targetObj, diffX, diffY) {
-          this.resolveY(targetObj, diffY);
-        }).
-        onCollisionsDone(function() {
-          this.x += this.moveDeltaX;
-          this.y += this.moveDeltaY;
-          this.moveDeltaX = 0;
-          this.moveDeltaY = 0;
         });
 
       input.onInputUpdate(function(inputs) {
