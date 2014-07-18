@@ -36,8 +36,8 @@ jack2d('collider', ['helper', 'obj', 'grid'], function(helper, obj, grid) {
       for(i = 0; i < numGridObjects; i++) {
         gridObject = gridObjects[i];
 
-        if(gridObject.checkBoundsCollisions) {
-          gridObject.checkBoundsCollisions(this.collisionBounds);
+        if(gridObject.checkBorderCollisions) {
+          gridObject.checkBorderCollisions(this.collisionBounds);
         }
 
         if(gridObject.checkCollisions) {
@@ -60,15 +60,6 @@ jack2d('collider', ['helper', 'obj', 'grid'], function(helper, obj, grid) {
         sourceObject.checkCollisions(targetObject);
       }
       return this;
-    }/*,
-    checkBoundsCollisions: function(sourceObject) {
-      if(sourceObject.boundaryCollisionCallback) {
-        computeBounds(sourceObject);
-        if(!containsRect(sourceObject.bounds, this.collisionBounds)) {
-          sourceObject.boundaryCollisionCallback();
-        }
-      }
-      return this;
-    }*/
+    }
   });
 });

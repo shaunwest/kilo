@@ -26,15 +26,13 @@
 
     jack2d(['obj', 'liveElementFactory', 'input'], function(obj, $el, input) {
       var myObj1 = $el('#myObj1', obj.mixin(['AABBObject'], {
-          moveDeltaX: 0,
-          moveDeltaY: 0,
           x: 0,
           y: 0,
           width: 16,
           height: 16
         })),
-        myObj2 = $el('#myObj2', obj.mixin(['AABBObject'], {moveDeltaX: 0, moveDeltaY: 0, x: 200, y: 200, width: 16, height: 16})),
-        myObj3 = $el('#myObj3', obj.mixin(['AABBObject'], {moveDeltaX: 0, moveDeltaY: 0, x: 216, y: 200, width: 16, height: 16}));
+        myObj2 = $el('#myObj2', obj.mixin(['AABBObject'], {x: 200, y: 200, width: 16, height: 16})),
+        myObj3 = $el('#myObj3', obj.mixin(['AABBObject'], {x: 216, y: 200, width: 16, height: 16}));
 
       obj.mixin(['collider', 'canvas']).
         el('#visualCollider').
@@ -44,11 +42,6 @@
         onInteract(function(event) {
           myObj1.x = event.offsetX - myObj1.width / 2;
           myObj1.y = event.offsetY - myObj1.height / 2;
-        });
-
-      myObj1.
-        onBoundaryCollision(function() {
-          //console.log('Bounds Collision!');
         });
 
       input.onInputUpdate(function(inputs) {
