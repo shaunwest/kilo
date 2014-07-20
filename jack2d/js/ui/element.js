@@ -36,8 +36,17 @@ jack2d('element', ['helper', 'doc', 'proxy', 'input'], function(helper, doc, pro
       input.onInputUpdate(function(inputs, ended) {
         if(inputs.interact && inputs.interact.target === element) {
           contextCallback(inputs.interact, false);
-        } else if(ended.interact && ended.interact.target === element) {
-          contextCallback(ended.interact, true);
+        }
+      });
+      return this;
+    }),
+    onInteractEnd: proxy.defer(function(callback) {
+      var element = this.element,
+        contextCallback = callback.bind(this);
+
+      input.onInputUpdateEnd(function(input) {
+        if(input.interact && input.interact.target === element) {
+          contextCallback(input.interact);
         }
       });
       return this;
