@@ -6,45 +6,87 @@
   <script src="../js/jack2d.js"></script>
   <script src="../js/jack2d-platformer.js"></script>
   <style>
-    #animation { position: absolute; }
+    #animation { position: absolute; z-index:1; }
+    #platform { position: absolute; background-color: green; }
     #debugContainer {top: 0; right: 0;}
+    #colliderContainer {
+      position: absolute;
+      border: 1px solid black;
+      left: 0;
+      width: 400px;
+      height: 400px;
+    }
   </style>
   <script>
     $(document).ready(function() {
       'use strict';
+
+      var CELL_SIZE = 100,
+        NUM_CELLS = 4,
+        WORLD_SIZE = CELL_SIZE * NUM_CELLS;
+
       var $animation = $('#animation'),
         animationContext = $animation[0].getContext('2d'),
         obj = jack2d('obj'),
-        player = obj.mixin(['platformer.physicsObject', 'spriteAnimation', 'input']),
+        input = jack2d('input'),
+        $el = jack2d('liveElementFactory'),
         debug = jack2d('debug');
 
-      debug.el('#debugContainer').livePrint(function(print) {
-        print('pos', 'Pos: ' + player.x + ', ' + player.y);
-        print('vel', 'Vel: ' + player.velocityX.toFixed(2) + ', ' + player.velocityY.toFixed(2));
+      var player = obj.mixin([
+        'platformer.physicsObject',
+        'spriteAnimation',
+        'actionObject',
+        'AABBObject'
+      ], {
+        x: 150,
+        y: 0,
+        width: 16,
+        height: 48
       });
 
+      var platform = $el('#platform', obj.mixin('AABBObject', {
+        x: 100,
+        y: 150,
+        width: 150,
+        height: 50
+      }));
+
+      var world = obj.mixin(['collider', 'canvas']).
+        el('#visualCollider').
+        checkerBackground().
+        setWorldBounds(WORLD_SIZE).
+        addObjects(platform);
+
+      var stats = debug.
+        el('#debugContainer').
+        livePrint(function(print) {
+          print('pos', 'Pos: ' + player.x + ', ' + player.y);
+          print('vel', 'Vel: ' + player.velocityX.toFixed(2) + ', ' + player.velocityY.toFixed(2));
+        });
+
       player.
-        setControlScheme({
-          left: {key: 37},
-          right: {key: 39}
-        }).
-        onInput(function(inputs) {
-          if(inputs.left) {
-            this.
-              playSequence(2, 'left').
-              setVelocityX(-150);
-          } else if(inputs.right) {
-            this.
-              playSequence(2, 'right').
-              setVelocityX(150);
-          } else if(Math.abs(this.velocityX) < 40) { // TODO: is there a way this can be calculated?
-            this.playSequence(0);
-          }
-        }).
-        physics(function() {
-          this.y = 100;
+        // Config
+        setActions({
+          left: {key: input.LEFT},
+          right: {key: input.RIGHT}
         }).
         loadSpriteSheet('img/player48.png').
+        // Logic
+        physics(function() {
+          this.setVelocityY(100);
+        }).
+        collisions(world).
+        _left(function() {
+          this.
+            playSequence(2, 'left').
+            setVelocityX(-150);
+        }).
+        _right(function() {
+          this.
+            playSequence(2, 'right').
+            setVelocityX(150);
+        }).
+        // Visuals
         onAnimationFrame(function() {
           var frame = this.getCurrentFrame();
           if(frame) {
@@ -54,8 +96,12 @@
         }).
         onFrame(function() {
           $animation.
-            css('left', this.x).
+            css('left', this.x - 16).
             css('top', this.y);
+
+          if(Math.abs(this.velocityX) < 40) {
+            this.playSequence(0);
+          }
         });
     });
   </script>
@@ -63,7 +109,11 @@
 <body>
 <div>
   <div id="debugContainer"></div>
-  <canvas id="animation" width="48" height="48"></canvas>
+  <div id="colliderContainer">
+    <canvas id="visualCollider" width="400" height="400"></canvas>
+    <canvas id="animation" width="48" height="48"></canvas>
+    <div id="platform"></div>
+  </div>
 </div>
 </body>
 </html>

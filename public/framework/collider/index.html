@@ -24,17 +24,17 @@
       WORLD_SIZE = CELL_SIZE * NUM_CELLS,
       MOVE_SPEED = 4;
 
-    jack2d(['obj', 'liveElementFactory', 'input'], function(obj, $el, input) {
-      var myObj1 = $el('#myObj1', obj.mixin(['AABBObject'], {
+    jack2d(['obj', 'elementFactory', 'input'], function(obj, $el, input) {
+      var myObj1 = $el('#myObj1', obj.mixin('AABBObject', {
           x: 0,
           y: 0,
           width: 16,
           height: 16
         })),
-        myObj2 = $el('#myObj2', obj.mixin(['AABBObject'], {x: 200, y: 200, width: 16, height: 16})),
-        myObj3 = $el('#myObj3', obj.mixin(['AABBObject'], {x: 216, y: 200, width: 16, height: 16}));
+        myObj2 = $el('#myObj2', obj.mixin('AABBObject', {x: 200, y: 200, width: 16, height: 16})),
+        myObj3 = $el('#myObj3', obj.mixin('AABBObject', {x: 216, y: 200, width: 16, height: 16}));
 
-      obj.mixin(['collider', 'canvas']).
+      obj.mixin(['collider', 'canvas', 'chronoObject']).
         el('#visualCollider').
         checkerBackground().
         setWorldBounds(WORLD_SIZE).
@@ -42,19 +42,24 @@
         onInteract(function(event) {
           myObj1.x = event.offsetX - myObj1.width / 2;
           myObj1.y = event.offsetY - myObj1.height / 2;
+        }).
+        onFrame(function() {
+          myObj1.updateElement();
+          myObj2.updateElement();
+          myObj3.updateElement();
         });
 
       input.onInputUpdate(function(inputs) {
         if(inputs[input.LEFT]) {
-          myObj1.moveX(-MOVE_SPEED);
+          myObj1.x -= MOVE_SPEED;
         } else if(inputs[input.RIGHT]) {
-          myObj1.moveX(MOVE_SPEED);
+          myObj1.x += MOVE_SPEED;
         }
 
         if(inputs[input.UP]) {
-          myObj1.moveY(-MOVE_SPEED);
+          myObj1.y -= MOVE_SPEED;
         } else if(inputs[input.DOWN]) {
-          myObj1.moveY(MOVE_SPEED);
+          myObj1.y += MOVE_SPEED;
         }
       });
     });

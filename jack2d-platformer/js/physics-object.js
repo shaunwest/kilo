@@ -7,16 +7,17 @@ jack2d('platformer.physicsObject', ['helper', 'obj', 'chronoObject'], function(h
 
   return obj.mixin(chronoObject, {
     physics: function(ready) {
-      this.x = 0;
-      this.y = 0;
+      //this.x = 0;
+      //this.y = 0;
       this.velocityX = 0; // pixels/second
       this.velocityY = 0;
       this.frictionX = 0.005; //0 (100% friction) -> 1 (no friction)
-      this.frictionY = 0.5;
+      this.frictionY = 100.0;
       this.accelerationX = 0;
       this.accelerationY = 0;
       this.onFrame(function(deltaSeconds) {
         this.calculateVelocity(deltaSeconds);
+        //console.log(this.x);
         this.x += Math.round(this.velocityX * deltaSeconds);
         this.y += Math.round(this.velocityY * deltaSeconds);
       });

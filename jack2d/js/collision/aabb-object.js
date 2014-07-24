@@ -2,44 +2,63 @@
  * Created by Shaun on 7/8/14.
  */
 
-jack2d('AABBObject', ['rect'], function(rect) {
+jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper, obj, rect, chronoObject) {
   'use strict';
 
-  return {
-    moveX: function(deltaX) {
-      this.moveDeltaX = deltaX;
+  return obj.mixin(chronoObject, {
+    collisions: function(collider) {
+      if(!helper.isDefined(collider)) {
+        helper.error('Jack2d: AABBObject: collider is not defined.');
+      }
+      collider.addObject(this);
+      this.collider = collider;
+      this.onFrame(this.checkCollisions);
+      return this;
     },
-    moveY: function(deltaY) {
-      this.moveDeltaY = deltaY;
+    checkCollisions: function() {
+      var collider = this.collider;
+
+      if(this.computeMoveDelta) {
+        this.computeMoveDelta();
+
+        if(this.checkBorderCollisions) {
+          this.checkBorderCollisions(collider.collisionBounds);
+        }
+
+        if(this.checkObjectCollisions) {
+          this.checkObjectCollisions(collider.getNearby(this));
+
+          if(this.collisionsDone) {
+            this.collisionsDone();
+          }
+        }
+      }
+      return this;
     },
-    alignLeft: function(x) {
-      this.x = x - this.width;
-    },
-    alignRight: function(x) {
-      this.x = x;
-    },
-    alignTop: function(y) {
-      this.y = y - this.height;
-    },
-    alignBottom: function(y) {
-      this.y = y;
+    computeMoveDelta: function() {
+      this.moveDeltaX = this.x - (this.lastX || this.x);
+      this.moveDeltaY = this.y - (this.lastY || this.y);
+      this.x = this.lastX || this.x;
+      this.y = this.lastY || this.y;
     },
     computeAABB: function() {
       this.computeHorizontalBounds(this.moveDeltaX);
       this.computeVerticalBounds(this.moveDeltaY);
     },
     computeHorizontalBounds: function(deltaX) {
-      var bounds = (this.bounds) ? this.bounds : this.bounds = {};
+      var moveDeltaX = helper.def(deltaX, 0),
+        bounds = (this.bounds) ? this.bounds : this.bounds = {};
 
-      bounds.left = this.x + deltaX;
+      bounds.left = this.x + moveDeltaX;
       bounds.right = bounds.left + this.width;
 
       return bounds;
     },
     computeVerticalBounds: function(deltaY) {
-      var bounds = (this.bounds) ? this.bounds : this.bounds = {};
+      var moveDeltaY = helper.def(deltaY, 0),
+        bounds = (this.bounds) ? this.bounds : this.bounds = {};
 
-      bounds.top = this.y + deltaY;
+      bounds.top = this.y + moveDeltaY;
       bounds.bottom = bounds.top + this.height;
 
       return bounds;
@@ -47,6 +66,8 @@ jack2d('AABBObject', ['rect'], function(rect) {
     collisionsDone: function() {
       this.x += this.moveDeltaX || 0;
       this.y += this.moveDeltaY || 0;
+      this.lastX = this.x;
+      this.lastY = this.y;
       this.moveDeltaX = 0;
       this.moveDeltaY = 0;
 
@@ -134,7 +155,17 @@ jack2d('AABBObject', ['rect'], function(rect) {
 
       return this;
     },
-    checkCollisions: function(targetObject) {
+    checkObjectCollisions: function(targetObjects) {
+      var numTargetObjects = targetObjects.length,
+        targetObject, i;
+
+      for(i = 0; i < numTargetObjects; i++) {
+        targetObject = targetObjects[i];
+        this.checkObjectCollision(targetObject);
+      }
+      return this;
+    },
+    checkObjectCollision: function(targetObject) {
       if(!targetObject.computeAABB) {
         return this;
       }
@@ -148,6 +179,18 @@ jack2d('AABBObject', ['rect'], function(rect) {
       }
 
       return this;
+    },
+    alignLeft: function(x) {
+      this.x = this.lastX = x - this.width;
+    },
+    alignRight: function(x) {
+      this.x = this.lastX = x;
+    },
+    alignTop: function(y) {
+      this.y = this.lastY = y - this.height;
+    },
+    alignBottom: function(y) {
+      this.y = this.lastY = y;
     },
     onBorderXCollision: function(callback) {
       this.borderXCollisionCallback = callback;
@@ -169,5 +212,5 @@ jack2d('AABBObject', ['rect'], function(rect) {
       this.collisionsDoneCallback = callback;
       return this;
     }
-  };
+  });
 });

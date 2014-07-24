@@ -7,7 +7,7 @@ jack2d('collider', ['helper', 'obj', 'grid'], function(helper, obj, grid) {
 
   var GRID_CELL_SIZE = 100;
 
-  return obj.mixin(grid, {
+  return obj.extend(grid, {
     setWorldBounds: function(width, height) {
       height = height || width;
 
@@ -22,43 +22,6 @@ jack2d('collider', ['helper', 'obj', 'grid'], function(helper, obj, grid) {
         bottom: height
       };
 
-      this.onFrame(this.checkCollisions);
-      return this;
-    },
-    addObject: function(addObject, colliderObject) {
-      return addObject.call(this, colliderObject);
-    },
-    checkCollisions: function() {
-      var gridObjects = this.gridObjects,
-        numGridObjects = gridObjects.length,
-        gridObject, i;
-
-      for(i = 0; i < numGridObjects; i++) {
-        gridObject = gridObjects[i];
-
-        if(gridObject.checkBorderCollisions) {
-          gridObject.checkBorderCollisions(this.collisionBounds);
-        }
-
-        if(gridObject.checkCollisions) {
-          this.checkObjectCollisions(gridObject, this.getNearby(gridObject));
-
-          if(gridObject.collisionsDone) {
-            gridObject.collisionsDone();
-          }
-        }
-      }
-
-      return this;
-    },
-    checkObjectCollisions: function(sourceObject, targetObjects) {
-      var numTargetObjects = targetObjects.length,
-        targetObject, i;
-
-      for(i = 0; i < numTargetObjects; i++) {
-        targetObject = targetObjects[i];
-        sourceObject.checkCollisions(targetObject);
-      }
       return this;
     }
   });

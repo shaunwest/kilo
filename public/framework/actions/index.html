@@ -19,19 +19,18 @@
           up: {key: input.UP, element: doc.el('#upButton')},
           down: {key: input.DOWN, element: doc.el('#downButton')}
         }).
-          actions.
-          up(function(event) {
-            console.log('up!');
-          }).
-          left(function() {
-            console.log('left!');
-          }).
-          down(function() {
-            console.log('down!');
-          }).
-          right(function() {
-            console.log('right!');
-          });
+        _up(function() {
+          console.log('up!');
+        }).
+        _left(function() {
+          console.log('left!');
+        }).
+        _down(function() {
+          console.log('down!');
+        }).
+        _right(function() {
+          console.log('right!');
+        });
       });
     });
   </script>
