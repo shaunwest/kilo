@@ -10,27 +10,22 @@
     jack2d(['obj', 'actionObject', 'input', 'doc'], function(obj, actionObject, input, doc) {
       'use strict';
 
-      var myActionObj = obj.clone(actionObject);
+      var myActionObj = obj.clone(actionObject).init();
 
       doc.onDocumentReady().then(function() {
-        myActionObj.setActions({
-          left: {key: input.LEFT, element: doc.el('#leftButton')},
-          right: {key: input.RIGHT, element: doc.el('#rightButton')},
-          up: {key: input.UP, element: doc.el('#upButton')},
-          down: {key: input.DOWN, element: doc.el('#downButton')}
-        }).
-        _up(function() {
-          console.log('up!');
-        }).
-        _left(function() {
-          console.log('left!');
-        }).
-        _down(function() {
-          console.log('down!');
-        }).
-        _right(function() {
-          console.log('right!');
-        });
+        myActionObj.
+          action('left', {key: input.LEFT, element: doc.el('#leftButton')}, function() {
+            console.log('left!');
+          }).
+          action('right', {key: input.RIGHT, element: doc.el('#rightButton')}, function() {
+            console.log('right!');
+          }).
+          action('up', {key: input.UP, element: doc.el('#upButton')}, function() {
+            console.log('up!');
+          }).
+          action('down', {key: input.DOWN, element: doc.el('#downButton')}, function() {
+            console.log('down!');
+          });
       });
     });
   </script>

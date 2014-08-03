@@ -8,12 +8,13 @@ jack2d('collider', ['helper', 'obj', 'grid'], function(helper, obj, grid) {
   var GRID_CELL_SIZE = 100;
 
   return obj.extend(grid, {
-    setWorldBounds: function(width, height) {
+    setWorldBounds: function(width, height, cellSize) { // see about extending 'setGrid' instead
       height = height || width;
+      cellSize = cellSize || GRID_CELL_SIZE;
 
-      this.setGrid(GRID_CELL_SIZE,
-        Math.ceil(width / GRID_CELL_SIZE),
-        Math.ceil(height / GRID_CELL_SIZE));
+      this.setGrid(cellSize,
+        Math.ceil(width / cellSize),
+        Math.ceil(height / cellSize));
 
       this.collisionBounds = {
         left: 0,

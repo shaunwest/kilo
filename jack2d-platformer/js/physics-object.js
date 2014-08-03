@@ -6,38 +6,55 @@ jack2d('platformer.physicsObject', ['helper', 'obj', 'chronoObject'], function(h
   'use strict';
 
   return obj.mixin(chronoObject, {
-    physics: function(ready) {
-      //this.x = 0;
-      //this.y = 0;
+    init: function() {
       this.velocityX = 0; // pixels/second
       this.velocityY = 0;
-      this.frictionX = 0.005; //0 (100% friction) -> 1 (no friction)
-      this.frictionY = 100.0;
+      this.frictionX = 0.0; // 0.0 (no friction) -> 1.0 (100% friction)
+      this.frictionY = 0.0;
       this.accelerationX = 0;
       this.accelerationY = 0;
+      this.maxVelocityX = 500;
+      this.maxVelocityY = 500;
+
       this.onFrame(function(deltaSeconds) {
         this.calculateVelocity(deltaSeconds);
-        //console.log(this.x);
         this.x += Math.round(this.velocityX * deltaSeconds);
         this.y += Math.round(this.velocityY * deltaSeconds);
       });
-      if(helper.isFunction(ready)) {
-        helper.call(this, ready, this)();
-      }
+
       return this;
     },
     calculateVelocity: function(deltaSeconds) {
-      if(Math.abs(this.velocityX) < 1) {
-        this.velocityX = 0;
-      }
-      if(Math.abs(this.velocityY) < 1) {
-        this.velocityY = 0;
-      }
-      this.velocityX += this.accelerationX * deltaSeconds;
-      this.velocityX *= Math.pow(this.frictionX / 100, deltaSeconds);
+      this.calculateVelocityX(deltaSeconds);
+      this.calculateVelocityY(deltaSeconds);
+    },
+    calculateVelocityX: function(deltaSeconds) {
+      var velocityX = this.velocityX;
 
-      this.velocityY += this.accelerationY * deltaSeconds;
-      this.velocityY *= Math.pow(this.frictionY / 100, deltaSeconds);
+      if(Math.abs(velocityX) < 1) {
+        velocityX = 0;
+      }
+
+      velocityX += this.accelerationX * deltaSeconds;
+      velocityX *= Math.pow(1 - this.frictionX, deltaSeconds);
+      velocityX = Math.min(velocityX, this.maxVelocityX);
+      velocityX = Math.max(velocityX, -this.maxVelocityX);
+
+      this.velocityX = velocityX;
+    },
+    calculateVelocityY: function(deltaSeconds) {
+      var velocityY = this.velocityY;
+
+      if(Math.abs(velocityY) < 1) {
+        velocityY = 0;
+      }
+
+      velocityY += this.accelerationY * deltaSeconds;
+      velocityY *= Math.pow(1 - this.frictionY, deltaSeconds);
+      velocityY = Math.min(velocityY, this.maxVelocityY);
+      velocityY = Math.max(velocityY, -this.maxVelocityY);
+
+      this.velocityY = velocityY;
     },
     setVelocityX: function(value) {
       this.velocityX = value;
@@ -45,6 +62,30 @@ jack2d('platformer.physicsObject', ['helper', 'obj', 'chronoObject'], function(h
     },
     setVelocityY: function(value) {
       this.velocityY = value;
+      return this;
+    },
+    setFrictionX: function(value) {
+      this.frictionX = value;
+      return this;
+    },
+    setFrictionY: function(value) {
+      this.frictionY = value;
+      return this;
+    },
+    setAccelerationX: function(value) {
+      this.accelerationX = value;
+      return this;
+    },
+    setAccelerationY: function(value) {
+      this.accelerationY = value;
+      return this;
+    },
+    setMaxVelocityY: function(value) {
+      this.maxVelocityY = value;
+      return this;
+    },
+    setMaxVelocityX: function(value) {
+      this.maxVelocityX = value;
       return this;
     }
   });

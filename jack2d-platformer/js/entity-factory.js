@@ -13,12 +13,15 @@ jack2d('platformer.entityFactory', ['obj', 'platformer.entity'], function(obj, e
   };
 
   function get(props) {
-    return obj.clone(obj.mixin(props, unCache() || entity)).physics();
+    var newEntity = obj.clone(obj.mixin(props, unCache() || entity));
+    newEntity.x = 0;
+    newEntity.y = 0;
+    return newEntity.init();
   }
 
   function unCache() {
     if(entities.length > 0) {
-      return entities.shift().physics();
+      return entities.shift().init();
     }
     return null;
   }
