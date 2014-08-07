@@ -5,7 +5,7 @@
 jack2d('spriteAnimation', ['helper', 'obj', 'chrono'], function(helper, obj, chrono) {
   'use strict';
 
-  return obj.mixin(['chronoObject', 'sprite'], {
+  return obj.mixin(['chronoObject', 'sprite', {
     initAnimation: function() {
       this.direction = 'left';
       this.frameSetIndex = -1;
@@ -127,5 +127,5 @@ jack2d('spriteAnimation', ['helper', 'obj', 'chrono'], function(helper, obj, chr
     getCurrentFrame: function() {
       return this.getFrame(this.frameSetIndex, this.sequenceIndex, this.direction);
     }
-  });
+  }]);
 });

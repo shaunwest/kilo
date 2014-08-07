@@ -18,14 +18,15 @@
     }
   </style>
   <script>
-    jack2d('Player', ['obj', 'actionObject'], function(obj, actionObject) {
-      var BasePlayer = obj.mixin([
-        'platformer.physicsObject',
+    jack2d('Player', ['obj'], function(obj) {
+      var Entity = obj.mixin([
+        'platformer.PhysicsObject',
+        'platformer.PhysicsInterface',
         'spriteAnimation',
         'AABBObject'
       ]);
 
-      return obj.extend(BasePlayer, actionObject);
+      return obj.extend([Entity, 'ActionObject']);
     });
 
     jack2d('PlayerFactory', ['Factory', 'Player'], function(Factory, Player) {
@@ -50,25 +51,17 @@
         animationContext = $animation[0].getContext('2d'),
         obj = jack2d('obj'),
         input = jack2d('input'),
-        $el = jack2d('liveElementFactory'),
-        actionObject = jack2d('actionObject'),
+        $el = jack2d('LiveElementFactory'),
         $Player = jack2d('PlayerFactory'),
         debug = jack2d('debug');
 
       var player = $Player();
-      /*var player = obj.mixin(Player, {
-        x: 150,
-        y: 118,
-        width: 16,
-        height: 32
-      }).init();*/
 
-      var platform = $el('#platform', obj.mixin('AABBObject', {
-        x: 100,
-        y: 150,
-        width: 150,
-        height: 50
-      }));
+      var platform = $el('#platform', obj.mixin(['AABBObject']));
+      platform.x = 100;
+      platform.y = 150;
+      platform.width = 150;
+      platform.height = 50;
 
       var world = obj.mixin(['collider', 'canvas']).
         el('#visualCollider').
@@ -107,7 +100,6 @@
             playSequence(1);
             //setAccelerationY(500);
         }).
-        // Visual stuff
         onAnimationFrame(function() {
           var frame = this.getCurrentFrame();
           if(frame) {

@@ -16,9 +16,8 @@ var jack2d = (function() {
     isObject: function(value) { return (value !== null && typeof value === 'object'); },
     def: function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; },
     error: function(message) { throw new Error(message); },
-    uCaseFirst: function(string) {
-      return (string) ? string.charAt(0).toUpperCase() + string.slice(1) : null;
-    },
+    warn: function(message) { console.error(message); },
+    info: function(message) { console.log(message); },
     call: function(context, func) {
       var args = Array.prototype.slice.call(arguments, 2);
       return function() {
@@ -48,10 +47,11 @@ var jack2d = (function() {
       if(!module) {
         module = this.unresolved[key];
         if(module) {
+          helper.info('Jack2d: resolving dependencies for \'' + key + '\'');
           module = this.modules[key] = this.resolve(module.deps, module.func, module.scope);
           delete this.unresolved[key];
         } else {
-          console.log('Jack2d: module \'' + key + '\' not found');
+          helper.warn('Jack2d: module \'' + key + '\' not found');
         }
       }
       return module;
@@ -64,7 +64,7 @@ var jack2d = (function() {
         if(module) {
           args.push(module);
         } else {
-          helper.error('Jack2d: Can\'t resolve ' + dep);
+          helper.warn('Jack2d: Can\'t resolve ' + dep);
         }
       }
       return func.apply(scope || {}, args.concat(Array.prototype.slice.call(arguments, 0)));

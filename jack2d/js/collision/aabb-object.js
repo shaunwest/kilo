@@ -5,7 +5,7 @@
 jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper, obj, rect, chronoObject) {
   'use strict';
 
-  return obj.mixin(chronoObject, {
+  return obj.mixin([chronoObject, {
     collisions: function(collider) {
       if(!helper.isDefined(collider)) {
         helper.error('Jack2d: AABBObject: collider is not defined.');
@@ -212,5 +212,5 @@ jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper,
       this.collisionsDoneCallback = callback;
       return this;
     }
-  });
+  }]);
 });
