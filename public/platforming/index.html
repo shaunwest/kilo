@@ -18,15 +18,13 @@
     }
   </style>
   <script>
-    jack2d('Player', ['obj'], function(obj) {
-      var Entity = obj.mixin([
+    jack2d('Player', ['obj'], function(Obj) {
+      return Obj.mixin([
         'platformer.PhysicsObject',
-        'platformer.PhysicsInterface',
         'spriteAnimation',
-        'AABBObject'
+        'AABBObject',
+        'ActionObject'
       ]);
-
-      return obj.extend([Entity, 'ActionObject']);
     });
 
     jack2d('PlayerFactory', ['Factory', 'Player'], function(Factory, Player) {
@@ -52,12 +50,12 @@
         obj = jack2d('obj'),
         input = jack2d('input'),
         $el = jack2d('LiveElementFactory'),
-        $Player = jack2d('PlayerFactory'),
+        FPlayer = jack2d('PlayerFactory'),
         debug = jack2d('debug');
 
-      var player = $Player();
+      var player = FPlayer();
 
-      var platform = $el('#platform', obj.mixin(['AABBObject']));
+      var platform = $el('#platform', ['AABBObject']);
       platform.x = 100;
       platform.y = 150;
       platform.width = 150;
@@ -82,8 +80,13 @@
         //setAccelerationX(50).
         setMaxVelocityX(150).
         setMaxVelocityY(300).
-        //setAccelerationY(500).
+        setAccelerationY(500).
         collisions(world).
+        onObjectYCollision(function(collisionObject, diffX, diffY) {
+          if(diffY < 0) {
+            this.onGround = true;
+          }
+        }).
         action('left', {key: input.LEFT}, function() {
           this.
             playSequence(2, 'left').
@@ -95,10 +98,12 @@
             setVelocityX(100);
         }).
         action('up', {key: input.UP}, function() {
-          this.
-            setVelocityY(-250).
-            playSequence(1);
+          if(this.onGround) {
+            this.
+              setVelocityY(-250).
+              playSequence(1);
             //setAccelerationY(500);
+          }
         }).
         onAnimationFrame(function() {
           var frame = this.getCurrentFrame();
@@ -108,6 +113,7 @@
           }
         }).
         onFrame(function() {
+          this.onGround = false;
           $animation.
             css('left', this.x - 16).
             css('top', this.y - 16);

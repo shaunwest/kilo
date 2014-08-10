@@ -7,15 +7,15 @@
   </style>
   <script src="../../js/jack2d.js"></script>
   <script>
-    jack2d(['obj', 'elementFactory', 'hotspot'], function(obj, $el, hotspot) {
-      var myHotSpot = obj.create(hotspot);
+    jack2d(['obj', 'ElementFactory', 'hotspot'], function(Obj, $el, Hotspot) {
+      var myHotSpot = Obj.create(Hotspot);
 
       // Invisible Hot Spot
       myHotSpot.
         setLeft(0).setTop(100).setRight(200).setBottom(400).
         onInteract(function(inputs) {
           console.log('My Hot Invisible Spot!');
-        }).onInteractEnd(function(inputs) {
+        }, function(inputs) {
           console.log('My Hot Invisible Spot Ended!');
         });
 
@@ -23,7 +23,7 @@
       $el('#hotSpot').
         onInteract(function(inputs) {
           console.log('My Hot Spot!');
-        }).onInteractEnd(function(inputs) {
+        }, function(inputs) {
           console.log('My Hot Spot Ended!');
         });
     });

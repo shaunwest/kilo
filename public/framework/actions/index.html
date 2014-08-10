@@ -7,23 +7,24 @@
   </style>
   <script src="../../js/jack2d.js"></script>
   <script>
-    jack2d(['obj', 'actionObject', 'input', 'doc'], function(obj, actionObject, input, doc) {
+    var myActionObj;
+    jack2d(['obj', 'ActionObject', 'input', 'doc'], function(Obj, ActionObject, Input, Doc) {
       'use strict';
 
-      var myActionObj = obj.clone(actionObject).init();
+      myActionObj = Obj.clone(ActionObject);
 
-      doc.onDocumentReady().then(function() {
+      Doc.onDocumentReady().then(function() {
         myActionObj.
-          action('left', {key: input.LEFT, element: doc.el('#leftButton')}, function() {
+          action('left', {key: Input.LEFT, element: Doc.el('#leftButton')}, function() {
             console.log('left!');
           }).
-          action('right', {key: input.RIGHT, element: doc.el('#rightButton')}, function() {
+          action('right', {key: Input.RIGHT, element: Doc.el('#rightButton')}, function() {
             console.log('right!');
           }).
-          action('up', {key: input.UP, element: doc.el('#upButton')}, function() {
+          action('up', {key: Input.UP, element: Doc.el('#upButton')}, function() {
             console.log('up!');
           }).
-          action('down', {key: input.DOWN, element: doc.el('#downButton')}, function() {
+          action('down', {key: Input.DOWN, element: Doc.el('#downButton')}, function() {
             console.log('down!');
           });
       });

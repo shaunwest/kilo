@@ -34,13 +34,23 @@
 
     var obj1Model = {x: 0, y: 0, width: 16, height: 16};
 
-    jack2d(['debug', 'obj', 'grid', 'canvas', 'liveElementFactory'],
-    function(debug, obj, grid, canvas, $el) {
-      var myObj1 = $el('#myObj1', obj1Model),
-        myObj2 = $el('#myObj2', {x: 250, y: 150, width: 16, height: 16});
+    jack2d(['debug', 'obj', 'grid', 'canvas', 'LiveElementFactory'],
+    function(Debug, Obj, Grid, Canvas, FLiveElement) {
+      var myObj1 = FLiveElement('#myObj1'),
+        myObj2 = FLiveElement('#myObj2');
+
+      myObj1.x = 0;
+      myObj1.y = 0;
+      myObj1.width = 16;
+      myObj1.height = 16;
+
+      myObj2.x = 250;
+      myObj2.y = 150;
+      myObj2.width = 16;
+      myObj2.height = 16;
 
       // Create a visual grid
-      obj.mixin(grid, canvas).
+      Obj.mixin([Grid, Canvas]).
         el('#gridViewer').
         setGrid(CELL_SIZE, NUM_CELLS).
         checkerBackground().
@@ -49,15 +59,14 @@
         onInteract(function(event) {
           myObj1.x = event.offsetX - myObj1.width / 2;
           myObj1.y = event.offsetY - myObj1.height / 2;
-        }).
-        onInteractEnd(function(event) {
+        },function(event) {
           console.log('Nearby Objects:');
           console.log(this.getNearby(myObj1));
         });
 
-      debug.el('#output').livePrint(function(print) {
-        print('myObj1', '<p>myObj1:<br>' + obj.print(myObj1.cells) + '</p>');
-        print('myObj2', '<p>myObj2:<br>' + obj.print(myObj2.cells) + '</p>');
+      Debug.el('#output').livePrint(function(print) {
+        print('myObj1', '<p>myObj1:<br>' + Obj.print(myObj1.cells) + '</p>');
+        print('myObj2', '<p>myObj2:<br>' + Obj.print(myObj2.cells) + '</p>');
       });
     });
   </script>

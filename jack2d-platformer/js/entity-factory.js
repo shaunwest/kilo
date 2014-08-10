@@ -12,8 +12,8 @@ jack2d('platformer.entityFactory', ['obj', 'platformer.entity'], function(obj, e
     free: free
   };
 
-  function get(props) {
-    var newEntity = obj.clone(obj.mixin(props, unCache() || entity));
+  function get() {
+    var newEntity = obj.clone(unCache() || entity);
     newEntity.x = 0;
     newEntity.y = 0;
     return newEntity.init();

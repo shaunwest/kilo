@@ -4,10 +4,10 @@
   <title>Keys</title>
   <script src="../../js/jack2d.js"></script>
   <script>
-    jack2d(['input', 'elementFactory'], function(input, elFactory) {
+    jack2d(['input', 'InputObject', 'LiveElementFactory'], function(input, InputObject, FElement) {
       'use strict';
 
-      var inputId = input.onInputUpdate(function(inputs, ended) {
+      InputObject.onInteract(function(inputs, ended) {
         if(inputs[input.LEFT]) {
           console.log('left!');
         } else if(ended[input.LEFT]) {
@@ -29,8 +29,9 @@
       });
 
 
-      elFactory('#killInput').onInteract(function() {
-        input.cancelOnInputUpdate(inputId);
+      FElement('#killInput').onInteract(function() {
+        //input.cancelOnInputUpdate(inputId);
+        InputObject.killOnFrame();
       });
     });
   </script>

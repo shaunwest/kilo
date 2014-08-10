@@ -18,7 +18,7 @@ var jack2d = (function() {
     error: function(message) { throw new Error(message); },
     warn: function(message) { console.error(message); },
     info: function(message) { console.log(message); },
-    call: function(context, func) {
+    call: function(context, func) { // TODO: move to Func
       var args = Array.prototype.slice.call(arguments, 2);
       return function() {
         func.apply(context, (args.length > 0) ? args : arguments);
