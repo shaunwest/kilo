@@ -5,6 +5,7 @@
   <script src="../bower-components/jquery/dist/jquery.min.js"></script>
   <script src="../js/jack2d.js"></script>
   <script src="../js/jack2d-platformer.js"></script>
+  <script src="js/player.js"></script>
   <style>
     #animation { position: absolute; z-index:1; }
     #platform { position: absolute; background-color: green; }
@@ -18,26 +19,7 @@
     }
   </style>
   <script>
-    jack2d('Player', ['obj'], function(Obj) {
-      return Obj.mixin([
-        'platformer.PhysicsObject',
-        'spriteAnimation',
-        'AABBObject',
-        'ActionObject'
-      ]);
-    });
-
-    jack2d('PlayerFactory', ['Factory', 'Player'], function(Factory, Player) {
-      return function() {
-        var newPlayer = Factory(Player);
-        newPlayer.x = 150;
-        newPlayer.y = 118;
-        newPlayer.width = 16;
-        newPlayer.height = 32;
-        return newPlayer.init();
-      };
-    });
-
+    var player;
     $(document).ready(function() {
       'use strict';
 
@@ -47,64 +29,74 @@
 
       var $animation = $('#animation'),
         animationContext = $animation[0].getContext('2d'),
-        obj = jack2d('obj'),
-        input = jack2d('input'),
-        $el = jack2d('LiveElementFactory'),
+        Obj = jack2d('obj'),
+        Input = jack2d('input'),
+        FLiveElement = jack2d('LiveElementFactory'),
         FPlayer = jack2d('PlayerFactory'),
-        debug = jack2d('debug');
+        Debug = jack2d('debug');
 
-      var player = FPlayer();
+      player = FPlayer();
 
-      var platform = $el('#platform', ['AABBObject']);
+      var platform = FLiveElement('#platform', ['AABBObject']);
       platform.x = 100;
       platform.y = 150;
       platform.width = 150;
       platform.height = 50;
 
-      var world = obj.mixin(['collider', 'canvas']).
+      var world = Obj.mixin(['collider', 'canvas']).
         el('#visualCollider').
         checkerBackground().
         setWorldBounds(WORLD_SIZE).
         addObjects(platform);
 
-      var stats = debug.
+      Debug.
         el('#debugContainer').
         livePrint(function(print) {
           print('pos', 'Pos: ' + player.x + ', ' + player.y);
+          print('ground', 'Gnd: ' + player.onGround);
+          print('border', 'Bor: ' + player.borderCollisionBottom);
+          print('object', 'Obj: ' + player.objectCollisionBottom);
+          print('left', 'Lft: ' + player.left);
           print('vel', 'Vel: ' + player.velocityX.toFixed(2) + ', ' + player.velocityY.toFixed(2));
         });
+
+      function idle(velocityX) {
+        return (Math.abs(velocityX) < 30)
+      }
 
       player.
         loadSpriteSheet('img/player48.png').
         setFrictionX(0.99).
-        //setAccelerationX(50).
         setMaxVelocityX(150).
         setMaxVelocityY(300).
         setAccelerationY(500).
-        collisions(world).
-        onObjectYCollision(function(collisionObject, diffX, diffY) {
-          if(diffY < 0) {
-            this.onGround = true;
-          }
-        }).
-        action('left', {key: input.LEFT}, function() {
-          this.
-            playSequence(2, 'left').
-            setVelocityX(-100);
-        }).
-        action('right', {key: input.RIGHT}, function() {
-          this.
-            playSequence(2, 'right').
-            setVelocityX(100);
-        }).
-        action('up', {key: input.UP}, function() {
-          if(this.onGround) {
-            this.
-              setVelocityY(-250).
-              playSequence(1);
-            //setAccelerationY(500);
-          }
-        }).
+        setWorld(world).
+        when('objectCollisionBottom').
+          set('onGround', true).
+        when('borderCollisionBottom').
+          set('onGround', true).
+        whenNot('objectCollisionBottom').
+          andNot('borderCollisionBottom').
+          set('onGround', false).
+        whenNot('onGround').
+          call('playSequence', 1).
+        when('left').
+          and('onGround').
+          set('velocityX', -100).
+          call('playSequence', 2, 'left').
+        when('right').
+          and('onGround').
+          set('velocityX', 100).
+          call('playSequence', 2, 'right').
+        when('velocityX', idle).
+          and('onGround').
+          call('playSequence', 0).
+        when('up').
+          and('onGround').
+          set('velocityY', -250).
+        action('left', {key: Input.LEFT}).
+        action('right', {key: Input.RIGHT}).
+        action('up', {key: Input.UP}).
         onAnimationFrame(function() {
           var frame = this.getCurrentFrame();
           if(frame) {
@@ -113,14 +105,13 @@
           }
         }).
         onFrame(function() {
-          this.onGround = false;
           $animation.
             css('left', this.x - 16).
             css('top', this.y - 16);
 
-          if(Math.abs(this.velocityX) < 30) {
+          /*if(Math.abs(this.velocityX) < 30 && Math.abs(this.velocityY) === 0) {
             this.playSequence(0);
-          }
+          }*/
         });
     });
   </script>

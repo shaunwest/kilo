@@ -5,8 +5,139 @@
 jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper, obj, rect, chronoObject) {
   'use strict';
 
+  function resetCollisionVars(sourceObject) {
+    sourceObject.borderCollisionBottom = false;
+    sourceObject.borderCollisionLeft = false;
+    sourceObject.borderCollisionRight = false;
+    sourceObject.borderCollisionTop = false;
+    sourceObject.objectCollisionLeft = false;
+    sourceObject.objectCollisionRight = false;
+    sourceObject.objectCollisionBottom = false;
+    sourceObject.objectCollisionTop = false;
+  }
+
+  function computeMoveDelta(sourceObject) {
+    sourceObject.moveDeltaX = sourceObject.x - (sourceObject.lastX || sourceObject.x);
+    sourceObject.moveDeltaY = sourceObject.y - (sourceObject.lastY || sourceObject.y);
+    sourceObject.x = sourceObject.lastX || sourceObject.x;
+    sourceObject.y = sourceObject.lastY || sourceObject.y;
+  }
+
+  function computeHorizontalBounds(sourceObject, deltaX) {
+    var moveDeltaX = helper.def(deltaX, 0),
+      bounds = (sourceObject.bounds) ? sourceObject.bounds : sourceObject.bounds = {};
+
+    bounds.left = sourceObject.x + moveDeltaX;
+    bounds.right = bounds.left + sourceObject.width;
+
+    return bounds;
+  }
+
+  function computeVerticalBounds(sourceObject, deltaY) {
+    var moveDeltaY = helper.def(deltaY, 0),
+      bounds = (sourceObject.bounds) ? sourceObject.bounds : sourceObject.bounds = {};
+
+    bounds.top = sourceObject.y + moveDeltaY;
+    bounds.bottom = bounds.top + sourceObject.height;
+
+    return bounds;
+  }
+
+  function checkBorderCollisionsX(sourceObject, borders) {
+    var diffX = rect.containsRectX(sourceObject.bounds, borders);
+    if(diffX !== false) {
+      sourceObject.moveDeltaX = 0;
+      if(diffX < 0) {
+        sourceObject.alignRight(0);
+        sourceObject.borderCollisionLeft = true;
+      } else if(diffX > 0) {
+        sourceObject.alignLeft(borders.right);
+        sourceObject.borderCollisionRight = true;
+      }
+      /*if(sourceObject.borderXCollisionCallback) {
+       sourceObject.borderXCollisionCallback(diffX);
+       }*/
+    }
+  }
+
+  function checkBorderCollisionsY(sourceObject, borders) {
+    var diffY = rect.containsRectY(sourceObject.bounds, borders);
+    if(diffY !== false) {
+      sourceObject.moveDeltaY = 0;
+      if(diffY < 0) {
+        sourceObject.alignBottom(0);
+        sourceObject.borderCollisionTop = true;
+      } else if(diffY > 0) {
+        sourceObject.alignTop(borders.bottom);
+        sourceObject.borderCollisionBottom = true;
+      }
+      /*if(sourceObject.borderYCollisionCallback) {
+       sourceObject.borderYCollisionCallback(diffY);
+       }*/
+    }
+  }
+
+  function checkObjectCollisionsX(sourceObject, targetObject) {
+    var diffX, diffY;
+
+    computeHorizontalBounds(sourceObject, sourceObject.moveDeltaX);
+    computeVerticalBounds(sourceObject, 0);
+    diffX = rect.intersectsRectX(sourceObject.bounds, targetObject.bounds);
+    diffY = rect.intersectsRectY(sourceObject.bounds, targetObject.bounds);
+
+    if(diffX !== false && diffY !== false) {
+      sourceObject.moveDeltaX = 0;
+      if(diffX < 0) {
+        sourceObject.alignLeft(targetObject.bounds.left);
+        sourceObject.objectCollisionRight = true;
+      } else if(diffX > 0) {
+        sourceObject.alignRight(targetObject.bounds.right);
+        sourceObject.objectCollisionLeft = true;
+      }
+      /*if(sourceObject.objectXCollisionCallback) {
+       sourceObject.objectXCollisionCallback(targetObject, diffX, diffY);
+       }*/
+    }
+  }
+
+  function checkObjectCollisionsY(sourceObject, targetObject) {
+    var diffX, diffY;
+
+    computeHorizontalBounds(sourceObject, 0);
+    computeVerticalBounds(sourceObject, sourceObject.moveDeltaY);
+    diffX = rect.intersectsRectX(sourceObject.bounds, targetObject.bounds);
+    diffY = rect.intersectsRectY(sourceObject.bounds, targetObject.bounds);
+
+    if(diffX !== false && diffY !== false) {
+      sourceObject.moveDeltaY = 0;
+      if(diffY < 0) {
+        sourceObject.alignTop(targetObject.bounds.top);
+        sourceObject.objectCollisionBottom = true;
+      } else if(diffY > 0) {
+        sourceObject.alignBottom(targetObject.bounds.bottom);
+        sourceObject.objectCollisionTop = true;
+      }
+      /*if(sourceObject.objectYCollisionCallback) {
+       sourceObject.objectYCollisionCallback(targetObject, diffX, diffY);
+       }*/
+    }
+  }
+
+  function finalize(sourceObject) {
+    sourceObject.x += sourceObject.moveDeltaX || 0;
+    sourceObject.y += sourceObject.moveDeltaY || 0;
+    sourceObject.lastX = sourceObject.x;
+    sourceObject.lastY = sourceObject.y;
+    sourceObject.moveDeltaX = 0;
+    sourceObject.moveDeltaY = 0;
+
+    if(sourceObject.collisionsDoneCallback) {
+      sourceObject.collisionsDoneCallback();
+    }
+  }
+
   return obj.mixin([chronoObject, {
-    collisions: function(collider) {
+    setWorld: function(collider) {
       if(!helper.isDefined(collider)) {
         helper.error('Jack2d: AABBObject: collider is not defined.');
       }
@@ -18,141 +149,24 @@ jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper,
     checkCollisions: function() {
       var collider = this.collider;
 
-      if(this.computeMoveDelta) {
-        this.computeMoveDelta();
+      resetCollisionVars(this);
+      computeMoveDelta(this);
 
-        if(this.checkBorderCollisions) {
-          this.checkBorderCollisions(collider.collisionBounds);
-        }
+      this.checkBorderCollisions(collider.collisionBounds);
+      this.checkObjectCollisions(collider.getNearby(this));
 
-        if(this.checkObjectCollisions) {
-          this.checkObjectCollisions(collider.getNearby(this));
-
-          if(this.collisionsDone) {
-            this.collisionsDone();
-          }
-        }
-      }
+      finalize(this);
       return this;
-    },
-    computeMoveDelta: function() {
-      this.moveDeltaX = this.x - (this.lastX || this.x);
-      this.moveDeltaY = this.y - (this.lastY || this.y);
-      this.x = this.lastX || this.x;
-      this.y = this.lastY || this.y;
     },
     computeAABB: function() {
-      this.computeHorizontalBounds(this.moveDeltaX);
-      this.computeVerticalBounds(this.moveDeltaY);
+      computeHorizontalBounds(this, this.moveDeltaX);
+      computeVerticalBounds(this, this.moveDeltaY);
     },
-    computeHorizontalBounds: function(deltaX) {
-      var moveDeltaX = helper.def(deltaX, 0),
-        bounds = (this.bounds) ? this.bounds : this.bounds = {};
 
-      bounds.left = this.x + moveDeltaX;
-      bounds.right = bounds.left + this.width;
-
-      return bounds;
-    },
-    computeVerticalBounds: function(deltaY) {
-      var moveDeltaY = helper.def(deltaY, 0),
-        bounds = (this.bounds) ? this.bounds : this.bounds = {};
-
-      bounds.top = this.y + moveDeltaY;
-      bounds.bottom = bounds.top + this.height;
-
-      return bounds;
-    },
-    collisionsDone: function() {
-      this.x += this.moveDeltaX || 0;
-      this.y += this.moveDeltaY || 0;
-      this.lastX = this.x;
-      this.lastY = this.y;
-      this.moveDeltaX = 0;
-      this.moveDeltaY = 0;
-
-      if(this.collisionsDoneCallback) {
-        this.collisionsDoneCallback();
-      }
-    },
     checkBorderCollisions: function(borders) {
       this.computeAABB();
-      this.checkBorderCollisionsX(borders);
-      this.checkBorderCollisionsY(borders);
-      return this;
-    },
-    checkBorderCollisionsX: function(borders) {
-      var diffX = rect.containsRectX(this.bounds, borders);
-      if(diffX !== false) {
-        this.moveDeltaX = 0;
-        if(diffX < 0) {
-          this.alignRight(0);
-        } else if(diffX > 0) {
-          this.alignLeft(borders.right);
-        }
-        if(this.borderXCollisionCallback) {
-          this.borderXCollisionCallback(diffX);
-        }
-      }
-      return this;
-    },
-    checkBorderCollisionsY: function(borders) {
-      var diffY = rect.containsRectY(this.bounds, borders);
-      if(diffY !== false) {
-        this.moveDeltaY = 0;
-        if(diffY < 0) {
-          this.alignBottom(0);
-        } else if(diffY > 0) {
-          this.alignTop(borders.bottom);
-        }
-        if(this.borderYCollisionCallback) {
-          this.borderYCollisionCallback(diffY);
-        }
-      }
-      return this;
-    },
-    checkCollisionsX: function(targetObject) {
-      var diffX, diffY;
-
-      this.computeHorizontalBounds(this.moveDeltaX);
-      this.computeVerticalBounds(0);
-      diffX = rect.intersectsRectX(this.bounds, targetObject.bounds);
-      diffY = rect.intersectsRectY(this.bounds, targetObject.bounds);
-
-      if(diffX !== false && diffY !== false) {
-        this.moveDeltaX = 0;
-        if(diffX < 0) {
-          this.alignLeft(targetObject.bounds.left);
-        } else if(diffX > 0) {
-          this.alignRight(targetObject.bounds.right);
-        }
-        if(this.objectXCollisionCallback) {
-          this.objectXCollisionCallback(targetObject, diffX, diffY);
-        }
-      }
-
-      return this;
-    },
-    checkCollisionsY: function(targetObject) {
-      var diffX, diffY;
-
-      this.computeHorizontalBounds(0);
-      this.computeVerticalBounds(this.moveDeltaY);
-      diffX = rect.intersectsRectX(this.bounds, targetObject.bounds);
-      diffY = rect.intersectsRectY(this.bounds, targetObject.bounds);
-
-      if(diffX !== false && diffY !== false) {
-        this.moveDeltaY = 0;
-        if(diffY < 0) {
-          this.alignTop(targetObject.bounds.top);
-        } else if(diffY > 0) {
-          this.alignBottom(targetObject.bounds.bottom);
-        }
-        if(this.objectYCollisionCallback) {
-          this.objectYCollisionCallback(targetObject, diffX, diffY);
-        }
-      }
-
+      checkBorderCollisionsX(this, borders);
+      checkBorderCollisionsY(this, borders);
       return this;
     },
     checkObjectCollisions: function(targetObjects) {
@@ -163,6 +177,7 @@ jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper,
         targetObject = targetObjects[i];
         this.checkObjectCollision(targetObject);
       }
+
       return this;
     },
     checkObjectCollision: function(targetObject) {
@@ -172,10 +187,10 @@ jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper,
       targetObject.computeAABB();
 
       if(this.moveDeltaX) {
-        this.checkCollisionsX(targetObject);
+        checkObjectCollisionsX(this, targetObject);
       }
       if(this.moveDeltaY) {
-        this.checkCollisionsY(targetObject);
+        checkObjectCollisionsY(this, targetObject);
       }
 
       return this;
@@ -191,22 +206,6 @@ jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper,
     },
     alignBottom: function(y) {
       this.y = this.lastY = y;
-    },
-    onBorderXCollision: function(callback) {
-      this.borderXCollisionCallback = callback;
-      return this;
-    },
-    onBorderYCollision: function(callback) {
-      this.borderYCollisionCallback = callback;
-      return this;
-    },
-    onObjectXCollision: function(callback) {
-      this.objectXCollisionCallback = callback;
-      return this;
-    },
-    onObjectYCollision: function(callback) {
-      this.objectYCollisionCallback = callback;
-      return this;
     },
     onCollisionsDone: function(callback) {
       this.collisionsDoneCallback = callback;
