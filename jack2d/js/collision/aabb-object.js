@@ -6,14 +6,12 @@ jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper,
   'use strict';
 
   function resetCollisionVars(sourceObject) {
-    sourceObject.borderCollisionBottom = false;
-    sourceObject.borderCollisionLeft = false;
-    sourceObject.borderCollisionRight = false;
-    sourceObject.borderCollisionTop = false;
-    sourceObject.objectCollisionLeft = false;
-    sourceObject.objectCollisionRight = false;
-    sourceObject.objectCollisionBottom = false;
-    sourceObject.objectCollisionTop = false;
+    sourceObject.collisionBottom = false;
+    sourceObject.collisionLeft = false;
+    sourceObject.collisionRight = false;
+    sourceObject.collisionTop = false;
+    sourceObject.objectCollision = false;
+    sourceObject.borderCollision = false;
   }
 
   function computeMoveDelta(sourceObject) {
@@ -49,14 +47,13 @@ jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper,
       sourceObject.moveDeltaX = 0;
       if(diffX < 0) {
         sourceObject.alignRight(0);
-        sourceObject.borderCollisionLeft = true;
+        sourceObject.collisionLeft = true;
+        sourceObject.borderCollision = true;
       } else if(diffX > 0) {
         sourceObject.alignLeft(borders.right);
-        sourceObject.borderCollisionRight = true;
+        sourceObject.borderCollision = true;
+        sourceObject.collisionRight = true;
       }
-      /*if(sourceObject.borderXCollisionCallback) {
-       sourceObject.borderXCollisionCallback(diffX);
-       }*/
     }
   }
 
@@ -66,14 +63,13 @@ jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper,
       sourceObject.moveDeltaY = 0;
       if(diffY < 0) {
         sourceObject.alignBottom(0);
-        sourceObject.borderCollisionTop = true;
+        sourceObject.borderCollision = true;
+        sourceObject.collisionTop = true;
       } else if(diffY > 0) {
         sourceObject.alignTop(borders.bottom);
-        sourceObject.borderCollisionBottom = true;
+        sourceObject.borderCollision = true;
+        sourceObject.collisionBottom = true;
       }
-      /*if(sourceObject.borderYCollisionCallback) {
-       sourceObject.borderYCollisionCallback(diffY);
-       }*/
     }
   }
 
@@ -89,14 +85,13 @@ jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper,
       sourceObject.moveDeltaX = 0;
       if(diffX < 0) {
         sourceObject.alignLeft(targetObject.bounds.left);
-        sourceObject.objectCollisionRight = true;
+        sourceObject.objectCollision = true;
+        sourceObject.collisionRight = true;
       } else if(diffX > 0) {
         sourceObject.alignRight(targetObject.bounds.right);
-        sourceObject.objectCollisionLeft = true;
+        sourceObject.objectCollision = true;
+        sourceObject.collisionLeft = true;
       }
-      /*if(sourceObject.objectXCollisionCallback) {
-       sourceObject.objectXCollisionCallback(targetObject, diffX, diffY);
-       }*/
     }
   }
 
@@ -112,14 +107,13 @@ jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper,
       sourceObject.moveDeltaY = 0;
       if(diffY < 0) {
         sourceObject.alignTop(targetObject.bounds.top);
-        sourceObject.objectCollisionBottom = true;
+        sourceObject.objectCollision = true;
+        sourceObject.collisionBottom = true;
       } else if(diffY > 0) {
         sourceObject.alignBottom(targetObject.bounds.bottom);
-        sourceObject.objectCollisionTop = true;
+        sourceObject.objectCollision = true;
+        sourceObject.collisionTop = true;
       }
-      /*if(sourceObject.objectYCollisionCallback) {
-       sourceObject.objectYCollisionCallback(targetObject, diffX, diffY);
-       }*/
     }
   }
 
@@ -137,13 +131,18 @@ jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper,
   }
 
   return obj.mixin([chronoObject, {
-    setWorld: function(collider) {
+    collisions: function(collider, callback) {
       if(!helper.isDefined(collider)) {
         helper.error('Jack2d: AABBObject: collider is not defined.');
       }
       collider.addObject(this);
       this.collider = collider;
-      this.onFrame(this.checkCollisions);
+      this.onFrame(function() {
+        this.checkCollisions();
+        if(callback) {
+          callback.call(this);
+        }
+      }, 'aabb-object');
       return this;
     },
     checkCollisions: function() {

@@ -9,7 +9,7 @@ jack2d('Player', ['obj'], function(Obj) {
     'platformer.PhysicsObject',
     'spriteAnimation',
     'AABBObject',
-    'Flow',
+    'FlowFactory',
     'ActionObject'
   ]);
 });
@@ -23,6 +23,6 @@ jack2d('PlayerFactory', ['Factory', 'Player'], function(Factory, Player) {
     newPlayer.y = 118;
     newPlayer.width = 16;
     newPlayer.height = 32;
-    return newPlayer.init();
+    return newPlayer; //.init();
   };
 });

@@ -5,42 +5,33 @@
 jack2d('platformer.BasePhysicsObject', ['helper', 'obj', 'chronoObject'], function(helper, obj, chronoObject) {
   'use strict';
 
-  function calculateVelocityX(deltaSeconds,
-                              velocityX,
-                              accelerationX,
-                              frictionX,
-                              maxVelocityX) {
-    if(Math.abs(velocityX) < 1) {
-      velocityX = 0;
+  function calculateVelocity(deltaSeconds, velocity, acceleration, friction, maxVelocity) {
+    if(Math.abs(velocity) < 1) {
+      velocity = 0;
     }
 
-    velocityX += accelerationX * deltaSeconds;
-    velocityX *= Math.pow(1 - frictionX, deltaSeconds);
-    velocityX = Math.min(velocityX, maxVelocityX);
-    velocityX = Math.max(velocityX, -maxVelocityX);
+    velocity += acceleration * deltaSeconds;
+    velocity *= Math.pow(1 - friction, deltaSeconds);
+    velocity = Math.min(velocity, maxVelocity);
+    velocity = Math.max(velocity, -maxVelocity);
 
-    return velocityX;
-  }
-
-  function calculateVelocityY(deltaSeconds,
-                              velocityY,
-                              accelerationY,
-                              frictionY,
-                              maxVelocityY) {
-    if(Math.abs(velocityY) < 1) {
-      velocityY = 0;
-    }
-
-    velocityY += accelerationY * deltaSeconds;
-    velocityY *= Math.pow(1 - frictionY, deltaSeconds);
-    velocityY = Math.min(velocityY, maxVelocityY);
-    velocityY = Math.max(velocityY, -maxVelocityY);
-
-    return velocityY;
+    return velocity;
   }
 
   return obj.mixin([chronoObject, {
-    init: function() {
+    /*init: function() {
+      this.velocityX = 0; // pixels/second
+      this.velocityY = 0;
+      this.frictionX = 0.0; // 0.0 (no friction) -> 1.0 (100% friction)
+      this.frictionY = 0.0;
+      this.accelerationX = 0;
+      this.accelerationY = 0;
+      this.maxVelocityX = 500;
+      this.maxVelocityY = 500;
+
+      return this;
+    },*/
+    physics: function(onFrame) {
       this.velocityX = 0; // pixels/second
       this.velocityY = 0;
       this.frictionX = 0.0; // 0.0 (no friction) -> 1.0 (100% friction)
@@ -51,15 +42,20 @@ jack2d('platformer.BasePhysicsObject', ['helper', 'obj', 'chronoObject'], functi
       this.maxVelocityY = 500;
 
       this.onFrame(function(deltaSeconds) {
-        this.velocityX = calculateVelocityX(deltaSeconds,  this.velocityX,
+        //console.log('wtf');
+        //console.log(this.velocityX);
+        this.velocityX = calculateVelocity(deltaSeconds, this.velocityX,
           this.accelerationX, this.frictionX, this.maxVelocityX);
-        this.velocityY = calculateVelocityY(deltaSeconds, this.velocityY,
+        this.velocityY = calculateVelocity(deltaSeconds, this.velocityY,
           this.accelerationY, this.frictionY, this.maxVelocityY);
 
         this.x += Math.round(this.velocityX * deltaSeconds);
         this.y += Math.round(this.velocityY * deltaSeconds);
-      });
 
+        if(onFrame) {
+          onFrame.call(this);
+        }
+      }, 'physics');
       return this;
     }
   }]);

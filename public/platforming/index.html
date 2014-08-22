@@ -9,26 +9,38 @@
   <style>
     #animation { position: absolute; z-index:1; }
     #platform { position: absolute; background-color: green; }
-    #debugContainer {top: 0; right: 0;}
     #colliderContainer {
       position: absolute;
       border: 1px solid black;
-      left: 0;
+      margin: 10px;
+      right: 0;
       width: 400px;
       height: 400px;
+    }
+    #debugContainer {
+      position: absolute;
+      font-family: courier, sans-serif;
+      background-color: rgba(0,0,0,0.7);
+      color: #ffffff;
+      margin: 0;
+      padding: 10px;
+      z-index: 99999;
+      border: 2px solid #222222;
     }
   </style>
   <script>
     var player;
     $(document).ready(function() {
       'use strict';
-
+      //jack2d.log = false;
       var CELL_SIZE = 100,
         NUM_CELLS = 4,
         WORLD_SIZE = CELL_SIZE * NUM_CELLS;
 
       var $animation = $('#animation'),
         animationContext = $animation[0].getContext('2d'),
+        Chrono = jack2d('chrono'),
+        helper = jack2d('helper'),
         Obj = jack2d('obj'),
         Input = jack2d('input'),
         FLiveElement = jack2d('LiveElementFactory'),
@@ -51,52 +63,76 @@
 
       Debug.
         el('#debugContainer').
-        livePrint(function(print) {
-          print('pos', 'Pos: ' + player.x + ', ' + player.y);
-          print('ground', 'Gnd: ' + player.onGround);
-          print('border', 'Bor: ' + player.borderCollisionBottom);
-          print('object', 'Obj: ' + player.objectCollisionBottom);
-          print('left', 'Lft: ' + player.left);
-          print('vel', 'Vel: ' + player.velocityX.toFixed(2) + ', ' + player.velocityY.toFixed(2));
+        livePrint(function() {
+          this.
+            print('fps', 'FPS: ' + Chrono.getFps()).
+            printObject(player);
         });
 
       function idle(velocityX) {
-        return (Math.abs(velocityX) < 30)
+        return (Math.abs(velocityX) < 30);
+      }
+
+      function movingLeft(velocityX) {
+        return (velocityX <= -30);
+      }
+
+      function movingRight(velocityX) {
+        return (velocityX >= 30);
       }
 
       player.
         loadSpriteSheet('img/player48.png').
-        setFrictionX(0.99).
-        setMaxVelocityX(150).
-        setMaxVelocityY(300).
-        setAccelerationY(500).
-        setWorld(world).
-        when('objectCollisionBottom').
-          set('onGround', true).
-        when('borderCollisionBottom').
-          set('onGround', true).
-        whenNot('objectCollisionBottom').
-          andNot('borderCollisionBottom').
-          set('onGround', false).
-        whenNot('onGround').
-          call('playSequence', 1).
-        when('left').
-          and('onGround').
-          set('velocityX', -100).
-          call('playSequence', 2, 'left').
-        when('right').
-          and('onGround').
-          set('velocityX', 100).
-          call('playSequence', 2, 'right').
-        when('velocityX', idle).
-          and('onGround').
-          call('playSequence', 0).
-        when('up').
-          and('onGround').
-          set('velocityY', -250).
-        action('left', {key: Input.LEFT}).
-        action('right', {key: Input.RIGHT}).
-        action('up', {key: Input.UP}).
+        actions(function() {
+        }).
+          action('left', {key: Input.LEFT}).
+          action('right', {key: Input.RIGHT}).
+          action('up', {key: Input.UP}).
+          flow().
+            when('left').
+              set('velocityX', -100).
+              run(function() {
+                console.log('b ' + this.velocityX);
+              }).
+            when('right').
+              set('velocityX', 100).
+            when('up').and('onGround').
+              set('velocityY', -250).
+            done().
+
+        physics(function() {
+        }).
+          setFrictionX(0.99).
+          setMaxVelocityX(150).
+          setMaxVelocityY(300).
+          setAccelerationY(500).
+
+        collisions(world, function() {
+        }).
+          flow().
+            when('collisionBottom').
+              set('onGround', true).
+            whenNot('collisionBottom').
+              set('onGround', false).
+            when('collisionLeft').
+              set('velocityX', 0).
+            when('collisionRight').
+              set('velocityX', 0).
+            done().
+
+        flow().
+          when('velocityX', movingLeft).and('onGround').
+            call('playSequence', 2, 'left').
+          when('velocityX', movingRight).and('onGround').
+            call('playSequence', 2, 'right').
+          when('velocityX', idle).and('onGround').
+            call('playSequence', 0).
+          whenNot('onGround').
+            call('playSequence', 1).
+          done().
+
+        initAnimation().
+        // Set animations
         onAnimationFrame(function() {
           var frame = this.getCurrentFrame();
           if(frame) {
@@ -104,15 +140,13 @@
             animationContext.drawImage(frame, 0, 0);
           }
         }).
+
         onFrame(function() {
           $animation.
             css('left', this.x - 16).
             css('top', this.y - 16);
+        }, 'visual-position');
 
-          /*if(Math.abs(this.velocityX) < 30 && Math.abs(this.velocityY) === 0) {
-            this.playSequence(0);
-          }*/
-        });
     });
   </script>
 </head>

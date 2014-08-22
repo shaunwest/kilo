@@ -7,7 +7,6 @@
     <option eqeqeq="true" />
     <option es3="false" />
     <option forin="true" />
-    <option freeze="false" />
     <option immed="false" />
     <option newcap="false" />
     <option noarg="true" />
@@ -19,7 +18,6 @@
     <option trailing="false" />
     <option latedef="false" />
     <option unused="false" />
-    <option quotmark="false" />
     <option asi="false" />
     <option boss="false" />
     <option debug="false" />
@@ -34,9 +32,7 @@
     <option laxbreak="false" />
     <option laxcomma="false" />
     <option loopfunc="false" />
-    <option moz="false" />
     <option multistr="false" />
-    <option notypeof="false" />
     <option proto="false" />
     <option scripturl="false" />
     <option smarttabs="false" />
@@ -52,7 +48,6 @@
     <option mootools="false" />
     <option node="false" />
     <option nonstandard="false" />
-    <option phantom="false" />
     <option prototypejs="false" />
     <option rhino="false" />
     <option worker="false" />

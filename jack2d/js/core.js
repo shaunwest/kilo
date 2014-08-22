@@ -14,10 +14,12 @@ var jack2d = (function() {
   helper = {
     isDefined: function(value) { return (typeof value !== 'undefined'); },
     isObject: function(value) { return (value !== null && typeof value === 'object'); },
+    isBoolean: function(value) { return (typeof value === 'boolean'); },
     def: function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; },
     error: function(message) { throw new Error(message); },
     warn: function(message) { console.error(message); },
     info: function(message) { console.log(message); },
+    log: function(message) { if(jack2d.log) { console.log(message); } },
     call: function(context, func) { // TODO: move to Func
       var args = Array.prototype.slice.call(arguments, 2);
       return function() {
@@ -96,6 +98,8 @@ var jack2d = (function() {
 
     return null;
   };
+
+  jack2d.log = true;
 
   return jack2d;
 })();

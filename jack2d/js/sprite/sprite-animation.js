@@ -25,7 +25,7 @@ jack2d('spriteAnimation', ['helper', 'obj', 'chrono'], function(helper, obj, chr
         } else {
           this.currentStep += (deltaSeconds * chrono.getWholeMultiplier());
         }
-      });
+      }, 'sprite-animation');
       return this;
     },
 
@@ -70,9 +70,9 @@ jack2d('spriteAnimation', ['helper', 'obj', 'chrono'], function(helper, obj, chr
     },
 
     playSequence: function(frameSetIndex, direction) {
-      if(!this.animationReady) {
+      /*if(!this.animationReady) {
         this.initAnimation();
-      }
+      }*/
       if(!helper.isDefined(direction)) {
         direction = this.direction;
       }

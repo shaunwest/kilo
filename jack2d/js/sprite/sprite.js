@@ -48,6 +48,10 @@ function(helper, spriteSheetParser, imageLoader) {
       }
       return null;
     },
+    setDelay: function(value) {
+      this.delay = value;
+      return this;
+    },
     getDelay: function() {
       return this.delay;
     },
