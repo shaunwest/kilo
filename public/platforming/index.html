@@ -37,6 +37,7 @@
         NUM_CELLS = 4,
         WORLD_SIZE = CELL_SIZE * NUM_CELLS;
 
+
       var $animation = $('#animation'),
         animationContext = $animation[0].getContext('2d'),
         Chrono = jack2d('chrono'),
@@ -44,6 +45,7 @@
         Obj = jack2d('obj'),
         Input = jack2d('input'),
         FLiveElement = jack2d('LiveElementFactory'),
+        Player = jack2d('Player'),
         FPlayer = jack2d('PlayerFactory'),
         Debug = jack2d('debug');
 
@@ -82,7 +84,7 @@
       }
 
       player.
-        loadSpriteSheet('img/player48.png').
+        loadSpriteSheet('img/miyamoto.png').
         actions(function() {
         }).
           action('left', {key: Input.LEFT}).
@@ -91,12 +93,9 @@
           flow().
             when('left').
               set('velocityX', -100).
-              run(function() {
-                console.log('b ' + this.velocityX);
-              }).
             when('right').
               set('velocityX', 100).
-            when('up').and('onGround').
+            when('up').and('canJump').
               set('velocityY', -250).
             done().
 
@@ -112,6 +111,10 @@
           flow().
             when('collisionBottom').
               set('onGround', true).
+            when('onGround').andNot('up').
+              set('canJump', true).
+            whenNot('onGround').
+              set('canJump', false).
             whenNot('collisionBottom').
               set('onGround', false).
             when('collisionLeft').
@@ -120,26 +123,26 @@
               set('velocityX', 0).
             done().
 
-        flow().
-          when('velocityX', movingLeft).and('onGround').
-            call('playSequence', 2, 'left').
-          when('velocityX', movingRight).and('onGround').
-            call('playSequence', 2, 'right').
-          when('velocityX', idle).and('onGround').
-            call('playSequence', 0).
-          whenNot('onGround').
-            call('playSequence', 1).
-          done().
-
-        initAnimation().
-        // Set animations
-        onAnimationFrame(function() {
-          var frame = this.getCurrentFrame();
-          if(frame) {
-            animationContext.clearRect(0, 0, 48, 48);
-            animationContext.drawImage(frame, 0, 0);
-          }
-        }).
+        animate().
+          flow().
+            when('velocityX', movingLeft).
+              set('direction', 'left').
+            when('velocityX', movingRight).
+              set('direction', 'right').
+            when('onGround').
+              call('playSequence', Player.RUN).
+            when('onGround').and('velocityX', idle).
+              call('playSequence', Player.IDLE).
+            whenNot('onGround').
+              call('playSequence', Player.JUMP).
+            done().
+          onAnimationFrame(function() {
+            var frame = this.getCurrentFrame();
+            if(frame) {
+              animationContext.clearRect(0, 0, 48, 48);
+              animationContext.drawImage(frame, 0, 0);
+            }
+          }).
 
         onFrame(function() {
           $animation.

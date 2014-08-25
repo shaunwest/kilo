@@ -57,15 +57,6 @@ jack2d('ActionObject', ['obj', 'input', 'helper'], function(Obj, Input, Helper) 
       return this;
     },
     action: function(actionId, actionConfigOrCallback, callback) {
-      /*if(!this.keyActions) {
-        this.keyActions = [];
-        this.onFrame(function() {
-          this.inputs = Input.getInputs();
-          this.inputsEnded = Input.getInputsEnded();
-          this.inputSequence = Input.getSequence();
-          onInputUpdate(this, this.keyActions);
-        }, 'action-object');
-      }*/
       if(Helper.isFunction(actionConfigOrCallback)) {
         callback = actionConfigOrCallback;
         actionConfigOrCallback = {};

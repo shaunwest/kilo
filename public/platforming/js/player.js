@@ -5,13 +5,19 @@
 jack2d('Player', ['obj'], function(Obj) {
   'use strict';
 
-  return Obj.mixin([
+  var Player = Obj.mixin([
     'platformer.PhysicsObject',
     'spriteAnimation',
     'AABBObject',
     'FlowFactory',
     'ActionObject'
   ]);
+
+  Player.IDLE = 0;
+  Player.JUMP = 1;
+  Player.RUN = 2;
+
+  return Player;
 });
 
 jack2d('PlayerFactory', ['Factory', 'Player'], function(Factory, Player) {
@@ -23,6 +29,6 @@ jack2d('PlayerFactory', ['Factory', 'Player'], function(Factory, Player) {
     newPlayer.y = 118;
     newPlayer.width = 16;
     newPlayer.height = 32;
-    return newPlayer; //.init();
+    return newPlayer;
   };
 });

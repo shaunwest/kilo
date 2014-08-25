@@ -39,9 +39,14 @@ jack2d('Flow', ['helper', 'obj'], function(Helper, Obj) {
     numAnds = ands.length;
     for(i = 0; i < numAnds; i++) {
       and = ands[i];
-      if(and.isFunc && !and.value(target[and.prop]) ||
-        target[and.prop] !== and.value) {
-        return false;
+      if(and.isFunc) {
+        if(!and.value(target[and.prop])) {
+          return false;
+        }
+      } else {
+        if(target[and.prop] !== and.value) {
+          return false;
+        }
       }
     }
     return true;

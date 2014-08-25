@@ -19,18 +19,6 @@ jack2d('platformer.BasePhysicsObject', ['helper', 'obj', 'chronoObject'], functi
   }
 
   return obj.mixin([chronoObject, {
-    /*init: function() {
-      this.velocityX = 0; // pixels/second
-      this.velocityY = 0;
-      this.frictionX = 0.0; // 0.0 (no friction) -> 1.0 (100% friction)
-      this.frictionY = 0.0;
-      this.accelerationX = 0;
-      this.accelerationY = 0;
-      this.maxVelocityX = 500;
-      this.maxVelocityY = 500;
-
-      return this;
-    },*/
     physics: function(onFrame) {
       this.velocityX = 0; // pixels/second
       this.velocityY = 0;
@@ -42,8 +30,6 @@ jack2d('platformer.BasePhysicsObject', ['helper', 'obj', 'chronoObject'], functi
       this.maxVelocityY = 500;
 
       this.onFrame(function(deltaSeconds) {
-        //console.log('wtf');
-        //console.log(this.velocityX);
         this.velocityX = calculateVelocity(deltaSeconds, this.velocityX,
           this.accelerationX, this.frictionX, this.maxVelocityX);
         this.velocityY = calculateVelocity(deltaSeconds, this.velocityY,
