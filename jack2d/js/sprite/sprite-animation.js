@@ -7,7 +7,7 @@ jack2d('spriteAnimation', ['helper', 'obj', 'chrono'], function(helper, obj, chr
 
   return obj.mixin(['chronoObject', 'sprite', {
     animate: function() {
-      this.direction = 'left';
+      this.direction = 0; //'left';
       this.frameSetIndex = -1;
       this.animationReady = true;
       this.stop();
@@ -33,7 +33,7 @@ jack2d('spriteAnimation', ['helper', 'obj', 'chrono'], function(helper, obj, chr
       this.onSequenceComplete = null;
       this.onAnimationChange = null;
       this.onFrameComplete = null;
-      this.initAnimation();
+      this.animate();
       return this;
     },
 

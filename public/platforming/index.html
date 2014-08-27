@@ -35,7 +35,9 @@
       //jack2d.log = false;
       var CELL_SIZE = 100,
         NUM_CELLS = 4,
-        WORLD_SIZE = CELL_SIZE * NUM_CELLS;
+        WORLD_SIZE = CELL_SIZE * NUM_CELLS,
+        DIR_LEFT = 0,
+        DIR_RIGHT = 1;
 
 
       var $animation = $('#animation'),
@@ -85,8 +87,7 @@
 
       player.
         loadSpriteSheet('img/miyamoto.png').
-        actions(function() {
-        }).
+        actions().
           action('left', {key: Input.LEFT}).
           action('right', {key: Input.RIGHT}).
           action('up', {key: Input.UP}).
@@ -99,15 +100,13 @@
               set('velocityY', -250).
             done().
 
-        physics(function() {
-        }).
+        physics().
           setFrictionX(0.99).
           setMaxVelocityX(150).
           setMaxVelocityY(300).
           setAccelerationY(500).
 
-        collisions(world, function() {
-        }).
+        collisions(world).
           flow().
             when('collisionBottom').
               set('onGround', true).
@@ -126,9 +125,9 @@
         animate().
           flow().
             when('velocityX', movingLeft).
-              set('direction', 'left').
+              set('direction', DIR_RIGHT).
             when('velocityX', movingRight).
-              set('direction', 'right').
+              set('direction', DIR_LEFT).
             when('onGround').
               call('playSequence', Player.RUN).
             when('onGround').and('velocityX', idle).

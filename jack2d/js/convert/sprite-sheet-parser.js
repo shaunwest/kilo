@@ -41,7 +41,8 @@ jack2d('spriteSheetParser', ['appConfig'], function(appConfig) {
         spriteContext.scale(-1, 1);
       }
       spriteContext.drawImage(
-        sourceAsset, i * spriteWidth, row * spriteHeight,
+        sourceAsset,
+        i * spriteWidth, row * spriteHeight,
         spriteWidth, spriteHeight,
         0, 0,
         spriteWidth, spriteHeight

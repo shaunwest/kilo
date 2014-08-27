@@ -6,11 +6,13 @@
  */
 
 jack2d('sprite',
-['helper', 'spriteSheetParser', 'imageLoader'],
-function(helper, spriteSheetParser, imageLoader) {
+['helper', 'spriteSheetParser', 'imageLoader', 'FrameSet'],
+function(helper, spriteSheetParser, imageLoader, FrameSet) {
   'use strict';
 
-  var DEFAULT_DELAY = 5;
+  var DEFAULT_DELAY = 5,
+    DEFAULT_WIDTH = 48,
+    DEFAULT_HEIGHT = 48;
 
   return {
     loadSpriteSheet: function(spriteSheetPath) {
@@ -20,8 +22,8 @@ function(helper, spriteSheetParser, imageLoader) {
       imageLoader.loadPath(spriteSheetPath).
         then(helper.call(this, function(image) {
           this.spriteSheet = image;
-          this.frameSet = spriteSheetParser.parse(image);
-          this.frameSetReversed = spriteSheetParser.parse(image, true);
+          this.frameSet = new FrameSet(spriteSheetParser.parse(image), DEFAULT_WIDTH, DEFAULT_HEIGHT);
+          //this.frameSetReversed = spriteSheetParser.parse(image, true);
           this.spriteSheetLoaded = true;
           if(helper.isFunction(this.spriteSheetReady)) {
             this.spriteSheetReady(this);
@@ -42,9 +44,10 @@ function(helper, spriteSheetParser, imageLoader) {
     getSpriteSheet: function() {
       return this.spriteSheet;
     },
-    getFrameSet: function(direction) {
+    getFrameSet: function(flipped) {
       if(this.spriteSheetLoaded) {
-        return (direction === 'right') ? this.frameSetReversed : this.frameSet;
+        //return (direction === 'right') ? this.frameSetReversed : this.frameSet;
+        return this.frameSet.getFrames(flipped);
       }
       return null;
     },
