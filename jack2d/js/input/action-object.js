@@ -44,7 +44,11 @@ jack2d('ActionObject', ['obj', 'input', 'helper'], function(Obj, Input, Helper) 
   return Obj.mixin(['chronoObject', {
     actions: function(onFrame) {
       this.keyActions = [];
+      this.allowActions = true;
       this.onFrame(function() {
+        if(!this.allowActions) {
+          return;
+        }
         this.inputs = Input.getInputs();
         this.inputsEnded = Input.getInputsEnded();
         this.inputSequence = Input.getSequence();

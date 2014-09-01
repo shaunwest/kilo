@@ -52,6 +52,7 @@ module.exports = function(grunt) {
             '<%= coreJs %>/collision/**/*.js',
             '<%= coreJs %>/convert/**/*.js',
             '<%= coreJs %>/sprite/**/*.js',
+            '<%= coreJs %>/tile/**/*.js',
             '<%= coreJs %>/ui/**/*.js',
             '<%= coreJs %>/flow/**/*.js',
             '<%= coreJs %>/physics-platformer/**/*.js'

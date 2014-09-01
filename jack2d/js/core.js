@@ -20,6 +20,7 @@ var jack2d = (function() {
     warn: function(message) { console.error(message); },
     info: function(message) { console.log(message); },
     log: function(message) { if(jack2d.log) { console.log(message); } },
+    argsToArray: function(args) { return Array.prototype.slice.call(args); },
     call: function(context, func) { // TODO: move to Func
       var args = Array.prototype.slice.call(arguments, 2);
       return function() {

@@ -49,6 +49,7 @@
         FLiveElement = jack2d('LiveElementFactory'),
         Player = jack2d('Player'),
         FPlayer = jack2d('PlayerFactory'),
+        controls = jack2d('Player.controls'),
         Debug = jack2d('debug');
 
       player = FPlayer();
@@ -85,20 +86,17 @@
         return (velocityX >= 30);
       }
 
+      // 1. patterns for effective flows. would be nice if it worked better with auto format
+      // 2. how to handle multiple "modes" of play DONE?
+      // 3. automation DONE?
       player.
         loadSpriteSheet('img/miyamoto.png').
         actions().
           action('left', {key: Input.LEFT}).
           action('right', {key: Input.RIGHT}).
           action('up', {key: Input.UP}).
-          flow().
-            when('left').
-              set('velocityX', -100).
-            when('right').
-              set('velocityX', 100).
-            when('up').and('canJump').
-              set('velocityY', -250).
-            done().
+          action('down', {key: Input.DOWN}).
+          flowInclude(controls).
 
         physics().
           setFrictionX(0.99).
@@ -110,16 +108,37 @@
           flow().
             when('collisionBottom').
               set('onGround', true).
-            when('onGround').andNot('up').
-              set('canJump', true).
-            whenNot('onGround').
-              set('canJump', false).
             whenNot('collisionBottom').
               set('onGround', false).
             when('collisionLeft').
               set('velocityX', 0).
             when('collisionRight').
               set('velocityX', 0).
+            done().
+
+          flow().
+            when('onGround').and('down').
+              set('ducking', true).
+            when('onGround').andNot('down').
+              set('ducking', false).
+            when('onGround').andNot('up').
+              set('canJump', true).
+            whenNot('onGround').
+              set('canJump', false).
+            done().
+
+          flow().
+            when('autoWalk').
+              set('velocityX', -100).
+              set('allowActions', false).
+            when('x', function(x) { return (x <= 48) }).
+              set('autoWalk', false).
+              set('allowActions', true).
+            done().
+
+          flowWhen('fooMode').
+            whenNot('onGround').
+              run(function() { console.log('foo!') }).
             done().
 
         animate().
@@ -132,6 +151,8 @@
               call('playSequence', Player.RUN).
             when('onGround').and('velocityX', idle).
               call('playSequence', Player.IDLE).
+            when('ducking').
+              call('playSequence', Player.DUCK).
             whenNot('onGround').
               call('playSequence', Player.JUMP).
             done().

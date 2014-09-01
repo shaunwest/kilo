@@ -16,6 +16,7 @@ jack2d('Player', ['obj'], function(Obj) {
   Player.IDLE = 0;
   Player.JUMP = 1;
   Player.RUN = 2;
+  Player.DUCK = 3;
 
   return Player;
 });
@@ -31,4 +32,20 @@ jack2d('PlayerFactory', ['Factory', 'Player'], function(Factory, Player) {
     newPlayer.height = 32;
     return newPlayer;
   };
+});
+
+jack2d('Player.controls', ['Flow', 'Factory'], function(Flow, Factory) {
+  'use strict';
+
+  return Factory(Flow).
+    when('left').andNot('ducking').
+      set('velocityX', -100).
+    when('right').andNot('ducking').
+      set('velocityX', 100).
+    when('up').and('canJump').
+      set('velocityY', -250);
+});
+
+jack2d('Player.stuff', ['Flow', 'Factory'], function(Flow, Factory) {
+  'use strict';
 });
