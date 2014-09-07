@@ -1,80 +1,78 @@
 /**
- * Created by Shaun on 6/22/14.
+ * Created by Shaun on 9/3/14.
  */
 
-jack2d('proxy', ['helper'], function(helper) {
+jack2d('Proxy', ['helper'], function(Helper) {
   'use strict';
 
-  var deferredObjects,
-    lastDeferredId;
+  function Proxy(targetObject, methodQueue, resultList) {
+    var proxyObject;
 
-  init();
+    methodQueue = methodQueue || [];
+    resultList = resultList || [];
 
-  function init() {
-    reset();
+    proxyObject = augmentMethods(targetObject, methodQueue, resultList); //, interceptor);
+    proxyObject.targetObject = targetObject;
+    proxyObject.set = augmentMethod(methodQueue, resultList, function(key, value) {
+      this[key] = value;
+      return this;
+    }, targetObject); //, interceptor);
+
+    return proxyObject;
   }
 
-  function reset() {
-    deferredObjects = {};
-    lastDeferredId = 0;
-  }
-
-  function defer(objOrFunc) {
-    if(helper.isFunction(objOrFunc)){
-      return deferFunction(objOrFunc);
-    } else {
-      return deferObject(objOrFunc);
-    }
-  }
-
-  function deferObject(obj) {
-    Object.keys(obj).forEach(function(prop) {
-      if(!helper.isFunction(obj[prop])) {
+  function augmentMethods(targetObject, methodQueue, resultList) {
+    var proxyObject = {
+      methodQueue: methodQueue,
+      resultList: resultList
+    };
+    Object.keys(targetObject).forEach(function(prop) {
+      if(!Helper.isFunction(targetObject[prop])) {
         return;
       }
-      obj[prop] = deferFunction(obj[prop]);
+      proxyObject[prop] = augmentMethod(methodQueue, resultList, targetObject[prop], targetObject); //, interceptor);
     });
-
-    return obj;
+    return proxyObject;
   }
 
-  function deferFunction(func) {
-    if(!helper.isFunction(func)) {
-      return func;
-    }
-    // this function gets called as a method of an object
-    // therefore 'this' refers to the object
+  function augmentMethod(methodQueue, resultList, method, context) {
     return function() {
-      if(!this.executedDeferred) {
-        if(!this.deferredId) {
-          this.deferredId = ++lastDeferredId;
-          deferredObjects[this.deferredId] = [];
-        }
-        // this is to avoid using new objects (that would need to be GC'd)
-        deferredObjects[this.deferredId].push(func);
-        deferredObjects[this.deferredId].push(arguments);
+      var methodData = {method: method, args: Helper.argsToArray(arguments), context: context};
+      /*if(interceptor) {
+        interceptor(methodData);
+      }*/
+      if(methodQueue.length === 0) {
+        methodQueue.push(methodData);
+        executeMethodQueue(methodQueue, resultList);
       } else {
-        return func.apply(this, arguments);
+        methodQueue.push(methodData);
       }
       return this;
     };
   }
 
-  function executeDeferred(context) {
-    var deferredFunctions = deferredObjects[context.deferredId],
-      func, args;
+  // should something be done with result?
+  function executeMethodQueue(methodQueue, resultList) {
+    var methodData, result;
 
-    while(deferredFunctions.length > 0) {
-      func = deferredFunctions.shift();
-      args = deferredFunctions.shift();
-      func.apply(context, args);
+    methodData = methodQueue[0];
+    if(!methodData) {
+      return;
     }
 
-    context.executedDeferred = true;
+    result = methodData.method.apply(methodData.context, methodData.args);
+    resultList.push(result);
+
+    if(result && result.then) {
+      result.then(function(data) {
+        methodQueue.shift();
+        executeMethodQueue(methodQueue, resultList);
+      });
+    } else {
+      methodQueue.shift();
+      executeMethodQueue(methodQueue, resultList);
+    }
   }
 
-  return {
-    defer: defer,
-    executeDeferred: executeDeferred
-  };
+  return Proxy;
 });

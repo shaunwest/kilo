@@ -60,6 +60,8 @@ jack2d('TileLayer', ['helper'], function(Helper) {
     },
     setTileSet: function(value) {
       this.tileSet = value;
+      this.tileWidth = this.tileSet.tileWidth;
+      this.tileHeight = this.tileSet.tileHeight;
       return this;
     },
     setTileWidth: function(value) {

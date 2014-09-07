@@ -5,16 +5,37 @@
 jack2d('TileSet', ['imageLoader', 'tileConverter'], function(imageLoader, tileConverter) {
   'use strict';
 
-  return {
-    loadTileSet: function(sources) {
-      var tileGroups, promises = [];
+  var DEFAULT_TILE_SIZE = 16;
 
+  return {
+    setTileWidth: function(value) {
+      this.tileWidth = value;
+      return this;
+    },
+    setTileHeight: function(value) {
+      this.tileHeight = value;
+      return this;
+    },
+    getTileHeight: function() {
+      return this.tileHeight;
+    },
+    getTileWidth: function() {
+      return this.tileWidth;
+    },
+    test: function() {
+      return new Promise(function() {});
+    },
+    loadTileSet: function(sources) {
+      var tileGroups, tileWidth, tileHeight, promises = [];
+
+      tileWidth = (this.tileWidth) ? this.tileWidth : this.tileWidth = DEFAULT_TILE_SIZE;
+      tileHeight = (this.tileHeight) ? this.tileHeight : this.tileHeight = DEFAULT_TILE_SIZE;
       tileGroups = (this.tileGroups) ? this.tileGroups : this.tileGroups = {};
 
       sources.forEach(function(tileGroupSource) {
         var promise = imageLoader.loadPath(tileGroupSource.path);
         promise.then(function(image) {
-          tileGroups[tileGroupSource.id] = tileConverter.makeTiles(image);
+          tileGroups[tileGroupSource.id] = tileConverter.makeTiles(image, tileWidth, tileHeight);
         });
         promises.push(promise);
       });

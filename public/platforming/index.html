@@ -30,9 +30,13 @@
   </style>
   <script>
     var player;
+    var playerFlow;
     $(document).ready(function() {
       'use strict';
       //jack2d.log = false;
+
+
+
       var CELL_SIZE = 100,
         NUM_CELLS = 4,
         WORLD_SIZE = CELL_SIZE * NUM_CELLS,
@@ -50,6 +54,7 @@
         Player = jack2d('Player'),
         FPlayer = jack2d('PlayerFactory'),
         controls = jack2d('Player.controls'),
+        Flow = jack2d('Flow'),
         Debug = jack2d('debug');
 
       player = FPlayer();
@@ -66,8 +71,8 @@
         setWorldBounds(WORLD_SIZE).
         addObjects(platform);
 
-      Debug.
-        el('#debugContainer').
+      Flow(Debug).
+        elPromise('#debugContainer').
         livePrint(function() {
           this.
             print('fps', 'FPS: ' + Chrono.getFps()).
@@ -89,14 +94,21 @@
       // 1. patterns for effective flows. would be nice if it worked better with auto format
       // 2. how to handle multiple "modes" of play DONE?
       // 3. automation DONE?
-      player.
+      playerFlow = Flow(player).
         loadSpriteSheet('img/miyamoto.png').
         actions().
           action('left', {key: Input.LEFT}).
           action('right', {key: Input.RIGHT}).
           action('up', {key: Input.UP}).
           action('down', {key: Input.DOWN}).
-          flowInclude(controls).
+          //flowInclude(controls).
+        when('left').andNot('ducking').
+        set('velocityX', -100).
+        when('right').andNot('ducking').
+        set('velocityX', 100).
+        when('up').and('canJump').
+        set('velocityY', -250).
+        done().
 
         physics().
           setFrictionX(0.99).
@@ -105,7 +117,7 @@
           setAccelerationY(500).
 
         collisions(world).
-          flow().
+          //flow().
             when('collisionBottom').
               set('onGround', true).
             whenNot('collisionBottom').
@@ -114,9 +126,9 @@
               set('velocityX', 0).
             when('collisionRight').
               set('velocityX', 0).
-            done().
+            //done().
 
-          flow().
+          //flow().
             when('onGround').and('down').
               set('ducking', true).
             when('onGround').andNot('down').
@@ -125,9 +137,9 @@
               set('canJump', true).
             whenNot('onGround').
               set('canJump', false).
-            done().
+            //done().
 
-          flow().
+          //flow().
             when('autoWalk').
               set('velocityX', -100).
               set('allowActions', false).
@@ -136,13 +148,13 @@
               set('allowActions', true).
             done().
 
-          flowWhen('fooMode').
+          /*flowWhen('fooMode').
             whenNot('onGround').
               run(function() { console.log('foo!') }).
-            done().
+            done().*/
 
         animate().
-          flow().
+          //flow().
             when('velocityX', movingLeft).
               set('direction', DIR_RIGHT).
             when('velocityX', movingRight).

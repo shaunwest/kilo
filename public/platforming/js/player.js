@@ -9,7 +9,7 @@ jack2d('Player', ['obj'], function(Obj) {
     'platformer.PhysicsObject',
     'spriteAnimation',
     'AABBObject',
-    'FlowFactory',
+    //'FlowFactory',
     'ActionObject'
   ]);
 
@@ -34,10 +34,10 @@ jack2d('PlayerFactory', ['Factory', 'Player'], function(Factory, Player) {
   };
 });
 
-jack2d('Player.controls', ['Flow', 'Factory'], function(Flow, Factory) {
+jack2d('Player.controls', ['FlowObject', 'Factory'], function(FlowObject, Factory) {
   'use strict';
 
-  return Factory(Flow).
+  return Factory(FlowObject).
     when('left').andNot('ducking').
       set('velocityX', -100).
     when('right').andNot('ducking').
@@ -46,6 +46,6 @@ jack2d('Player.controls', ['Flow', 'Factory'], function(Flow, Factory) {
       set('velocityY', -250);
 });
 
-jack2d('Player.stuff', ['Flow', 'Factory'], function(Flow, Factory) {
+jack2d('Player.stuff', ['FlowObject', 'Factory'], function(FlowObject, Factory) {
   'use strict';
 });
