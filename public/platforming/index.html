@@ -54,7 +54,7 @@
         Player = jack2d('Player'),
         FPlayer = jack2d('PlayerFactory'),
         controls = jack2d('Player.controls'),
-        Flow = jack2d('FlowPOC'),
+        Flow = jack2d('Flow'),
         Debug = jack2d('debug');
 
       player = FPlayer();
@@ -102,7 +102,7 @@
           action('up', {key: Input.UP}).
           action('down', {key: Input.DOWN}).
           //flowInclude(controls).
-        commit().
+        //commit().
         when('left').andNot('ducking').
           set('velocityX', -100).
         when('right').andNot('ducking').
@@ -119,7 +119,7 @@
 
         collisions(world).
           //flow().
-          commit().
+          //commit().
             when('collisionBottom').
               set('onGround', true).
             whenNot('collisionBottom').
@@ -139,7 +139,7 @@
               set('canJump', true).
             whenNot('onGround').
               set('canJump', false).
-            //done().
+            done().
           //flow().
             /*when('autoWalk').
               set('velocityX', -100).
@@ -155,7 +155,7 @@
 
         animate().
           //flow().
-        commit().
+        //commit().
             when('velocityX', movingLeft).
               set('direction', DIR_RIGHT).
             when('velocityX', movingRight).

@@ -11,10 +11,9 @@
       jack2d([
         'Factory',
         'Flow',
-        'FlowPOC',
         'TileSet',
         'TileLayer',
-        'CanvasViewport'], function(Factory, Flow, FlowPOC, TileSet, TileLayer, CanvasViewport) {
+        'CanvasViewport'], function(Factory, Flow, TileSet, TileLayer, CanvasViewport) {
 
         treeTiles = Factory(TileSet);
         viewport = Factory(CanvasViewport);
@@ -159,7 +158,7 @@
               set('hello', true).
               myFunc();*/
 
-        FlowPOC(treeTiles).
+        test = Flow(treeTiles).
           setTileWidth(16).
           setTileHeight(16).
           when('foo').
