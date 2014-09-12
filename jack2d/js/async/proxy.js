@@ -13,10 +13,10 @@ jack2d('Proxy', ['helper'], function(Helper) {
 
     proxyObject = augmentMethods(targetObject, methodQueue, resultList); //, interceptor);
     proxyObject.targetObject = targetObject;
-    proxyObject.set = augmentMethod(methodQueue, resultList, function(key, value) {
+    /*proxyObject.set = augmentMethod(methodQueue, resultList, function(key, value) {
       this[key] = value;
       return this;
-    }, targetObject); //, interceptor);
+    }, targetObject); //, interceptor);*/
 
     return proxyObject;
   }
@@ -50,6 +50,7 @@ jack2d('Proxy', ['helper'], function(Helper) {
       return this;
     };
   }
+  Proxy.augmentMethod = augmentMethod;
 
   // should something be done with result?
   function executeMethodQueue(methodQueue, resultList) {

@@ -54,7 +54,7 @@
         Player = jack2d('Player'),
         FPlayer = jack2d('PlayerFactory'),
         controls = jack2d('Player.controls'),
-        Flow = jack2d('Flow'),
+        Flow = jack2d('FlowPOC'),
         Debug = jack2d('debug');
 
       player = FPlayer();
@@ -66,8 +66,8 @@
       platform.height = 50;
 
       var world = Obj.mixin(['collider', 'canvas']).
-        el('#visualCollider').
-        checkerBackground().
+        //el('#visualCollider').
+        //checkerBackground().
         setWorldBounds(WORLD_SIZE).
         addObjects(platform);
 
@@ -102,12 +102,13 @@
           action('up', {key: Input.UP}).
           action('down', {key: Input.DOWN}).
           //flowInclude(controls).
+        commit().
         when('left').andNot('ducking').
-        set('velocityX', -100).
+          set('velocityX', -100).
         when('right').andNot('ducking').
-        set('velocityX', 100).
+          set('velocityX', 100).
         when('up').and('canJump').
-        set('velocityY', -250).
+          set('velocityY', -250).
         done().
 
         physics().
@@ -118,6 +119,7 @@
 
         collisions(world).
           //flow().
+          commit().
             when('collisionBottom').
               set('onGround', true).
             whenNot('collisionBottom').
@@ -138,16 +140,14 @@
             whenNot('onGround').
               set('canJump', false).
             //done().
-
           //flow().
-            when('autoWalk').
+            /*when('autoWalk').
               set('velocityX', -100).
               set('allowActions', false).
             when('x', function(x) { return (x <= 48) }).
               set('autoWalk', false).
               set('allowActions', true).
-            done().
-
+            done().*/
           /*flowWhen('fooMode').
             whenNot('onGround').
               run(function() { console.log('foo!') }).
@@ -155,18 +155,19 @@
 
         animate().
           //flow().
+        commit().
             when('velocityX', movingLeft).
               set('direction', DIR_RIGHT).
             when('velocityX', movingRight).
               set('direction', DIR_LEFT).
             when('onGround').
-              call('playSequence', Player.RUN).
+              playSequence(Player.RUN).
             when('onGround').and('velocityX', idle).
-              call('playSequence', Player.IDLE).
+              playSequence(Player.IDLE).
             when('ducking').
-              call('playSequence', Player.DUCK).
+              playSequence(Player.DUCK).
             whenNot('onGround').
-              call('playSequence', Player.JUMP).
+              playSequence(Player.JUMP).
             done().
           onAnimationFrame(function() {
             var frame = this.getCurrentFrame();
@@ -175,12 +176,94 @@
               animationContext.drawImage(frame, 0, 0);
             }
           }).
-
         onFrame(function() {
           $animation.
             css('left', this.x - 16).
             css('top', this.y - 16);
         }, 'visual-position');
+
+      /*playerFlow = Flow(player).
+        loadSpriteSheet('img/miyamoto.png').
+        actions().
+        action('left', {key: Input.LEFT}).
+        action('right', {key: Input.RIGHT}).
+        action('up', {key: Input.UP}).
+        action('down', {key: Input.DOWN}).
+        //flowInclude(controls).
+        when('left').andNot('ducking').
+        set('velocityX', -100).
+        when('right').andNot('ducking').
+        set('velocityX', 100).
+        when('up').and('canJump').
+        set('velocityY', -250).
+        done().
+
+        physics().
+        setFrictionX(0.99).
+        setMaxVelocityX(150).
+        setMaxVelocityY(300).
+        setAccelerationY(500).
+
+        collisions(world).
+        //flow().
+        when('collisionBottom').
+        set('onGround', true).
+        whenNot('collisionBottom').
+        set('onGround', false).
+        when('collisionLeft').
+        set('velocityX', 0).
+        when('collisionRight').
+        set('velocityX', 0).
+        //done().
+
+        //flow().
+        when('onGround').and('down').
+        set('ducking', true).
+        when('onGround').andNot('down').
+        set('ducking', false).
+        when('onGround').andNot('up').
+        set('canJump', true).
+        whenNot('onGround').
+        set('canJump', false).
+        //done().
+
+        //flow().
+        when('autoWalk').
+        set('velocityX', -100).
+        set('allowActions', false).
+        when('x', function(x) { return (x <= 48) }).
+        set('autoWalk', false).
+        set('allowActions', true).
+        done().
+
+        animate().
+        //flow().
+        when('velocityX', movingLeft).
+        set('direction', DIR_RIGHT).
+        when('velocityX', movingRight).
+        set('direction', DIR_LEFT).
+        when('onGround').
+        call('playSequence', Player.RUN).
+        when('onGround').and('velocityX', idle).
+        call('playSequence', Player.IDLE).
+        when('ducking').
+        call('playSequence', Player.DUCK).
+        whenNot('onGround').
+        call('playSequence', Player.JUMP).
+        done().
+        onAnimationFrame(function() {
+          var frame = this.getCurrentFrame();
+          if(frame) {
+            animationContext.clearRect(0, 0, 48, 48);
+            animationContext.drawImage(frame, 0, 0);
+          }
+        }).
+
+        onFrame(function() {
+          $animation.
+            css('left', this.x - 16).
+            css('top', this.y - 16);
+        }, 'visual-position');*/
 
     });
   </script>

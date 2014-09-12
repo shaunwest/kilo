@@ -5,15 +5,16 @@
   <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
   <script src="../../js/jack2d.js"></script>
   <script>
-    var treeTiles, viewport, layer, test;
+    var treeTiles, viewport, layer, test, blah;
 
     $(document).ready(function() {
       jack2d([
         'Factory',
         'Flow',
+        'FlowPOC',
         'TileSet',
         'TileLayer',
-        'CanvasViewport'], function(Factory, Flow, TileSet, TileLayer, CanvasViewport) {
+        'CanvasViewport'], function(Factory, Flow, FlowPOC, TileSet, TileLayer, CanvasViewport) {
 
         treeTiles = Factory(TileSet);
         viewport = Factory(CanvasViewport);
@@ -122,15 +123,50 @@
           elPromise('#viewport'). // waits for promise
           addLayer();*/
 
-        Flow(treeTiles).
+        /*Flow(treeTiles).
           setTileWidth(16).
           setTileHeight(16).
-
           when('foo').
             set('bar', true).
           when('baz').
             set('gah', true).
-          done().
+          //done().
+          loadTileSet([{id: '1', path: 'img/tree.png'}]).
+          next(layer).
+            setTileSet(treeTiles).
+            setLayerData(treeData).
+            resizeCanvas().
+          next(viewport).
+            elPromise('#viewport').
+            addLayer(layer);*/
+
+        blah = {
+          myFunc: function() {
+            this.marco = 'polo';
+          }
+        };
+
+        /*test = FlowPOC(treeTiles).
+          //setTileWidth(32).
+          //setTileHeight(16).
+          when('foo').and('bar').
+            setTileWidth(64).
+            done().
+          setTileWidth(128).
+          next(blah).
+            set('baz', true).
+            when('hi').
+              set('hello', true).
+              myFunc();*/
+
+        FlowPOC(treeTiles).
+          setTileWidth(16).
+          setTileHeight(16).
+          when('foo').
+            set('bar', true).
+          when('baz').
+            set('gah', true).
+            done().
           loadTileSet([{id: '1', path: 'img/tree.png'}]).
           next(layer).
             setTileSet(treeTiles).
@@ -139,7 +175,6 @@
           next(viewport).
             elPromise('#viewport').
             addLayer(layer);
-
       });
     });
 
