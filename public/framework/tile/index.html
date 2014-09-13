@@ -2,181 +2,44 @@
 <html>
 <head>
   <title>Tile</title>
-  <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
   <script src="../../js/jack2d.js"></script>
   <script>
-    var treeTiles, viewport, layer, test, blah;
+    var treeTiles, viewport, layer;
 
-    $(document).ready(function() {
-      jack2d([
-        'Factory',
-        'Flow',
-        'TileSet',
-        'TileLayer',
-        'CanvasViewport'], function(Factory, Flow, TileSet, TileLayer, CanvasViewport) {
+    jack2d([
+      'Factory',
+      'Flow',
+      'TileSet',
+      'TileLayer',
+      'CanvasViewport'],
+    function(Factory, Flow, TileSet, TileLayer, CanvasViewport) {
+      treeTiles = Factory(TileSet);
+      viewport = Factory(CanvasViewport);
+      layer = Factory(TileLayer);
 
-        treeTiles = Factory(TileSet);
-        viewport = Factory(CanvasViewport);
-        layer = Factory(TileLayer);
+      var treeData = [
+        [["1",0],["1",1],["1",2],["1",3],["1",4],["1",5],["1",6],["1",7]],
+        [["1",8],["1",9],["1",10],["1",11],["1",12],["1",13],["1",14],["1",15]],
+        [["1",16],["1",17],["1",18],["1",19],["1",20],["1",21],["1",22],["1",23]],
+        [["1",24],["1",25],["1",26],["1",27],["1",28],["1",29],["1",30],["1",31]],
+        [["1",32],["1",33],["1",34],["1",35],["1",36],["1",37],["1",38],["1",39]],
+        [["1",40],["1",41],["1",42],["1",43],["1",44],["1",45],["1",46],["1",47]],
+        [["1",48],["1",49],["1",50],["1",51],["1",52],["1",53],["1",54],["1",55]],
+        [["1",56],["1",57],["1",58],["1",59],["1",60],["1",61],["1",62],["1",63]]
+      ];
 
-        var treeData = [
-          [["1",0],["1",1],["1",2],["1",3],["1",4],["1",5],["1",6],["1",7]],
-          [["1",8],["1",9],["1",10],["1",11],["1",12],["1",13],["1",14],["1",15]],
-          [["1",16],["1",17],["1",18],["1",19],["1",20],["1",21],["1",22],["1",23]],
-          [["1",24],["1",25],["1",26],["1",27],["1",28],["1",29],["1",30],["1",31]],
-          [["1",32],["1",33],["1",34],["1",35],["1",36],["1",37],["1",38],["1",39]],
-          [["1",40],["1",41],["1",42],["1",43],["1",44],["1",45],["1",46],["1",47]],
-          [["1",48],["1",49],["1",50],["1",51],["1",52],["1",53],["1",54],["1",55]],
-          [["1",56],["1",57],["1",58],["1",59],["1",60],["1",61],["1",62],["1",63]]
-        ];
-
-        /*test = Flow(treeTiles);
-        test.
-          setTileWidth(32).
-          getTileWidth().
-          pipe('setTileHeight').
-          //test().
-            when('foo').
-              set('bar', true).
-            next(layer).
-              set('baz', 'blah');*/
-
-        /*
-        // just async:
-        async(myElement).
-          el('#myElement').
-          setStyle('foo', 'bar');
-
-        // separate augment/method queue into its own class?
-
-        Flow(treeTiles, {objectArg: '*', returnArg: '&'}). // second param is optional config
-          loadTileSet().
-            next(layer).
-              setTileSet('*'). // pass previous object as arg
-              setLayerData(treeData).
-            next(viewport).
-              elPromise('#viewport').
-              addLayer('*'). // pass previous object as arg
-            next(layer).
-              foo().
-              getPixelWidth().
-            next(blah).
-              setPixelWidth('&'). // pass previous func return as arg
-              asyncCall().
-              async(). // doesn't wait for promise to resolve.
-              anotherCall().
-              when('someProp').
-                setPixelWidth(200).
-                asyncCall().
-                set('myProp', '&');
-
-
-
-        Flow(treeTiles, {}). // second param is optional config
-          loadTileSet().
-            pipeObject(layer). // append the entire last object to first? arg list
-              setTileSet().
-              setLayerData(treeData).
-            pipeObject(viewport).
-              elPromise('#viewport').
-              addLayer().
-            next(layer). // switch to a different object w/ no piping
-              resizeCanvas().
-              getPixelWidth().
-            pipe(blah). // append last result to first? func call arg list. If promise, waits and appends promise result.
-              setPixelWidth().
-              asyncCall().
-              async(). // doesn't wait for promise to resolve.
-              anotherCall();
-
-
-        Flow(treeTiles).
-          loadTileSet().
-            switch(layer).
-              pipe('tileSet').
-              set('layerData', treeData).
-              resizeCanvas().
-            switch(viewport).
-              elPromise('#viewport').
-              pipe().
-                addLayer();
-
-        Flow(treeTiles).
-          loadTileSet().pipe(layer).setTileSet().pipe(viewport).addLayer();
-       */
-
-
-        /* curent working method...
-        Pipe(treeTiles). // Synchronous Pipeline
-          setTileWidth(16).
-          setTileHeight(16).
-          loadTileSet([{id: '1', path: 'img/tree.png'}]). // waits for promise
-        pipe(layer).
-          setTileSet(). // automatically appends previous object to arguments list
+      Flow(treeTiles).
+        setTileWidth(16).
+        setTileHeight(16).
+        loadTileSet([{id: '1', path: 'img/tree.png'}]).
+        next(layer).
+          setTileSet(treeTiles).
           setLayerData(treeData).
           resizeCanvas().
-        //flow(treeTiles).
-        //  when('foo').
-        //  run(function() { console.log('bar!'); }).
-        pipe(viewport).
-          elPromise('#viewport'). // waits for promise
-          addLayer();*/
-
-        /*Flow(treeTiles).
-          setTileWidth(16).
-          setTileHeight(16).
-          when('foo').
-            set('bar', true).
-          when('baz').
-            set('gah', true).
-          //done().
-          loadTileSet([{id: '1', path: 'img/tree.png'}]).
-          next(layer).
-            setTileSet(treeTiles).
-            setLayerData(treeData).
-            resizeCanvas().
-          next(viewport).
-            elPromise('#viewport').
-            addLayer(layer);*/
-
-        blah = {
-          myFunc: function() {
-            this.marco = 'polo';
-          }
-        };
-
-        /*test = FlowPOC(treeTiles).
-          //setTileWidth(32).
-          //setTileHeight(16).
-          when('foo').and('bar').
-            setTileWidth(64).
-            done().
-          setTileWidth(128).
-          next(blah).
-            set('baz', true).
-            when('hi').
-              set('hello', true).
-              myFunc();*/
-
-        test = Flow(treeTiles).
-          setTileWidth(16).
-          setTileHeight(16).
-          when('foo').
-            set('bar', true).
-          when('baz').
-            set('gah', true).
-            done().
-          loadTileSet([{id: '1', path: 'img/tree.png'}]).
-          next(layer).
-            setTileSet(treeTiles).
-            setLayerData(treeData).
-            resizeCanvas().
-          next(viewport).
-            elPromise('#viewport').
-            addLayer(layer);
-      });
+        next(viewport).
+          el('#viewport').
+          addLayer(layer);
     });
-
   </script>
 </head>
 <body>

@@ -35,8 +35,6 @@
       'use strict';
       //jack2d.log = false;
 
-
-
       var CELL_SIZE = 100,
         NUM_CELLS = 4,
         WORLD_SIZE = CELL_SIZE * NUM_CELLS,
@@ -59,57 +57,38 @@
 
       player = FPlayer();
 
-      var platform = FLiveElement('#platform', ['AABBObject']);
-      platform.x = 100;
-      platform.y = 150;
-      platform.width = 150;
-      platform.height = 50;
+      //var platform = FLiveElement('#platform', ['AABBObject']);
 
-      var world = Obj.mixin(['collider', 'canvas']).
-        //el('#visualCollider').
-        //checkerBackground().
-        setWorldBounds(WORLD_SIZE).
-        addObjects(platform);
 
       Flow(Debug).
-        elPromise('#debugContainer').
+        el('#debugContainer').
         livePrint(function() {
           this.
             print('fps', 'FPS: ' + Chrono.getFps()).
             printObject(player);
         });
 
-      function idle(velocityX) {
-        return (Math.abs(velocityX) < 30);
-      }
-
-      function movingLeft(velocityX) {
-        return (velocityX <= -30);
-      }
-
-      function movingRight(velocityX) {
-        return (velocityX >= 30);
-      }
-
-      // 1. patterns for effective flows. would be nice if it worked better with auto format
-      // 2. how to handle multiple "modes" of play DONE?
-      // 3. automation DONE?
-      playerFlow = Flow(player).
+      var platform = Obj.mixin(['LiveElement', 'AABBObject']);
+      var world = Obj.mixin(['collider', 'canvas']);
+      playerFlow = Flow(platform).
+        el('#platform').
+        set('x', 100).
+        set('y', 150).
+        set('width', 150).
+        set('height', 50).
+      next(world).
+        el('#visualCollider').
+        checkerBackground(100).
+        setWorldBounds(WORLD_SIZE).
+        addObjects(platform).
+      next(player).
         loadSpriteSheet('img/miyamoto.png').
         actions().
           action('left', {key: Input.LEFT}).
           action('right', {key: Input.RIGHT}).
           action('up', {key: Input.UP}).
           action('down', {key: Input.DOWN}).
-          //flowInclude(controls).
-        //commit().
-        when('left').andNot('ducking').
-          set('velocityX', -100).
-        when('right').andNot('ducking').
-          set('velocityX', 100).
-        when('up').and('canJump').
-          set('velocityY', -250).
-        done().
+          include(controls(player)).
 
         physics().
           setFrictionX(0.99).
@@ -118,57 +97,51 @@
           setAccelerationY(500).
 
         collisions(world).
-          //flow().
-          //commit().
-            when('collisionBottom').
-              set('onGround', true).
-            whenNot('collisionBottom').
-              set('onGround', false).
-            when('collisionLeft').
-              set('velocityX', 0).
-            when('collisionRight').
-              set('velocityX', 0).
-            //done().
+          when('collisionBottom').
+            set('onGround', true).
+          whenNot('collisionBottom').
+            set('onGround', false).
+          when('collisionLeft').
+            set('velocityX', 0).
+          when('collisionRight').
+            set('velocityX', 0).
 
-          //flow().
-            when('onGround').and('down').
-              set('ducking', true).
-            when('onGround').andNot('down').
-              set('ducking', false).
-            when('onGround').andNot('up').
-              set('canJump', true).
+          when('onGround').and('down').
+            set('ducking', true).
+          when('onGround').andNot('down').
+            set('ducking', false).
+          when('onGround').andNot('up').
+            set('canJump', true).
+          whenNot('onGround').
+            set('canJump', false).
+
+          when('autoWalk').
+            set('velocityX', -100).
+            set('allowActions', false).
+          when('x', function(x) { return (x <= 48) }).
+            set('autoWalk', false).
+            set('allowActions', true).
+          done().
+          whenGroup('fooMode').
             whenNot('onGround').
-              set('canJump', false).
+              inc('foo', 1).
+              //run(function() { console.log('foo!') }).
             done().
-          //flow().
-            /*when('autoWalk').
-              set('velocityX', -100).
-              set('allowActions', false).
-            when('x', function(x) { return (x <= 48) }).
-              set('autoWalk', false).
-              set('allowActions', true).
-            done().*/
-          /*flowWhen('fooMode').
-            whenNot('onGround').
-              run(function() { console.log('foo!') }).
-            done().*/
 
         animate().
-          //flow().
-        //commit().
-            when('velocityX', movingLeft).
-              set('direction', DIR_RIGHT).
-            when('velocityX', movingRight).
-              set('direction', DIR_LEFT).
-            when('onGround').
-              playSequence(Player.RUN).
-            when('onGround').and('velocityX', idle).
-              playSequence(Player.IDLE).
-            when('ducking').
-              playSequence(Player.DUCK).
-            whenNot('onGround').
-              playSequence(Player.JUMP).
-            done().
+          when('velocityX', function(vX) { return (vX <= -30)}).
+            set('direction', DIR_RIGHT).
+          when('velocityX', function(vX) { return (vX >= 30) }).
+            set('direction', DIR_LEFT).
+          when('onGround').
+            playSequence(Player.RUN).
+          when('onGround').and('velocityX', function(vX){ return (Math.abs(vX) < 30) }).
+            playSequence(Player.IDLE).
+          when('ducking').
+            playSequence(Player.DUCK).
+          whenNot('onGround').
+            playSequence(Player.JUMP).
+          done().
           onAnimationFrame(function() {
             var frame = this.getCurrentFrame();
             if(frame) {
@@ -181,90 +154,6 @@
             css('left', this.x - 16).
             css('top', this.y - 16);
         }, 'visual-position');
-
-      /*playerFlow = Flow(player).
-        loadSpriteSheet('img/miyamoto.png').
-        actions().
-        action('left', {key: Input.LEFT}).
-        action('right', {key: Input.RIGHT}).
-        action('up', {key: Input.UP}).
-        action('down', {key: Input.DOWN}).
-        //flowInclude(controls).
-        when('left').andNot('ducking').
-        set('velocityX', -100).
-        when('right').andNot('ducking').
-        set('velocityX', 100).
-        when('up').and('canJump').
-        set('velocityY', -250).
-        done().
-
-        physics().
-        setFrictionX(0.99).
-        setMaxVelocityX(150).
-        setMaxVelocityY(300).
-        setAccelerationY(500).
-
-        collisions(world).
-        //flow().
-        when('collisionBottom').
-        set('onGround', true).
-        whenNot('collisionBottom').
-        set('onGround', false).
-        when('collisionLeft').
-        set('velocityX', 0).
-        when('collisionRight').
-        set('velocityX', 0).
-        //done().
-
-        //flow().
-        when('onGround').and('down').
-        set('ducking', true).
-        when('onGround').andNot('down').
-        set('ducking', false).
-        when('onGround').andNot('up').
-        set('canJump', true).
-        whenNot('onGround').
-        set('canJump', false).
-        //done().
-
-        //flow().
-        when('autoWalk').
-        set('velocityX', -100).
-        set('allowActions', false).
-        when('x', function(x) { return (x <= 48) }).
-        set('autoWalk', false).
-        set('allowActions', true).
-        done().
-
-        animate().
-        //flow().
-        when('velocityX', movingLeft).
-        set('direction', DIR_RIGHT).
-        when('velocityX', movingRight).
-        set('direction', DIR_LEFT).
-        when('onGround').
-        call('playSequence', Player.RUN).
-        when('onGround').and('velocityX', idle).
-        call('playSequence', Player.IDLE).
-        when('ducking').
-        call('playSequence', Player.DUCK).
-        whenNot('onGround').
-        call('playSequence', Player.JUMP).
-        done().
-        onAnimationFrame(function() {
-          var frame = this.getCurrentFrame();
-          if(frame) {
-            animationContext.clearRect(0, 0, 48, 48);
-            animationContext.drawImage(frame, 0, 0);
-          }
-        }).
-
-        onFrame(function() {
-          $animation.
-            css('left', this.x - 16).
-            css('top', this.y - 16);
-        }, 'visual-position');*/
-
     });
   </script>
 </head>

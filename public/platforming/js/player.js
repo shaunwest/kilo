@@ -34,18 +34,17 @@ jack2d('PlayerFactory', ['Factory', 'Player'], function(Factory, Player) {
   };
 });
 
-jack2d('Player.controls', ['FlowObject', 'Factory'], function(FlowObject, Factory) {
+jack2d('Player.controls', ['FlowDefinition'], function(FlowDefinition) {
   'use strict';
 
-  return Factory(FlowObject).
-    when('left').andNot('ducking').
-      set('velocityX', -100).
-    when('right').andNot('ducking').
-      set('velocityX', 100).
-    when('up').and('canJump').
-      set('velocityY', -250);
-});
-
-jack2d('Player.stuff', ['FlowObject', 'Factory'], function(FlowObject, Factory) {
-  'use strict';
+  return function(player) {
+    return FlowDefinition(player).
+      when('left').andNot('ducking').
+        set('velocityX', -100).
+      when('right').andNot('ducking').
+        set('velocityX', 100).
+      when('up').and('canJump').
+        set('velocityY', -250).
+      done();
+  };
 });

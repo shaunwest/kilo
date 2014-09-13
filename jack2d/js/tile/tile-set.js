@@ -16,15 +16,6 @@ jack2d('TileSet', ['imageLoader', 'tileConverter'], function(imageLoader, tileCo
       this.tileHeight = value;
       return this;
     },
-    getTileHeight: function() {
-      return this.tileHeight;
-    },
-    getTileWidth: function() {
-      return this.tileWidth;
-    },
-    test: function() {
-      return new Promise(function() {});
-    },
     loadTileSet: function(sources) {
       var tileGroups, tileWidth, tileHeight, promises = [];
 
