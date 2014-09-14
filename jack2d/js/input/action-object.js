@@ -42,7 +42,7 @@ jack2d('ActionObject', ['obj', 'input', 'helper'], function(Obj, Input, Helper) 
   }
 
   return Obj.mixin(['chronoObject', {
-    actions: function(onFrame) {
+    startActions: function() {
       this.keyActions = [];
       this.allowActions = true;
       this.onFrame(function() {
@@ -53,10 +53,7 @@ jack2d('ActionObject', ['obj', 'input', 'helper'], function(Obj, Input, Helper) 
         this.inputsEnded = Input.getInputsEnded();
         this.inputSequence = Input.getSequence();
         onInputUpdate(this, this.keyActions);
-        if(onFrame) {
-          onFrame.call(this);
-        }
-      }, 'action-object');
+      }, Helper.getGID('action-object'));
 
       return this;
     },

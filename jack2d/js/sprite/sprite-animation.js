@@ -2,14 +2,13 @@
  * Created by Shaun on 5/31/14.
  */
 
-jack2d('spriteAnimation', ['helper', 'obj', 'chrono'], function(helper, obj, chrono) {
+jack2d('spriteAnimation', ['helper', 'obj', 'chrono'], function(Helper, Obj, Chrono) {
   'use strict';
 
-  return obj.mixin(['chronoObject', 'sprite', {
-    animate: function() {
+  return Obj.mixin(['chronoObject', 'sprite', {
+    startAnimations: function() {
       this.direction = 0; //'left';
       this.frameSetIndex = -1;
-      this.animationReady = true;
       this.stop();
       this.onFrame(function(deltaSeconds) {
         if(!this.spriteSheetLoaded || !this.playing) {
@@ -23,9 +22,9 @@ jack2d('spriteAnimation', ['helper', 'obj', 'chrono'], function(helper, obj, chr
         if(this.currentStep >= this.getDelay()) {
           this.currentStep = 0;
         } else {
-          this.currentStep += (deltaSeconds * chrono.getWholeMultiplier());
+          this.currentStep += (deltaSeconds * Chrono.getWholeMultiplier());
         }
-      }, 'sprite-animation');
+      }, Helper.getGID('sprite-animation'));
       return this;
     },
 
@@ -70,10 +69,7 @@ jack2d('spriteAnimation', ['helper', 'obj', 'chrono'], function(helper, obj, chr
     },
 
     playSequence: function(frameSetIndex, direction) {
-      /*if(!this.animationReady) {
-        this.initAnimation();
-      }*/
-      if(!helper.isDefined(direction)) {
+      if(!Helper.isDefined(direction)) {
         direction = this.direction;
       }
       if(frameSetIndex !== this.frameSetIndex || this.direction !== direction) {

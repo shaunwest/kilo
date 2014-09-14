@@ -9,7 +9,7 @@
 var jack2d = (function() {
   'use strict';
 
-  var jack2d, helper, injector, appConfig = {};
+  var jack2d, helper, injector, appConfig = {}, gids = {};
 
   helper = {
     isDefined: function(value) { return (typeof value !== 'undefined'); },
@@ -21,6 +21,15 @@ var jack2d = (function() {
     info: function(message) { console.log(message); },
     log: function(message) { if(jack2d.log) { console.log(message); } },
     argsToArray: function(args) { return Array.prototype.slice.call(args); },
+    getGID: function(group) {
+      if(!group) {
+        group = '';
+      }
+      if(!gids[group]) {
+        gids[group] = 0;
+      }
+      return group + (++gids[group]);
+    },
     call: function(context, func) { // TODO: move to Func
       var args = Array.prototype.slice.call(arguments, 2);
       return function() {

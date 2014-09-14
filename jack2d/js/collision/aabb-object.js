@@ -131,23 +131,18 @@ jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper,
   }
 
   return obj.mixin([chronoObject, {
-    collisions: function(collider, callback) {
+    startCollisions: function(collider) {
       if(!helper.isDefined(collider)) {
-        helper.error('Jack2d: AABBObject: collider is not defined.');
+        helper.error('Jack2d: AABBObject: Collider is not defined.');
       }
       collider.addObject(this);
       this.collider = collider;
       this.onFrame(function() {
-        this.checkCollisions();
-        if(callback) {
-          callback.call(this);
-        }
-      }, 'aabb-object');
+        this.checkCollisions(collider);
+      }, helper.getGID('aabb-object'));
       return this;
     },
-    checkCollisions: function() {
-      var collider = this.collider;
-
+    checkCollisions: function(collider) {
       resetCollisionVars(this);
       computeMoveDelta(this);
 

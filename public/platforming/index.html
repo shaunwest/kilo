@@ -48,7 +48,6 @@
         helper = jack2d('helper'),
         Obj = jack2d('obj'),
         Input = jack2d('input'),
-        FLiveElement = jack2d('LiveElementFactory'),
         Player = jack2d('Player'),
         FPlayer = jack2d('PlayerFactory'),
         controls = jack2d('Player.controls'),
@@ -56,9 +55,6 @@
         Debug = jack2d('debug');
 
       player = FPlayer();
-
-      //var platform = FLiveElement('#platform', ['AABBObject']);
-
 
       Flow(Debug).
         el('#debugContainer').
@@ -83,20 +79,20 @@
         addObjects(platform).
       next(player).
         loadSpriteSheet('img/miyamoto.png').
-        actions().
+        startActions().
           action('left', {key: Input.LEFT}).
           action('right', {key: Input.RIGHT}).
           action('up', {key: Input.UP}).
           action('down', {key: Input.DOWN}).
           include(controls(player)).
 
-        physics().
-          setFrictionX(0.99).
-          setMaxVelocityX(150).
-          setMaxVelocityY(300).
-          setAccelerationY(500).
+        startPhysics().
+          set('frictionX', 0.99).
+          set('maxVelocityX', 150).
+          set('maxVelocityY', 300).
+          set('accelerationY', 500).
 
-        collisions(world).
+        startCollisions(world).
           when('collisionBottom').
             set('onGround', true).
           whenNot('collisionBottom').
@@ -125,10 +121,9 @@
           whenGroup('fooMode').
             whenNot('onGround').
               inc('foo', 1).
-              //run(function() { console.log('foo!') }).
             done().
 
-        animate().
+        startAnimations().
           when('velocityX', function(vX) { return (vX <= -30)}).
             set('direction', DIR_RIGHT).
           when('velocityX', function(vX) { return (vX >= 30) }).

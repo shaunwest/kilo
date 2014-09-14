@@ -18,7 +18,7 @@ function(helper, spriteSheetParser, imageLoader, FrameSet) {
     loadSpriteSheet: function(spriteSheetPath) {
       this.spriteSheetPath = spriteSheetPath;
       this.spriteSheetLoaded = false;
-      this.delay = DEFAULT_DELAY;
+      this.spriteFrameDelay = DEFAULT_DELAY;
       imageLoader.loadPath(spriteSheetPath).
         then(helper.call(this, function(image) {
           this.spriteSheet = image;
@@ -52,11 +52,11 @@ function(helper, spriteSheetParser, imageLoader, FrameSet) {
       return null;
     },
     setDelay: function(value) {
-      this.delay = value;
+      this.spriteFrameDelay = value;
       return this;
     },
     getDelay: function() {
-      return this.delay;
+      return this.spriteFrameDelay;
     },
     // TODO: look into adding some caching to getFrame and getFrameSequence
     getFrameSequence: function(frameSetIndex, direction) {
