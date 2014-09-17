@@ -9,7 +9,6 @@ jack2d('Player', ['obj'], function(Obj) {
     'platformer.PhysicsObject',
     'spriteAnimation',
     'AABBObject',
-    //'FlowFactory',
     'ActionObject'
   ]);
 

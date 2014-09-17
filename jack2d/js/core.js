@@ -30,6 +30,9 @@ var jack2d = (function() {
       }
       return group + (++gids[group]);
     },
+    rand: function(max) {
+      return Math.floor((Math.random() * (max + 1)));
+    },
     call: function(context, func) { // TODO: move to Func
       var args = Array.prototype.slice.call(arguments, 2);
       return function() {

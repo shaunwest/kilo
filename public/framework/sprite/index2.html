@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sprites</title>
+  <script src="../../bower-components/jquery/dist/jquery.min.js"></script>
+  <script src="../../js/jack2d.js"></script>
+  <script>
+    $(document).ready(function() {
+      'use strict';
+
+      var animationContext = $('#animation')[0].getContext('2d');
+
+      jack2d(['spriteFactory', 'spriteAnimationFactory', 'chrono'], function(spriteFactory, spriteAnimationFactory, chrono) {
+        /** play an animation sequence */
+        spriteAnimationFactory.get('img/player48.png').onSpriteSheetReady(function(spriteAnimation) {
+          spriteAnimation.
+            getFrameSequence(2, true).
+            forEach(function(frame) {
+              $('#frames').append(frame);
+            });
+
+          spriteAnimation.
+            playSequence(2, true).
+            onAnimationFrame(function() {
+              animationContext.clearRect(0, 0, 48, 48);
+              animationContext.drawImage(spriteAnimation.getCurrentFrame(), 0, 0);
+            });
+
+          /** control animations */
+          $('#runLeft').on('click', function() { spriteAnimation.playSequence(2, 'left'); });
+          $('#runRight').on('click', function() { spriteAnimation.playSequence(2, 'right'); });
+          $('#punchLeft').on('click', function() { spriteAnimation.playSequence(8, 'left'); });
+          $('#punchRight').on('click', function() { spriteAnimation.playSequence(8, 'right'); });
+          $('#stop').on('click', function() { spriteAnimation.stop(); });
+          $('#play').on('click', function() { spriteAnimation.play(); });
+        });
+
+        /** show FPS */
+        chrono.register(function() { $('#fps').text(chrono.getFps()) });
+      });
+    });
+  </script>
+</head>
+<body>
+<div id="fps"></div>
+<div id="frames"></div>
+<div>
+  <canvas id="animation" width="48" height="48"></canvas>
+</div>
+<button id="punchLeft">Punch Left</button>
+<button id="runLeft">Run Left</button>
+<button id="runRight">Run Right</button>
+<button id="punchRight">Punch Right</button>
+<button id="stop">Stop</button>
+<button id="play">Play</button>
+</body>
+</html>

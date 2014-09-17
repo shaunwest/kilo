@@ -2,6 +2,8 @@
  * Created by Shaun on 5/25/14.
  */
 
+
+// TODO: see if there should be a layer "interface"
 jack2d('TileLayer', ['helper'], function(Helper) {
   'use strict';
 
@@ -20,22 +22,6 @@ jack2d('TileLayer', ['helper'], function(Helper) {
   }
 
   return {
-    /*init: function(tileSet, layerData, tileWidth, tileHeight) {
-      this.canvas = document.createElement('canvas'); //canvas;
-      this.context = this.canvas.getContext('2d');
-      this.layerData = layerData;
-      this.tileSet = tileSet;
-      this.tileWidth = tileWidth;
-      this.tileHeight = tileHeight;
-      this.layerWidth = layerData.length;
-      this.layerHeight = layerData[0].length;
-      this.pixelWidth = this.layerWidth * tileWidth;
-      this.pixelHeight = this.layerHeight * tileHeight;
-
-      this.canvas.width = this.pixelWidth;
-      this.canvas.height = this.pixelHeight;
-      return this;
-    },*/
     setLayerData: function(value) {
       var layerData;
 
@@ -81,15 +67,16 @@ jack2d('TileLayer', ['helper'], function(Helper) {
     /*refresh: function() {
       this.init(this.tileSet, this.layerData, this.tileWidth, this.tileHeight);
       return this;
-    },
-    clear: function() {
-      this.context.clearRect(0, 0, this.pixelWidth, this.pixelHeight);
-      return this;
     },*/
+    clear: function() {
+      this.context.clearRect(0, 0, this.getPixelWidth(), this.getPixelHeight());
+      return this;
+    },
     draw: function() {
       var tx, ty;
 
       //this.resizeCanvas();
+      this.clear();
 
       for(tx = 0; tx < this.layerWidth; tx++) {
         for(ty = 0; ty < this.layerHeight; ty++) {

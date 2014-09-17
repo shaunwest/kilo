@@ -66,25 +66,41 @@
 
       var platform = Obj.mixin(['LiveElement', 'AABBObject']);
       var world = Obj.mixin(['collider', 'canvas']);
+
       playerFlow = Flow(platform).
         el('#platform').
         set('x', 100).
         set('y', 150).
         set('width', 150).
         set('height', 50).
+
       next(world).
         el('#visualCollider').
         checkerBackground(100).
         setWorldBounds(WORLD_SIZE).
         addObjects(platform).
+
       next(player).
+        /*each(function(player) {
+          player.x = helper.rand(150);
+          player.y = 118;
+          player.width = 16;
+          player.height = 32;
+        }).*/
         loadSpriteSheet('img/miyamoto.png').
         startActions().
           action('left', {key: Input.LEFT}).
           action('right', {key: Input.RIGHT}).
           action('up', {key: Input.UP}).
           action('down', {key: Input.DOWN}).
-          include(controls(player)).
+          //include(controls(player)).
+          when('left').andNot('ducking').
+            set('velocityX', -100).
+          when('right').andNot('ducking').
+            set('velocityX', 100).
+          when('up').and('canJump').
+            set('velocityY', -250).
+          done().
 
         startPhysics().
           set('frictionX', 0.99).
