@@ -8,22 +8,30 @@
       Helper = jack2d('helper');
 
     var flowObject = Flow('spriteAnimation', 5)
-      .each(function(spriteAnimation) {
+      .get(function(spriteAnimation) {
         spriteAnimation.x = Helper.rand(300);
         spriteAnimation.y = 0;
       })
       .loadSpriteSheet('img/miyamoto.png')
       .startAnimations()
-      .each(function(spriteAnimation) {
+      .get(function(spriteAnimation) {
         spriteAnimation.playSequence(Helper.rand(2))
       })
       .next('SpriteLayer')
       .setLayerWidth(500)
       .setLayerHeight(500)
-      .addSprites(Flow.last)
+      .lastOnComplete(function(sprite) {
+        this.addSprite(sprite);
+      })
+      //.addSprites(Flow.last)
+      //.addSprite(Flow.last)
       .next('CanvasViewport')
       .el('#viewport')
-      .addLayer(Flow.lastOne);
+      .getLast(function(layer) {
+        this.addLayer(layer);
+      });
+      //.addLayer(Flow.lastOne);
+      //.addLayer(Flow.last);
   </script>
 </head>
 <body>

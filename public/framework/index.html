@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <script src="../js/jack2d.js"></script>
+  <script>
+    var Flow = jack2d('Flow');
+
+    var flowObject = Flow(window)
+      .on('keydown')
+      .call(function() { console.log('keydown!') })
+      .done()
+      .when('innerWidth', function(innerWidth) { return (innerWidth > 900) })
+      .call(function() { console.log('foo!')})
+      .watch('name')
+      .call(function() { console.log('Name change!')});
+
+  </script>
+</head>
+<body>
+
+</body>
+</html>

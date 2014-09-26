@@ -49,7 +49,7 @@ jack2d('SpriteLayer', ['helper'], function(Helper) {
     },
     draw: function() {
       var i, numSprites, sprites;
-      if(!this.sprites) {
+      if(!this.sprites || !this.context) {
         return this;
       }
       this.clear();
