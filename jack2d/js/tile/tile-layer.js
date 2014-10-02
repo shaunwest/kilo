@@ -2,9 +2,7 @@
  * Created by Shaun on 5/25/14.
  */
 
-
-// TODO: see if there should be a layer "interface"
-jack2d('TileLayer', ['helper'], function(Helper) {
+jack2d('TileLayer', ['helper', 'Requires'], function(Helper, Requires) {
   'use strict';
 
   function getTileGroup(tileData) {
@@ -21,27 +19,32 @@ jack2d('TileLayer', ['helper'], function(Helper) {
     return tileSet.getTile(tileGroup, tileIndex);
   }
 
+  function clearContext(context, width, height) {
+    context.clearRect(0, 0, width, height);
+  }
+
   return {
     setLayerData: function(value) {
       var layerData;
 
-      layerData = (value) ?
+      layerData = this.layerData = value;
+      /*layerData = (value) ?
         this.layerData = value :
-        this.layerData;
+        this.layerData;*/
+
+      this.gridWidth = layerData.length;
+      this.gridHeight = layerData[0].length;
 
       if(!this.canvas) {
         this.canvas = document.createElement('canvas');
         this.context = this.canvas.getContext('2d');
       }
 
-      this.layerWidth = layerData.length;
-      this.layerHeight = layerData[0].length;
-
       return this;
     },
     resizeCanvas: function() {
-      this.canvas.width = this.layerWidth * this.tileWidth;
-      this.canvas.height = this.layerHeight * this.tileHeight;
+      this.canvas.width = this.gridWidth * this.tileWidth;
+      this.canvas.height = this.gridHeight * this.tileHeight;
       return this;
     },
     setTileSet: function(value) {
@@ -58,51 +61,57 @@ jack2d('TileLayer', ['helper'], function(Helper) {
       this.tileHeight = value;
       return this;
     },
-    getPixelWidth: function() {
-      return this.layerWidth * this.tileWidth;
+    getLayerWidth: function() {
+      return this.gridWidth * this.tileWidth;
     },
-    getPixelHeight: function() {
-      return this.layerHeight * this.tileHeight;
+    getLayerHeight: function() {
+      return this.gridHeight * this.tileHeight;
     },
     /*refresh: function() {
       this.init(this.tileSet, this.layerData, this.tileWidth, this.tileHeight);
       return this;
     },*/
     clear: function() {
-      this.context.clearRect(0, 0, this.getPixelWidth(), this.getPixelHeight());
+      if(this.context) {
+        clearContext(this.context, this.getLayerWidth(), this.getLayerHeight());
+      }
       return this;
     },
-    draw: function() {
-      var tx, ty;
+    draw: Requires(['layerData', 'context'], function() {
+      var tx, ty, gridWidth, gridHeight;
+      var tileWidth = this.tileWidth;
+      var tileHeight = this.tileHeight;
+      var layerData = this.layerData;
 
-      //this.resizeCanvas();
-      this.clear();
+      clearContext(this.context, this.getLayerWidth(), this.getLayerHeight());
 
-      for(tx = 0; tx < this.layerWidth; tx++) {
-        for(ty = 0; ty < this.layerHeight; ty++) {
+      for(tx = 0, gridWidth = this.gridWidth; tx < gridWidth; tx++) {
+        for(ty = 0, gridHeight = this.gridHeight; ty < gridHeight; ty++) {
           this.drawTile(
-            ty * this.tileHeight,
-            tx * this.tileWidth,
-            this.layerData[tx][ty]
+            ty * tileHeight,
+            tx * tileWidth,
+            tileWidth,
+            tileHeight,
+            layerData[tx][ty]
           );
         }
       }
       return this;
-    },
-    drawTile: function(x, y, tileData) {
+    }),
+    drawTile: Requires(['tileSet', 'context'], function(x, y, tileWidth, tileHeight, tileData) {
       var image = getTile(tileData, this.tileSet);
 
       if(image) {
         this.context.drawImage(
           image,
           0, 0,
-          this.tileWidth, this.tileHeight,
+          tileWidth, tileHeight,
           x, y,
-          this.tileWidth, this.tileHeight
+          tileWidth, tileHeight
         );
       }
       return this;
-    },
+    }),
     getTileByPixels: function(x, y) {
       var tx = Math.floor(x / this.tileWidth),
         ty = Math.floor(y / this.tileHeight);

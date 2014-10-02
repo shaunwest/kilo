@@ -2,6 +2,9 @@
 <html>
 <head>
   <title>Sprite</title>
+  <style>
+    #viewport { background-color: #92B7B3; }
+  </style>
   <script src="../../js/jack2d.js"></script>
   <script>
     var Flow = jack2d('Flow'),
@@ -11,7 +14,7 @@
 
     var flowObject = Flow('spriteAnimation', 5)
       .get(function(spriteAnimation) {
-        spriteAnimation.x = x+=40;
+        spriteAnimation.x = x+=55;
         spriteAnimation.y = 0;
       })
       .loadSpriteSheet('img/miyamoto.png')
