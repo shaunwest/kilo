@@ -29,7 +29,6 @@
     }
   </style>
   <script>
-    var player;
     var playerFlow;
     $(document).ready(function() {
       'use strict';
@@ -37,37 +36,23 @@
 
       var CELL_SIZE = 100,
         NUM_CELLS = 4,
-        WORLD_SIZE = CELL_SIZE * NUM_CELLS,
-        DIR_LEFT = 0,
-        DIR_RIGHT = 1;
-
+        WORLD_SIZE = CELL_SIZE * NUM_CELLS;
 
       var $animation = $('#animation'),
         animationContext = $animation[0].getContext('2d'),
         Chrono = jack2d('chrono'),
         helper = jack2d('helper'),
         Obj = jack2d('obj'),
-        Input = jack2d('input'),
         Player = jack2d('Player'),
-        FPlayer = jack2d('PlayerFactory'),
         controls = jack2d('Player.controls'),
         Flow = jack2d('Flow'),
+        playerFlow = jack2d('PlayerFlow'),
         Debug = jack2d('debug');
-
-      player = FPlayer();
-
-      Flow(Debug).
-        el('#debugContainer').
-        livePrint(function() {
-          this.
-            print('fps', 'FPS: ' + Chrono.getFps()).
-            printObject(player);
-        });
 
       var platform = Obj.mixin(['LiveElement', 'AABBObject']);
       var world = Obj.mixin(['collider', 'canvas']);
 
-      playerFlow = Flow(platform).
+      Flow(platform).
         el('#platform').
         set('x', 100).
         set('y', 150).
@@ -78,88 +63,30 @@
         el('#visualCollider').
         checkerBackground(100).
         setWorldBounds(WORLD_SIZE).
-        addObjects(platform).
+        addObjects(platform);
 
-      next(player).
-        /*each(function(player) {
-          player.x = helper.rand(150);
+      playerFlow('img/miyamoto.png', world).
+        get(function(player) {
+          player.x = 150;
           player.y = 118;
           player.width = 16;
           player.height = 32;
-        }).*/
-        loadSpriteSheet('img/miyamoto.png').
-        startActions().
-          action('left', {key: Input.LEFT}).
-          action('right', {key: Input.RIGHT}).
-          action('up', {key: Input.UP}).
-          action('down', {key: Input.DOWN}).
-          //include(controls(player)).
-          when('left').andNot('ducking').
-            set('velocityX', -100).
-          when('right').andNot('ducking').
-            set('velocityX', 100).
-          when('up').and('canJump').
-            set('velocityY', -250).
-          done().
 
-        startPhysics().
-          set('frictionX', 0.99).
-          set('maxVelocityX', 150).
-          set('maxVelocityY', 300).
-          set('accelerationY', 500).
-
-        startCollisions(world).
-          when('collisionBottom').
-            set('onGround', true).
-          whenNot('collisionBottom').
-            set('onGround', false).
-          when('collisionLeft').
-            set('velocityX', 0).
-          when('collisionRight').
-            set('velocityX', 0).
-
-          when('onGround').and('down').
-            set('ducking', true).
-          when('onGround').andNot('down').
-            set('ducking', false).
-          when('onGround').andNot('up').
-            set('canJump', true).
-          whenNot('onGround').
-            set('canJump', false).
-
-          when('autoWalk').
-            set('velocityX', -100).
-            set('allowActions', false).
-          when('x', function(x) { return (x <= 48) }).
-            set('autoWalk', false).
-            set('allowActions', true).
-          done().
-          whenGroup('fooMode').
-            whenNot('onGround').
-              inc('foo', 1).
-            done().
-
-        startAnimations().
-          when('velocityX', function(vX) { return (vX <= -30)}).
-            set('direction', DIR_RIGHT).
-          when('velocityX', function(vX) { return (vX >= 30) }).
-            set('direction', DIR_LEFT).
-          when('onGround').
-            playSequence(Player.RUN).
-          when('onGround').and('velocityX', function(vX){ return (Math.abs(vX) < 30) }).
-            playSequence(Player.IDLE).
-          when('ducking').
-            playSequence(Player.DUCK).
-          whenNot('onGround').
-            playSequence(Player.JUMP).
-          done().
-          onAnimationFrame(function() {
-            var frame = this.getCurrentFrame();
-            if(frame) {
-              animationContext.clearRect(0, 0, 48, 48);
-              animationContext.drawImage(frame, 0, 0);
-            }
-          }).
+          Flow(Debug).
+            el('#debugContainer').
+            livePrint(function() {
+              this.
+                print('fps', 'FPS: ' + Chrono.getFps()).
+                printObject(player);
+            });
+        }).
+        onAnimationFrame(function() {
+          var frame = this.getCurrentFrame();
+          if(frame) {
+            animationContext.clearRect(0, 0, 48, 48);
+            animationContext.drawImage(frame, 0, 0);
+          }
+        }).
         onFrame(function() {
           $animation.
             css('left', this.x - 16).

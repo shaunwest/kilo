@@ -19,8 +19,18 @@ jack2d('TileLayer', ['helper', 'Requires'], function(Helper, Requires) {
     return tileSet.getTile(tileGroup, tileIndex);
   }
 
-  function clearContext(context, width, height) {
-    context.clearRect(0, 0, width, height);
+  function drawTile(context, x, y, tileWidth, tileHeight, tileData, tileSet) {
+    var image = getTile(tileData, tileSet);
+
+    if(image) {
+      context.drawImage(
+        image,
+        0, 0,
+        tileWidth, tileHeight,
+        x, y,
+        tileWidth, tileHeight
+      );
+    }
   }
 
   return {
@@ -35,16 +45,6 @@ jack2d('TileLayer', ['helper', 'Requires'], function(Helper, Requires) {
       this.gridWidth = layerData.length;
       this.gridHeight = layerData[0].length;
 
-      if(!this.canvas) {
-        this.canvas = document.createElement('canvas');
-        this.context = this.canvas.getContext('2d');
-      }
-
-      return this;
-    },
-    resizeCanvas: function() {
-      this.canvas.width = this.gridWidth * this.tileWidth;
-      this.canvas.height = this.gridHeight * this.tileHeight;
       return this;
     },
     setTileSet: function(value) {
@@ -67,49 +67,30 @@ jack2d('TileLayer', ['helper', 'Requires'], function(Helper, Requires) {
     getLayerHeight: function() {
       return this.gridHeight * this.tileHeight;
     },
-    /*refresh: function() {
-      this.init(this.tileSet, this.layerData, this.tileWidth, this.tileHeight);
-      return this;
-    },*/
-    clear: function() {
-      if(this.context) {
-        clearContext(this.context, this.getLayerWidth(), this.getLayerHeight());
-      }
-      return this;
-    },
-    draw: Requires(['layerData', 'context'], function() {
+    // TODO: Need to support viewport...
+    draw: Requires(['layerData'], function(context, viewport) {
       var tx, ty, gridWidth, gridHeight;
       var tileWidth = this.tileWidth;
       var tileHeight = this.tileHeight;
       var layerData = this.layerData;
 
-      clearContext(this.context, this.getLayerWidth(), this.getLayerHeight());
-
       for(tx = 0, gridWidth = this.gridWidth; tx < gridWidth; tx++) {
         for(ty = 0, gridHeight = this.gridHeight; ty < gridHeight; ty++) {
-          this.drawTile(
+          drawTile(
+            context,
             ty * tileHeight,
             tx * tileWidth,
             tileWidth,
             tileHeight,
-            layerData[tx][ty]
+            layerData[tx][ty],
+            this.tileSet
           );
         }
       }
       return this;
     }),
-    drawTile: Requires(['tileSet', 'context'], function(x, y, tileWidth, tileHeight, tileData) {
-      var image = getTile(tileData, this.tileSet);
-
-      if(image) {
-        this.context.drawImage(
-          image,
-          0, 0,
-          tileWidth, tileHeight,
-          x, y,
-          tileWidth, tileHeight
-        );
-      }
+    drawTile: Requires(['tileSet'], function(context, x, y, tileWidth, tileHeight, tileData) {
+      drawTile(context, x, y, tileWidth, tileHeight, tileData, this.tileSet);
       return this;
     }),
     getTileByPixels: function(x, y) {
@@ -120,9 +101,6 @@ jack2d('TileLayer', ['helper', 'Requires'], function(Helper, Requires) {
     },
     getTile: function(tx, ty) {
       return getTile(this.layerData[ty][tx], this.tileSet);
-    },
-    getLayer: function() {
-      return this.canvas;
     },
     setTile: function(tx, ty, tileGroupId, tileIndex) {
       this.layerData[ty][tx] = [tileGroupId, tileIndex];

@@ -23,13 +23,14 @@
         spriteAnimation.playSequence(Helper.rand(2))
       })
       .next('SpriteLayer')
-      .setLayerWidth(500)
-      .setLayerHeight(500)
-      .getLastOnComplete(function(sprite) {
+      .getLast(function(sprite) {
         this.addSprite(sprite);
       })
       .next('CanvasViewport')
       .el('#viewport')
+      .setViewportWidth(300)
+      .setViewportHeight(300)
+      .set('hasBorder', true)
       .getLast(function(layer) {
         this.addLayer(layer);
       });

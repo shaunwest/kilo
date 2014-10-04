@@ -72,14 +72,14 @@ var jack2d = (function() {
       return module;
     },
     resolve: function(deps, func, scope) {
-      var dep, module, args = [], i;
+      var dep, depName, args = [], i;
       for(i = 0; i < deps.length; i++) {
-        dep = deps[i];
-        module = this.getDependency(dep);
-        if(module) {
-          args.push(module);
+        depName = deps[i];
+        dep = this.getDependency(depName);
+        if(dep) {
+          args.push(dep);
         } else {
-          helper.warn('Jack2d: Can\'t resolve ' + dep);
+          helper.warn('Jack2d: Can\'t resolve ' + depName);
         }
       }
       return func.apply(scope || {}, args.concat(Array.prototype.slice.call(arguments, 0)));
