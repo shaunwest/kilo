@@ -23,6 +23,18 @@ jack2d('collider', ['helper', 'obj', 'grid'], function(helper, obj, grid) {
         bottom: height
       };
 
+      /*this.onFrame(function() {
+        var i, numObjects, gridObject, gridObjects = this.gridObjects;
+        if(!gridObjects) {
+          return;
+        }
+        for(i = 0, numObjects = gridObjects.length; i < numObjects; i++) {
+          gridObject = gridObjects[i];
+          if(gridObject.checkCollisions) {
+            gridObject.checkCollisions(this);
+          }
+        }
+      }, helper.getGID('collider'));*/
       return this;
     }
   }]);

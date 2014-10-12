@@ -53,7 +53,7 @@ jack2d('ActionObject', ['obj', 'input', 'helper'], function(Obj, Input, Helper) 
         this.inputsEnded = Input.getInputsEnded();
         this.inputSequence = Input.getSequence();
         onInputUpdate(this, this.keyActions);
-      }, Helper.getGID('action-object'));
+      }, 'action-object');
 
       return this;
     },

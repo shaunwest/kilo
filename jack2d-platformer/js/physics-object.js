@@ -37,7 +37,7 @@ jack2d('platformer.PhysicsObject', ['helper', 'obj', 'chronoObject'], function(h
 
         this.x += Math.round(this.velocityX * deltaSeconds);
         this.y += Math.round(this.velocityY * deltaSeconds);
-      }, helper.getGID('physics'));
+      }, 'physics');
       return this;
     }
   }]);
