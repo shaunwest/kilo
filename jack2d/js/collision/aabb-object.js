@@ -139,7 +139,7 @@ jack2d('AABBObject', ['helper', 'obj', 'rect', 'chronoObject'], function(helper,
       //this.collider = collider;
       this.onFrame(function() {
         this.checkCollisions(collider);
-      }, 'aabb-object');
+      }, 'AABBObject');
       return this;
     },
     checkCollisions: function(collider) {

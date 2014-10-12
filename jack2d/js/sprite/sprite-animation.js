@@ -24,7 +24,7 @@ jack2d('spriteAnimation', ['helper', 'obj', 'chrono'], function(Helper, Obj, Chr
         } else {
           this.currentStep += (deltaSeconds * Chrono.getWholeMultiplier());
         }
-      }, 'sprite-animation');
+      }, 'spriteAnimation');
       return this;
     },
 

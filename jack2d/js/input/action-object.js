@@ -20,7 +20,7 @@ jack2d('ActionObject', ['obj', 'input', 'helper'], function(Obj, Input, Helper) 
       if(keyAction.key) {
         if(inputs[keyAction.key]) {
           if(keyAction.callback) {
-           keyAction.callback(inputs[keyAction.key]);
+            keyAction.callback(inputs[keyAction.key]);
           }
           context[keyAction.id] = true;
           keys = true;
@@ -53,7 +53,7 @@ jack2d('ActionObject', ['obj', 'input', 'helper'], function(Obj, Input, Helper) 
         this.inputsEnded = Input.getInputsEnded();
         this.inputSequence = Input.getSequence();
         onInputUpdate(this, this.keyActions);
-      }, 'action-object');
+      }, 'ActionObject');
 
       return this;
     },

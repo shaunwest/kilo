@@ -54,7 +54,7 @@ var jack2d = (function() {
     register: function(key, deps, func, scope) {
       this.unresolved[key] = {deps: deps, func: func, scope: scope};
     },
-    setModule: function(key, module) { /** save a module without doing dependency resolution */
+    setModule: function(key, module) { // save a module without doing dependency resolution
       this.modules[key] = module;
     },
     getDependency: function(key) {
@@ -64,6 +64,9 @@ var jack2d = (function() {
         if(module) {
           helper.info('Jack2d: resolving dependencies for \'' + key + '\'');
           module = this.modules[key] = this.resolve(module.deps, module.func, module.scope);
+          if(helper.isObject(module)) {
+            module.getType = function() { return key; };
+          }
           delete this.unresolved[key];
         } else {
           helper.warn('Jack2d: module \'' + key + '\' not found');
