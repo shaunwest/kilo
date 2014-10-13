@@ -10,7 +10,8 @@ jack2d('PlayerObject', ['obj', 'input'], function(Obj, Input) {
     'platformer.PhysicsObject',
     'spriteAnimation',
     'AABBObject',
-    'ActionObject', {
+    'ActionObject',
+    'FlowObject', {
     init: function(world, config) {
       this
         .startActions()
@@ -20,7 +21,6 @@ jack2d('PlayerObject', ['obj', 'input'], function(Obj, Input) {
         .action('down', {key: Input.DOWN})
         .startPhysics()
         .startCollisions(world)
-        .loadSpriteSheet('img/miyamoto.png')
         .startAnimations();
 
       Obj.merge(config, this);
@@ -38,6 +38,7 @@ jack2d('Moto', ['obj', 'Flow', 'World', 'PlayerObject', 'Constants'],
 
     return function() {
       var moto = Obj.create(PlayerObject);
+
       moto.init(World, {
         x: 150,
         y : 118,
@@ -49,7 +50,7 @@ jack2d('Moto', ['obj', 'Flow', 'World', 'PlayerObject', 'Constants'],
         accelerationY: 500
       });
 
-      Flow(moto, 1, moto.getChronoId('ActionObject'))
+      moto.flow('ActionObject')
         .when('left').andNot('ducking')
         .set('velocityX', -100)
         .when('right').andNot('ducking')
@@ -59,10 +60,9 @@ jack2d('Moto', ['obj', 'Flow', 'World', 'PlayerObject', 'Constants'],
         .when('down').and('canDuck')
         .set('ducking', true)
         .whenNot('down')
-        .set('ducking', false)
-        .done();
+        .set('ducking', false);
 
-      Flow(moto, 1, moto.getChronoId('AABBObject'))
+      moto.flow('AABBObject')
         .when('collisionLeft')
         .set('velocityX', 0)
         .when('collisionRight')
@@ -74,10 +74,9 @@ jack2d('Moto', ['obj', 'Flow', 'World', 'PlayerObject', 'Constants'],
         .when('collisionBottom').andNot('up')
         .set('canJump', true)
         .whenNot('collisionBottom')
-        .set('canJump', false)
-        .done();
+        .set('canJump', false);
 
-      Flow(moto, 1, moto.getChronoId('spriteAnimation'))
+      moto.flow('spriteAnimation')
         .when('velocityX', function(vX) { return (vX <= -30); })
         .set('direction', Directions.DIR_RIGHT)
         .when('velocityX', function(vX) { return (vX >= 30); })
@@ -89,8 +88,7 @@ jack2d('Moto', ['obj', 'Flow', 'World', 'PlayerObject', 'Constants'],
         .when('ducking')
         .playSequence(Animations.DUCK)
         .whenNot('collisionBottom')
-        .playSequence(Animations.JUMP)
-        .done();
+        .playSequence(Animations.JUMP);
 
       return moto;
     };
