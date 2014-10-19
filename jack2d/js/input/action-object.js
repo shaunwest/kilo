@@ -2,20 +2,16 @@
  * Created by Shaun on 7/2/14.
  */
 
-jack2d('ActionObject', ['obj', 'input', 'helper'], function(Obj, Input, Helper) {
+jack2d('ActionObject', ['obj', 'input', 'helper', 'PropChecker'], function(Obj, Input, Helper, PropChecker) {
   'use strict';
 
   function onInputUpdate(context, keyActions) {
-    var numKeyActions,
-      inputs,
-      keyAction,
-      keys = false,
-      i;
+    var i, numKeyActions, inputs, keyAction,
+      keys = false;
 
-    numKeyActions = keyActions.length;
     inputs = Input.getInputs();
 
-    for(i = 0; i < numKeyActions; i++) {
+    for(i = 0, numKeyActions = keyActions.length; i < numKeyActions; i++) {
       keyAction = keyActions[i];
       if(keyAction.key) {
         if(inputs[keyAction.key]) {

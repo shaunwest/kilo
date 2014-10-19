@@ -1,38 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Super Moto Bros.</title>
   <script src="../js/jack2d.js"></script>
   <script src="../js/jack2d-platformer.js"></script>
   <script src="js/constants.js"></script>
   <script src="js/world.js"></script>
   <script src="js/moto.js"></script>
-  <title>Super Moto Bros.</title>
+  <style>
+    #viewport { background-color: black; }
+  </style>
   <script>
     var moto;
-    jack2d(['World', 'Moto', 'CanvasViewport', 'SpriteLayer', 'Background'],
-      function(World, Moto, CanvasViewport, SpriteLayer, Background) {
+
+    jack2d(['World', 'Moto', 'CanvasViewport', 'SpriteLayer', 'BackgroundLayer'],
+      function(World, Moto, CanvasViewport, SpriteLayer, BackgroundLayer) {
         'use strict';
 
         moto = Moto();
         moto.loadSpriteSheet('img/miyamoto.png');
 
         World
-          .setWorldBounds(500)
+          .setWorldBounds(512, 256)
           .addObject(moto);
 
         SpriteLayer.addSprite(moto);
 
         CanvasViewport
           .el('#viewport')
-          .setViewportWidth(500)
-          .setViewportHeight(500)
-          .addLayer(Background)
+          .setFocus(moto)
+          //.setFocusOffset(128, 128)
+          .setFocusRegion(64, 0, 192, 256)
+          .setViewportWidth(256)
+          .setViewportHeight(256)
+          .addLayer(BackgroundLayer)
           .addLayer(SpriteLayer);
+
+        CanvasViewport.hasBorder = true;
+        CanvasViewport.drawFocusRegion = true;
       }
     );
   </script>
 </head>
 <body>
-  <canvas id="viewport" width="500" height="500"></canvas>
+  <canvas id="viewport" width="256" height="256"></canvas>
 </body>
 </html>

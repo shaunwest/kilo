@@ -37,7 +37,7 @@ jack2d('SpriteLayer', ['helper', 'Requires', 'RequiresArgs'], function(Helper, R
     },
     draw: Requires(['sprites'], function(context, viewport) {
       var i, numSprites, sprite, sprites;
-      //var drawFrame = this.drawFrame;
+      var drawFrame = this.drawFrame;
       var xMin = viewport.x;
       var yMin = viewport.y;
       var xMax = xMin + viewport.width;
@@ -46,7 +46,7 @@ jack2d('SpriteLayer', ['helper', 'Requires', 'RequiresArgs'], function(Helper, R
       for(i = 0, sprites = this.sprites, numSprites = sprites.length; i < numSprites; i++) {
         sprite = sprites[i];
         if(sprite.x >= xMin && sprite.y >= yMin && sprite.x <= xMax && sprite.y <= yMax) {
-          this.drawFrame(sprite.getCurrentFrame(), sprite.x - xMin, sprite.y - yMin, context);
+          drawFrame.call(this, sprite.getCurrentFrame(), sprite.x - xMin, sprite.y - yMin, context);
         }
       }
       return this;

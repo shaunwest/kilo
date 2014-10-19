@@ -2,7 +2,7 @@
  * Created by Shaun on 5/25/14.
  */
 
-jack2d('TileLayer', ['helper', 'Requires'], function(Helper, Requires) {
+jack2d('TileLayer', ['helper', 'Canvas', 'Requires'], function(Helper, Canvas, Requires) {
   'use strict';
 
   function getTileGroup(tileData) {
@@ -35,15 +35,12 @@ jack2d('TileLayer', ['helper', 'Requires'], function(Helper, Requires) {
 
   return {
     setLayerData: function(value) {
-      var layerData;
+      var layerData = this.layerData = value;
 
-      layerData = this.layerData = value;
-      /*layerData = (value) ?
-        this.layerData = value :
-        this.layerData;*/
-
-      this.gridWidth = layerData.length;
-      this.gridHeight = layerData[0].length;
+      this.tileGridWidth = layerData[0].length;
+      this.tileGridHeight = layerData.length;
+      this.segmentGridWidth = this.tileGridWidth / 2;
+      this.segmentGridHeight = this.tileGridHeight / 2;
 
       return this;
     },
@@ -62,29 +59,35 @@ jack2d('TileLayer', ['helper', 'Requires'], function(Helper, Requires) {
       return this;
     },
     getLayerWidth: function() {
-      return this.gridWidth * this.tileWidth;
+      return this.tileGridWidth * this.tileWidth;
     },
     getLayerHeight: function() {
-      return this.gridHeight * this.tileHeight;
+      return this.tileGridHeight * this.tileHeight;
     },
-    // TODO: Need to support viewport...
     draw: Requires(['layerData'], function(context, viewport) {
-      var tx, ty, gridWidth, gridHeight;
+      var tx, ty;
       var tileWidth = this.tileWidth;
       var tileHeight = this.tileHeight;
       var layerData = this.layerData;
+      var xMin = Math.max(Math.floor(viewport.x / tileWidth), 0);
+      var yMin = Math.max(Math.floor(viewport.y / tileHeight), 0);
+      var xMax = Math.min(xMin + Math.ceil(viewport.width / tileWidth), this.tileGridWidth);
+      var yMax = Math.min(yMin + Math.ceil(viewport.height / tileHeight), this.tileGridHeight);
 
-      for(tx = 0, gridWidth = this.gridWidth; tx < gridWidth; tx++) {
-        for(ty = 0, gridHeight = this.gridHeight; ty < gridHeight; ty++) {
+      Canvas.drawBackground(context,this.getLayerWidth(), this.getLayerHeight(), -viewport.x, -viewport.y, 'white');
+
+      for(tx = xMin; tx < xMax; tx++) {
+        for(ty = yMin; ty < yMax; ty++) {
           drawTile(
             context,
-            ty * tileHeight,
-            tx * tileWidth,
+            (tx * tileWidth) - viewport.x,
+            (ty * tileHeight) - viewport.y,
             tileWidth,
             tileHeight,
-            layerData[tx][ty],
+            layerData[ty][tx],
             this.tileSet
           );
+          //Canvas.drawBorder(context, tileWidth, tileHeight, (tx * tileWidth) - viewport.x, (ty * tileHeight) - viewport.y);
         }
       }
       return this;

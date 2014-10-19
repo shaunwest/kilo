@@ -2,7 +2,7 @@
  * Created by Shaun on 6/7/14.
  */
 
-jack2d('platformer.PhysicsObject', ['helper', 'obj', 'chronoObject'], function(helper, obj, chronoObject) {
+jack2d('platformer.PhysicsObject', ['helper', 'obj', 'chronoObject', 'PropChecker'], function(helper, obj, chronoObject, PropChecker) {
   'use strict';
 
   function calculateVelocity(deltaSeconds, velocity, acceleration, friction, maxVelocity) {
@@ -18,7 +18,7 @@ jack2d('platformer.PhysicsObject', ['helper', 'obj', 'chronoObject'], function(h
     return velocity;
   }
 
-  return obj.mixin([chronoObject, {
+  return obj.mixin([chronoObject, PropChecker('PhysicsObject', {
     startPhysics: function() {
       this.velocityX = 0; // pixels/second
       this.velocityY = 0;
@@ -40,5 +40,5 @@ jack2d('platformer.PhysicsObject', ['helper', 'obj', 'chronoObject'], function(h
       }, 'PhysicsObject');
       return this;
     }
-  }]);
+  })]);
 });

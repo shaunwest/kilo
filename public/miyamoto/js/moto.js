@@ -47,10 +47,16 @@ jack2d('Moto', ['obj', 'Flow', 'World', 'PlayerObject', 'Constants'],
         frictionX : 0.99,
         maxVelocityX : 150,
         maxVelocityY : 300,
-        accelerationY: 500
+        accelerationY: 500,
+        foo: {
+          bar: {
+            baz: 'hello'
+          }
+        }
       });
 
-      moto.flow('ActionObject')
+      moto
+        .after('ActionObject')
         .when('left').andNot('ducking')
         .set('velocityX', -100)
         .when('right').andNot('ducking')
@@ -59,10 +65,12 @@ jack2d('Moto', ['obj', 'Flow', 'World', 'PlayerObject', 'Constants'],
         .set('velocityY', -250)
         .when('down').and('canDuck')
         .set('ducking', true)
+        .set('foo.bar.baz', 'gah!')
         .whenNot('down')
         .set('ducking', false);
 
-      moto.flow('AABBObject')
+      moto
+        .after('AABBObject')
         .when('collisionLeft')
         .set('velocityX', 0)
         .when('collisionRight')
@@ -76,7 +84,8 @@ jack2d('Moto', ['obj', 'Flow', 'World', 'PlayerObject', 'Constants'],
         .whenNot('collisionBottom')
         .set('canJump', false);
 
-      moto.flow('spriteAnimation')
+      moto
+        .after('spriteAnimation')
         .when('velocityX', function(vX) { return (vX <= -30); })
         .set('direction', Directions.DIR_RIGHT)
         .when('velocityX', function(vX) { return (vX >= 30); })
