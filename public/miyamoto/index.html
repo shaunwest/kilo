@@ -29,11 +29,10 @@
         CanvasViewport
           .el('#viewport')
           .setFocus(moto)
-          //.setFocusOffset(128, 128)
           .setFocusRegion(64, 0, 192, 256)
           .setViewportWidth(256)
           .setViewportHeight(256)
-          .addLayer(BackgroundLayer)
+          .addLayer(BackgroundLayer, 1)
           .addLayer(SpriteLayer);
 
         CanvasViewport.hasBorder = true;

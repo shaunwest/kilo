@@ -41,7 +41,7 @@ var jack2d = (function() {
     }
   };
 
-  ['Array', 'Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'].
+  ['Array', 'Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'HTMLImageElement'].
     forEach(function(name) {
       helper['is' + name] = function(obj) {
         return Object.prototype.toString.call(obj) === '[object ' + name + ']';

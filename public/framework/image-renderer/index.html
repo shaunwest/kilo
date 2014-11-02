@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Image Renderer Demo</title>
+  <style>
+    #renderer {
+      width: 256px;
+      height: 256px;
+      background: black;
+    }
+  </style>
+  <script src="../../js/jack2d.js"></script>
+  <script>
+    var viewport;
+
+    jack2d(['Image', 'ImageRenderer', 'Viewport'], function(Image, ImageRenderer, Viewport) {
+      'use strict';
+
+      var img = Image('img/detroit.jpg');
+
+      viewport = Viewport();
+
+      ImageRenderer
+        .el('#renderer')
+        .setViewport(viewport)
+        .setImage(img);
+
+      /*SegmentRenderer
+        .el('#renderer')
+        .setSegmentSize(64)
+        .setViewport(viewport)
+        .draw(img, 0, 0);*/
+  });
+  </script>
+</head>
+<body>
+<canvas id="renderer" width="256" height="256"></canvas>
+</body>
+</html>

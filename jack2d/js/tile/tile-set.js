@@ -31,7 +31,8 @@ jack2d('TileSet', ['imageLoader', 'tileConverter'], function(imageLoader, tileCo
         promises.push(promise);
       });
 
-      return Promise.all(promises);
+      this.tileSetPromise = Promise.all(promises);
+      return this.tileSetPromise;
     },
     setTileGroup: function(groupId, group) {
       var tileGroups = (this.tileGroups) ? this.tileGroups : this.tileGroups = {};

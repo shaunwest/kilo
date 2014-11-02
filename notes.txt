@@ -1,0 +1,25 @@
+
+Layer? get rid of this concept?
+
+
+Renderer
+- renders 2d (and 3d?) content
+- renders above all previously added renderers
+- can have a viewport for clipping content that shouldn't be visible
+- needs to be tied to an HTML element, usually a div
+
+Viewport
+- gets passed to a Renderer rather than being tied to an HTML element
+- has viewport dimensions as well as deltaX/Y
+- any renderer can take a advantage of these values
+
+
+StreamCanvas
+
+
+
+getSegment(x, y)
+    - if a canvas exists for this position return it
+    - if it doesn't exist create one and return it
+
+    applying a single image to multiple canvases
