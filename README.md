@@ -1,4 +1,4 @@
-jack2d
-======
+March Core
+==========
 
-Jack2D Engine
+A minimal JS file that provides utility functions, DI, and DOM hooks.
