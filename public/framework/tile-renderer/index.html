@@ -4,21 +4,20 @@
   <title>Tile Renderer</title>
   <script src="../../js/jack2d.js"></script>
   <style>
-    #renderer {
+    .renderer {
       background-color: #0b97c4;
     }
   </style>
   <script>
     var treeTiles, viewport, layer;
 
-    jack2d([
+    jack2d.element('Renderer', [
       'Factory',
       'obj',
       'TileSet',
       'Viewport',
-      'ViewportObject',
       'TileRenderer'],
-    function(Factory, Obj, TileSet, Viewport, ViewportObject, TileRenderer) {
+    function(Factory, Obj, TileSet, Viewport, TileRenderer) {
       treeTiles = Factory(TileSet);
 
       var treeData = [
@@ -37,25 +36,17 @@
         .setTileHeight(16)
         .loadTileSet([{id: '1', path: 'img/tree.png'}]);
 
-      /*viewport = Viewport()
-        .setPositionX(32)
-        .setPositionY(32)
-        .setWidth(64)
-        .setHeight(64);*/
-
-      //viewport = Obj.create('ViewportObject');
-      viewport = ViewportObject();
+      viewport = Viewport();
 
       TileRenderer
-        .el('#renderer')
+        .el(this)
         .setViewport(viewport)
         .setTileSet(treeTiles)
         .setData(treeData);
-
     });
   </script>
 </head>
 <body>
-  <canvas id="renderer" width="64" height="64"></canvas>
+  <canvas data-jack2d="Renderer" class="renderer" width="64" height="64"></canvas>
 </body>
 </html>

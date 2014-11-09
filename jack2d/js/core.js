@@ -1,77 +1,70 @@
 /**
  * Created by Shaun on 5/1/14.
- *
- * tx/ty = tile coordinates
- * x/y   = pixel (screen) coordinates
- *
  */
 
-var jack2d = (function() {
+(function(id) {
   'use strict';
 
-  var jack2d, helper, injector, appConfig = {}, gids = {};
+  var core, Util, Injector, appConfig = {}, gids = {}, registeredElements = {}, previousOwner;
+  var CONSOLE_ID = id;
 
-  helper = {
+  Util = {
     isDefined: function(value) { return (typeof value !== 'undefined'); },
     isObject: function(value) { return (value !== null && typeof value === 'object'); },
     isBoolean: function(value) { return (typeof value === 'boolean'); },
     def: function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; },
-    error: function(message) { throw new Error(message); },
-    warn: function(message) { console.error(message); },
-    info: function(message) { console.log(message); },
-    log: function(message) { if(jack2d.log) { console.log(message); } },
+    error: function(message) { throw new Error(CONSOLE_ID + ': ' + message); },
+    warn: function(message) { Util.log('Warning: ' + message); },
+    log: function(message) { if(core.log) { console.log(CONSOLE_ID + ': ' + message); } },
     argsToArray: function(args) { return Array.prototype.slice.call(args); },
     getGID: function(group) {
-      if(!group) {
-        group = '';
-      }
-      if(!gids[group]) {
-        gids[group] = 0;
-      }
+      group = Util.def(group, '');
+      gids[group] = Util.def(gids[group], 0);
       return group + (++gids[group]);
     },
-    rand: function(max) {
-      return Math.floor((Math.random() * (max + 1)));
-    },
-    call: function(context, func) { // TODO: move to Func
-      var args = Array.prototype.slice.call(arguments, 2);
-      return function() {
-        func.apply(context, (args.length > 0) ? args : arguments);
-      };
+    rand: function(max, min) {
+      min = min || 0;
+      if(min > max || max < min) { Util.error('rand: invalid range.'); }
+      return Math.floor((Math.random() * (max - min + 1))) + (min);
     }
   };
 
   ['Array', 'Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'HTMLImageElement'].
     forEach(function(name) {
-      helper['is' + name] = function(obj) {
+      Util['is' + name] = function(obj) {
         return Object.prototype.toString.call(obj) === '[object ' + name + ']';
       };
     });
 
-  injector = {
+  Injector = {
     unresolved: {},
     modules: {},
     register: function(key, deps, func, scope) {
       this.unresolved[key] = {deps: deps, func: func, scope: scope};
+      return this;
     },
     setModule: function(key, module) { // save a module without doing dependency resolution
       this.modules[key] = module;
+      return this;
     },
     getDependency: function(key) {
       var module = this.modules[key];
-      if(!module) {
-        module = this.unresolved[key];
-        if(module) {
-          helper.info('Jack2d: resolving dependencies for \'' + key + '\'');
-          module = this.modules[key] = this.resolve(module.deps, module.func, module.scope);
-          if(helper.isObject(module)) {
-            module.getType = function() { return key; };
-          }
-          delete this.unresolved[key];
-        } else {
-          helper.warn('Jack2d: module \'' + key + '\' not found');
-        }
+      if(module) {
+        return module;
       }
+
+      module = this.unresolved[key];
+      if(!module) {
+        Util.warn('Module \'' + key + '\' not found');
+        return null;
+      }
+
+      Util.log('Resolving dependencies for \'' + key + '\'');
+      module = this.modules[key] = this.resolveAndApply(module.deps, module.func, module.scope);
+      if(Util.isObject(module)) {
+        module.getType = function() { return key; };
+      }
+      delete this.unresolved[key];
       return module;
     },
     resolve: function(deps, func, scope) {
@@ -82,41 +75,109 @@ var jack2d = (function() {
         if(dep) {
           args.push(dep);
         } else {
-          helper.warn('Jack2d: Can\'t resolve ' + depName);
+          Util.warn('Can\'t resolve ' + depName);
         }
       }
-      return func.apply(scope || {}, args.concat(Array.prototype.slice.call(arguments, 0)));
+      return args;
+    },
+    apply: function(args, func, scope) {
+      return func.apply(scope || {}, args);
+    },
+    resolveAndApply: function(deps, func, scope) {
+      return this.apply(this.resolve(deps), func, scope);
     }
   };
 
   /** add these basic modules to the injector */
-  injector.setModule('helper', helper);
-  injector.setModule('appConfig', appConfig);
-  injector.setModule('injector', injector);
+  Injector
+    .setModule('helper', Util).setModule('Helper', Util).setModule('Util', Util)
+    .setModule('injector', Injector).setModule('Injector', Injector)
+    .setModule('appConfig', appConfig);
 
-  jack2d = function(keyOrDeps, depsOrFunc, funcOrScope, scope) {
-    /** get dependencies */
-    if(helper.isArray(keyOrDeps)) {
-      injector.resolve(keyOrDeps, depsOrFunc, funcOrScope);
+  function onDocumentReady(onReady) {
+    var readyStateCheckInterval;
+    if (document.readyState === 'complete') {
+      onReady();
+    } else {
+      readyStateCheckInterval = setInterval(function () {
+        if (document.readyState === 'complete') {
+          onReady();
+          clearInterval(readyStateCheckInterval);
+        }
+      }, 10);
+    }
+  }
 
-    /** register a new module (with dependencies) */
-    } else if(helper.isArray(depsOrFunc) && helper.isFunction(funcOrScope)) {
-      injector.register(keyOrDeps, depsOrFunc, funcOrScope, scope);
+  /** find HTML elements to register */
+  onDocumentReady(function() {
+    var i, allElements, numElements, attrValue, selectedElement, registeredElement;
+    var dataAttrName = 'data-' + id, attrName = id;
+    var body = document.getElementsByTagName('body');
+    if(!body || !body[0]) {
+      return;
+    }
+    allElements = body[0].querySelectorAll('*');
+    for(i = 0, numElements = allElements.length; i < numElements; i++) {
+      selectedElement = allElements[i];
+      attrValue = selectedElement.getAttribute(dataAttrName) || selectedElement.getAttribute(attrName);
+      registeredElement = registeredElements[attrValue];
+      if(!registeredElement) {
+        continue;
+      }
+      if(registeredElement.deps) {
+        registeredElement.func.apply(selectedElement, Injector.resolve(registeredElement.deps));
+      } else {
+        registeredElement.func.call(selectedElement);
+      }
+    }
+  });
 
-    /** register a new module (without dependencies) */
-    } else if(helper.isFunction(depsOrFunc)) {
-      injector.register(keyOrDeps, [], depsOrFunc, funcOrScope);
+  /** the core interface */
+  core = function(keyOrDeps, depsOrFunc, funcOrScope, scope) {
+    // get dependencies
+    if(Util.isArray(keyOrDeps)) {
+      Injector.resolveAndApply(keyOrDeps, depsOrFunc, funcOrScope);
 
-    /** get a module */
-    } else if(keyOrDeps && !helper.isDefined(depsOrFunc)) {
-      return injector.getDependency(keyOrDeps);
+    // register a new module (with dependencies)
+    } else if(Util.isArray(depsOrFunc) && Util.isFunction(funcOrScope)) {
+      Injector.register(keyOrDeps, depsOrFunc, funcOrScope, scope);
+
+    // register a new module (without dependencies)
+    } else if(Util.isFunction(depsOrFunc)) {
+      Injector.register(keyOrDeps, [], depsOrFunc, funcOrScope);
+
+    // get a module
+    } else if(keyOrDeps && !Util.isDefined(depsOrFunc)) {
+      return Injector.getDependency(keyOrDeps);
     }
 
     return null;
   };
 
-  jack2d.log = true;
+  core.noConflict = function() {
+    window[id] = previousOwner;
+    return core;
+  };
+  core.element = function(elementId, funcOrDeps, func) {
+    var deps;
+    if(Util.isFunction(funcOrDeps)) {
+      func = funcOrDeps;
+    }
+    if(Util.isArray(funcOrDeps)) {
+      deps = funcOrDeps;
+    }
+    registeredElements[elementId] = {func: func, deps: deps};
+  };
+  core.elements = registeredElements;
+  core.onDocumentReady = core.ready = onDocumentReady;
+  core.log = true;
 
-  return jack2d;
-})();
+  /** create global reference to core */
+  if(window[id]) {
+    Util.warn('a preexisting value at namespace \'' + id + '\' has been overwritten.');
+    previousOwner = window[id];
+  }
+  window[id] = core;
+  return core;
+})('jack2d');
 

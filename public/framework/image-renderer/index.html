@@ -4,36 +4,32 @@
   <title>Image Renderer Demo</title>
   <style>
     #renderer {
-      width: 256px;
-      height: 256px;
+      width: 512px;
+      height: 512px;
       background: black;
     }
   </style>
   <script src="../../js/jack2d.js"></script>
   <script>
-    var viewport;
+    jack2d.element('Renderer', ['Image', 'ImageRenderer', 'obj', 'Viewport'],
+      function(Image, ImageRenderer, Obj, Viewport) {
+        'use strict';
 
-    jack2d(['Image', 'ImageRenderer', 'Viewport'], function(Image, ImageRenderer, Viewport) {
-      'use strict';
+        var img = Image('img/detroit.jpg');
 
-      var img = Image('img/detroit.jpg');
-
-      viewport = Viewport();
-
-      ImageRenderer
-        .el('#renderer')
-        .setViewport(viewport)
-        .setImage(img);
-
-      /*SegmentRenderer
-        .el('#renderer')
-        .setSegmentSize(64)
-        .setViewport(viewport)
-        .draw(img, 0, 0);*/
-  });
+        ImageRenderer
+          .el(this)
+          .setViewport(Obj.merge({
+            x: 0,
+            y: 0,
+            width: 256,
+            height: 256
+          }, Viewport()))
+          .setImage(img);
+      });
   </script>
 </head>
 <body>
-<canvas id="renderer" width="256" height="256"></canvas>
+<canvas data-jack2d="Renderer" id="renderer" width="512" height="512"></canvas>
 </body>
 </html>

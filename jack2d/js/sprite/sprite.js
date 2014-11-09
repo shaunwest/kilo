@@ -20,7 +20,7 @@ function(helper, spriteSheetParser, imageLoader, FrameSet, Requires) {
       this.spriteSheetLoaded = false;
       this.spriteFrameDelay = DEFAULT_DELAY;
       imageLoader.loadPath(spriteSheetPath).
-        then(helper.call(this, function(image) {
+        then(function(image) {
           this.spriteSheet = image;
           this.frameSet = new FrameSet(spriteSheetParser.parse(image), DEFAULT_WIDTH, DEFAULT_HEIGHT);
           //this.frameSetReversed = spriteSheetParser.parse(image, true);
@@ -28,9 +28,9 @@ function(helper, spriteSheetParser, imageLoader, FrameSet, Requires) {
           if(helper.isFunction(this.spriteSheetReady)) {
             this.spriteSheetReady(this);
           }
-        }), helper.call(this, function() {
+        }.bind(this), function() {
           console.error('Jack2d: Error loading sprite sheet at \'' + spriteSheetPath + '\'');
-        }));
+        }.bind(this));
       return this;
     },
     onSpriteSheetReady: function(callback) {

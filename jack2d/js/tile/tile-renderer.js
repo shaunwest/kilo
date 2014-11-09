@@ -2,57 +2,8 @@
  * Created by Shaun on 5/25/14.
  */
 
-jack2d('TileRenderer', ['helper', 'obj', 'Requires'], function(Helper, Obj, Requires) {
+jack2d('TileRenderer', ['Util', 'Extend', 'Requires', 'TileData'], function(Util, Extend, Requires, TileData) {
   'use strict';
-
-  function TileData(tileData) {
-    this.tileData = tileData || null;
-  }
-
-  TileData.prototype.setTileData = function(tileData) {
-    this.tileData = tileData;
-  };
-
-  TileData.prototype.setTileSet = function(tileSet) {
-    this.tileSet = tileSet;
-  };
-
-  TileData.prototype.getTileGroup = function(tileId) {
-    // TODO: all of these checks are ridiculous
-    // maybe validate the data before doing this stuff?
-    return (tileId && Helper.isArray(tileId)) ? tileId[0] : null;
-  };
-
-  TileData.prototype.getTileIndex = function(tileId) {
-    return (tileId && Helper.isArray(tileId)) ? tileId[1] : null;
-  };
-
-  TileData.prototype.getTileWidth = function() {
-    return this.tileSet.tileWidth;
-  };
-
-  TileData.prototype.getTileHeight = function() {
-    return this.tileSet.tileHeight;
-  };
-
-  TileData.prototype.getGridWidth = function() {
-    return this.tileData[0].length;
-  };
-
-  TileData.prototype.getGridHeight = function() {
-    return this.tileData.length;
-  };
-
-  TileData.prototype.getTile = function(tx, ty) {
-    var tileId = this.tileData[ty][tx];
-    var tileGroup = this.getTileGroup(tileId),
-      tileIndex = this.getTileIndex(tileId);
-    return this.tileSet.getTile(tileGroup, tileIndex);
-  };
-
-  TileData.prototype.setTile = function(tx, ty, tileId) {
-    this.tileData[ty][tx] = tileId;
-  };
 
   function createCanvas(width, height) {
     var canvas = document.createElement("canvas");
@@ -91,8 +42,8 @@ jack2d('TileRenderer', ['helper', 'obj', 'Requires'], function(Helper, Obj, Requ
       for(ty = yMin; ty < yMax; ty++) {
         drawTile(
           context2d,
-          (tx * tileWidth) - offsetX, //viewport.x,
-          (ty * tileHeight) - offsetY, //viewport.y,
+          (tx * tileWidth) - offsetX,
+          (ty * tileHeight) - offsetY,
           tileData,
           tx, ty
         );
@@ -100,7 +51,7 @@ jack2d('TileRenderer', ['helper', 'obj', 'Requires'], function(Helper, Obj, Requ
     }
   }
 
-  return Obj.mixin(['Element', {
+  return Extend('Element', {
     elPromise: function(elPromise, elementOrSelector) {
       return elPromise
         .call(this, elementOrSelector)
@@ -114,7 +65,7 @@ jack2d('TileRenderer', ['helper', 'obj', 'Requires'], function(Helper, Obj, Requ
           } else {
             throw new Error('Jack2d: ImageRenderer: Image element required');
           }
-          this.onFrame(this.updateRenderer);
+          this.onFrame(this.updateRenderer, 'tile-renderer');
         }.bind(this));
     },
     setViewport: function(viewport) {
@@ -159,8 +110,6 @@ jack2d('TileRenderer', ['helper', 'obj', 'Requires'], function(Helper, Obj, Requ
         this.bufferContext.clearRect(0, 0, viewport.width, viewport.height);
         this.bufferContext.drawImage(this.canvas, -xDelta, -yDelta);
 
-        console.log(yDelta);
-        console.log(viewport.y);
         // TODO: performance: some tiles are drawn twice when there's both an x & y delta
         if(xDelta > 0) {
           xViewRegion.width = xDeltaAbs;
@@ -211,5 +160,5 @@ jack2d('TileRenderer', ['helper', 'obj', 'Requires'], function(Helper, Obj, Requ
       this.tileData.setTile(tx, ty, [tileGroupId, tileIndex]);
       return this;
     }
-  }], true);
+  });
 });
