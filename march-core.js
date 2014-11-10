@@ -2,10 +2,10 @@
  * Created by Shaun on 5/1/14.
  */
 
-(function(id) {
+var march = (function(id) {
   'use strict';
 
-  var core, Util, Injector, appConfig = {}, gids = {}, registeredElements = {}, previousOwner;
+  var core, Util, Injector, appConfig = {}, gids = {}, registeredElements = {}, previousOwner = undefined;
   var CONSOLE_ID = id;
 
   Util = {
@@ -81,7 +81,7 @@
       return args;
     },
     apply: function(args, func, scope) {
-      return func.apply(scope || {}, args);
+      return func.apply(scope || core, args);
     },
     resolveAndApply: function(deps, func, scope) {
       return this.apply(this.resolve(deps), func, scope);
@@ -110,8 +110,7 @@
 
   /** find HTML elements to register */
   onDocumentReady(function() {
-    var i, allElements, numElements, attrValue, selectedElement, registeredElement;
-    var dataAttrName = 'data-' + id, attrName = id;
+    var i, allElements, numElements, selectedElement, registeredElement, registeredElementName;
     var body = document.getElementsByTagName('body');
     if(!body || !body[0]) {
       return;
@@ -119,20 +118,23 @@
     allElements = body[0].querySelectorAll('*');
     for(i = 0, numElements = allElements.length; i < numElements; i++) {
       selectedElement = allElements[i];
-      attrValue = selectedElement.getAttribute(dataAttrName) || selectedElement.getAttribute(attrName);
-      registeredElement = registeredElements[attrValue];
-      if(!registeredElement) {
-        continue;
-      }
-      if(registeredElement.deps) {
-        registeredElement.func.apply(selectedElement, Injector.resolve(registeredElement.deps));
-      } else {
-        registeredElement.func.call(selectedElement);
+      for(registeredElementName in registeredElements) {
+        if(!registeredElements.hasOwnProperty(registeredElementName)) {
+          continue;
+        }
+        registeredElement = registeredElements[registeredElementName];
+        if(selectedElement.hasAttribute('data-' + registeredElementName) || selectedElement.hasAttribute(registeredElementName)){
+          if(registeredElement.deps) {
+            registeredElement.func.apply(selectedElement, Injector.resolve(registeredElement.deps));
+          } else {
+            registeredElement.func.call(selectedElement);
+          }
+        }
       }
     }
   });
 
-  /** the core interface */
+  /** the main interface */
   core = function(keyOrDeps, depsOrFunc, funcOrScope, scope) {
     // get dependencies
     if(Util.isArray(keyOrDeps)) {
@@ -167,6 +169,7 @@
       deps = funcOrDeps;
     }
     registeredElements[elementId] = {func: func, deps: deps};
+    return this;
   };
   core.elements = registeredElements;
   core.onDocumentReady = core.ready = onDocumentReady;
@@ -179,5 +182,4 @@
   }
   window[id] = core;
   return core;
-})('jack2d');
-
+})('march');

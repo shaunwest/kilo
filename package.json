@@ -1,0 +1,23 @@
+{
+  "name": "march-core",
+  "version": "0.0.1",
+  "description": "March Core",
+  "main": "march-core.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shaunwest/march-core.git"
+  },
+  "author": "Shaun West",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shaunwest/march-core/issues"
+  },
+  "homepage": "https://github.com/shaunwest/march-core",
+  "devDependencies": {
+    "gulp": "^3.8.10",
+    "gulp-uglifyjs": "^0.5.0"
+  }
+}
