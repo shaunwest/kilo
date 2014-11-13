@@ -2,7 +2,7 @@
  * Created by Shaun on 5/1/14.
  */
 
-var march = (function(id) {
+var kilo = (function(id) {
   'use strict';
 
   var core, Util, Injector, appConfig = {}, gids = {}, registeredElements = {}, previousOwner = undefined;
@@ -182,4 +182,4 @@ var march = (function(id) {
   }
   window[id] = core;
   return core;
-})('march');
+})('kilo');
