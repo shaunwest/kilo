@@ -6,9 +6,10 @@ var gulp = require('gulp');
 var uglify = require('gulp-uglifyjs');
 
 gulp.task('uglify', function() {
-  gulp.src('march-core.js')
+  gulp.src('./march-core.js')
     .pipe(uglify('march-core.min.js', {
-      outSourceMap: true
+      outSourceMap: true,
+      sourceRoot: '/marchjs/march-core'
     }))
     .pipe(gulp.dest(''))
 });
