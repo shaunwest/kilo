@@ -1,0 +1,19 @@
+{
+  "name": "kilo-core",
+  "main": "kilo-core.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/shaunwest/kilo-core",
+  "authors": [
+    "Shaun West <shaunwest@gmail.com>"
+  ],
+  "description": "KiloJS Core Lib",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
