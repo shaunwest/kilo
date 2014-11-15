@@ -94,6 +94,7 @@ var kilo = (function(id) {
     .setModule('injector', Injector).setModule('Injector', Injector)
     .setModule('appConfig', appConfig);
 
+  /** run onReady when document readyState is 'complete' */
   function onDocumentReady(onReady) {
     var readyStateCheckInterval;
     if (document.readyState === 'complete') {
@@ -107,32 +108,6 @@ var kilo = (function(id) {
       }, 10);
     }
   }
-
-  /** find HTML elements to register */
-  onDocumentReady(function() {
-    var i, allElements, numElements, selectedElement, registeredElement, registeredElementName;
-    var body = document.getElementsByTagName('body');
-    if(!body || !body[0]) {
-      return;
-    }
-    allElements = body[0].querySelectorAll('*');
-    for(i = 0, numElements = allElements.length; i < numElements; i++) {
-      selectedElement = allElements[i];
-      for(registeredElementName in registeredElements) {
-        if(!registeredElements.hasOwnProperty(registeredElementName)) {
-          continue;
-        }
-        registeredElement = registeredElements[registeredElementName];
-        if(selectedElement.hasAttribute('data-' + registeredElementName) || selectedElement.hasAttribute(registeredElementName)){
-          if(registeredElement.deps) {
-            registeredElement.func.apply(selectedElement, Injector.resolve(registeredElement.deps));
-          } else {
-            registeredElement.func.call(selectedElement);
-          }
-        }
-      }
-    }
-  });
 
   /** the main interface */
   core = function(keyOrDeps, depsOrFunc, funcOrScope, scope) {
@@ -169,6 +144,33 @@ var kilo = (function(id) {
       deps = funcOrDeps;
     }
     registeredElements[elementId] = {func: func, deps: deps};
+
+    // find HTML elements with attrs that match keys in registeredElements
+    onDocumentReady(function() {
+      var i, allElements, numElements, selectedElement, registeredElement, registeredElementName;
+      var body = document.getElementsByTagName('body');
+      if(!body || !body[0]) {
+        return;
+      }
+      allElements = body[0].querySelectorAll('*');
+      for(i = 0, numElements = allElements.length; i < numElements; i++) {
+        selectedElement = allElements[i];
+        for(registeredElementName in registeredElements) {
+          if(!registeredElements.hasOwnProperty(registeredElementName)) {
+            continue;
+          }
+          registeredElement = registeredElements[registeredElementName];
+          if(selectedElement.hasAttribute('data-' + registeredElementName) || selectedElement.hasAttribute(registeredElementName)){
+            if(registeredElement.deps) {
+              registeredElement.func.apply(selectedElement, Injector.resolve(registeredElement.deps));
+            } else {
+              registeredElement.func.call(selectedElement);
+            }
+          }
+        }
+      }
+    });
+
     return this;
   };
   core.elements = registeredElements;
