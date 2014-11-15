@@ -5,22 +5,22 @@
 var kilo = (function(id) {
   'use strict';
 
-  var core, Util, Injector, appConfig = {}, gids = {}, allElements, registeredElements = {}, previousOwner = undefined;
+  var core, Util, Injector, appConfig = {}, gids = {}, allElements, previousOwner = undefined;
   var CONSOLE_ID = id;
 
   Util = {
     isDefined: function(value) { return (typeof value !== 'undefined'); },
-    isObject: function(value) { return (value !== null && typeof value === 'object'); },
+    //isObject: function(value) { return (value !== null && typeof value === 'object'); },
     isBoolean: function(value) { return (typeof value === 'boolean'); },
     def: function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; },
     error: function(message) { throw new Error(CONSOLE_ID + ': ' + message); },
     warn: function(message) { Util.log('Warning: ' + message); },
     log: function(message) { if(core.log) { console.log(CONSOLE_ID + ': ' + message); } },
     argsToArray: function(args) { return Array.prototype.slice.call(args); },
-    getGID: function(group) {
-      group = Util.def(group, '');
-      gids[group] = Util.def(gids[group], 0);
-      return group + (++gids[group]);
+    getGID: function(prefix) {
+      prefix = Util.def(prefix, '');
+      gids[prefix] = Util.def(gids[prefix], 0);
+      return prefix + (++gids[prefix]);
     },
     rand: function(max, min) {
       min = min || 0;
@@ -29,7 +29,7 @@ var kilo = (function(id) {
     }
   };
 
-  ['Array', 'Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'HTMLImageElement'].
+  ['Array', 'Object', 'Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'HTMLImageElement'].
     forEach(function(name) {
       Util['is' + name] = function(obj) {
         return Object.prototype.toString.call(obj) === '[object ' + name + ']';
@@ -143,7 +143,7 @@ var kilo = (function(id) {
     } else if(Util.isArray(funcOrDeps)) {
       deps = funcOrDeps;
     } else {
-      return this;
+      Util.error('element: second argument should be function or dependency array.');
     }
 
     onDocumentReady(function() {
