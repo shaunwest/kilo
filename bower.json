@@ -11,8 +11,8 @@
   "private": true,
   "ignore": [
     "**/.*",
-    'Gulpfile.js',
-    'karma.conf.js',
+    "Gulpfile.js",
+    "karma.conf.js",
     "node_modules",
     "bower_components",
     "test",
