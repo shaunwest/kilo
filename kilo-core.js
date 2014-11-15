@@ -5,7 +5,7 @@
 var kilo = (function(id) {
   'use strict';
 
-  var core, Util, Injector, appConfig = {}, gids = {}, registeredElements = {}, previousOwner = undefined;
+  var core, Util, Injector, appConfig = {}, gids = {}, allElements, registeredElements = {}, previousOwner = undefined;
   var CONSOLE_ID = id;
 
   Util = {
@@ -137,35 +137,33 @@ var kilo = (function(id) {
   };
   core.element = function(elementId, funcOrDeps, func) {
     var deps;
+
     if(Util.isFunction(funcOrDeps)) {
       func = funcOrDeps;
-    }
-    if(Util.isArray(funcOrDeps)) {
+    } else if(Util.isArray(funcOrDeps)) {
       deps = funcOrDeps;
+    } else {
+      return this;
     }
-    registeredElements[elementId] = {func: func, deps: deps};
 
-    // find HTML elements with attrs that match keys in registeredElements
     onDocumentReady(function() {
-      var i, allElements, numElements, selectedElement, registeredElement, registeredElementName;
-      var body = document.getElementsByTagName('body');
-      if(!body || !body[0]) {
-        return;
+      var i, body, numElements, selectedElement;
+
+      if(!allElements) {
+        body = document.getElementsByTagName('body');
+        if(!body || !body[0]) {
+          return;
+        }
+        allElements = body[0].querySelectorAll('*');
       }
-      allElements = body[0].querySelectorAll('*');
+
       for(i = 0, numElements = allElements.length; i < numElements; i++) {
         selectedElement = allElements[i];
-        for(registeredElementName in registeredElements) {
-          if(!registeredElements.hasOwnProperty(registeredElementName)) {
-            continue;
-          }
-          registeredElement = registeredElements[registeredElementName];
-          if(selectedElement.hasAttribute('data-' + registeredElementName) || selectedElement.hasAttribute(registeredElementName)){
-            if(registeredElement.deps) {
-              registeredElement.func.apply(selectedElement, Injector.resolve(registeredElement.deps));
-            } else {
-              registeredElement.func.call(selectedElement);
-            }
+        if(selectedElement.hasAttribute('data-' + elementId) || selectedElement.hasAttribute(elementId)){
+          if(deps) {
+            func.apply(selectedElement, Injector.resolve(deps));
+          } else {
+            func.call(selectedElement);
           }
         }
       }
@@ -173,7 +171,6 @@ var kilo = (function(id) {
 
     return this;
   };
-  core.elements = registeredElements;
   core.onDocumentReady = core.ready = onDocumentReady;
   core.log = true;
 
