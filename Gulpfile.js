@@ -5,7 +5,7 @@
 var gulp = require('gulp');
 var uglify = require('gulp-uglifyjs');
 
-gulp.task('uglify', function() {
+gulp.task('default', function() {
   gulp.src('./kilo-core.js')
     .pipe(uglify('kilo-core.min.js', {
       outSourceMap: true,
