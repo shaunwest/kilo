@@ -43,6 +43,11 @@ var kilo = (function(id) {
       this.unresolved[key] = {deps: deps, func: func, scope: scope};
       return this;
     },
+    unresolve: function(key) {
+      if(this.modules[key]) {
+        delete this.modules[key];
+      }
+    },
     setModule: function(key, module) { // save a module without doing dependency resolution
       this.modules[key] = module;
       return this;
@@ -64,7 +69,6 @@ var kilo = (function(id) {
       if(Util.isObject(module)) {
         module.getType = function() { return key; };
       }
-      delete this.unresolved[key];
       return module;
     },
     resolve: function(deps, func, scope) {
@@ -131,6 +135,9 @@ var kilo = (function(id) {
     return null;
   };
 
+  core.unresolve = function(key) {
+    Injector.unresolve(key);
+  };
   core.noConflict = function() {
     window[id] = previousOwner;
     return core;
