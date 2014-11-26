@@ -5,7 +5,7 @@
 var kilo = (function(id) {
   'use strict';
 
-  var core, Util, Injector, appConfig = {}, gids = {}, allElements, previousOwner = undefined;
+  var core, Util, Injector, appConfig = {}, gids = {}, elementMap = {}, previousOwner = undefined;
   var CONSOLE_ID = id;
 
   Util = {
@@ -30,7 +30,7 @@ var kilo = (function(id) {
   };
 
   ['Array', 'Object', 'Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'HTMLImageElement'].
-    forEach(function(name) {
+    forEach(function(name) { // TODO: don't use forEach
       Util['is' + name] = function(obj) {
         return Object.prototype.toString.call(obj) === '[object ' + name + ']';
       };
@@ -102,11 +102,11 @@ var kilo = (function(id) {
   function onDocumentReady(onReady) {
     var readyStateCheckInterval;
     if (document.readyState === 'complete') {
-      onReady();
+      onReady(document);
     } else {
       readyStateCheckInterval = setInterval(function () {
         if (document.readyState === 'complete') {
-          onReady();
+          onReady(document);
           clearInterval(readyStateCheckInterval);
         }
       }, 10);
@@ -115,9 +115,15 @@ var kilo = (function(id) {
 
   /** the main interface */
   core = function(keyOrDeps, depsOrFunc, funcOrScope, scope) {
+    var result;
     // get dependencies
     if(Util.isArray(keyOrDeps)) {
-      Injector.resolveAndApply(keyOrDeps, depsOrFunc, funcOrScope);
+      result = Injector.resolveAndApply(keyOrDeps, depsOrFunc, funcOrScope);
+      if(Util.isObject(result)) {
+        Object.keys(result).forEach(function(key) { // TODO: don't use Object.keys
+          Injector.setModule(key, result[key]);
+        });
+      }
 
     // register a new module (with dependencies)
     } else if(Util.isArray(depsOrFunc) && Util.isFunction(funcOrScope)) {
@@ -142,7 +148,59 @@ var kilo = (function(id) {
     window[id] = previousOwner;
     return core;
   };
+
+  function findElement(elementId, elements, cb) {
+    var i, numElements, selectedElement;
+
+    for(i = 0, numElements = elements.length; i < numElements; i++) {
+      selectedElement = elements[i];
+      if(selectedElement.hasAttribute('data-' + elementId)) {
+        if(!elementMap[elementId]) {
+          elementMap[elementId] = [];
+        }
+        elementMap[elementId].push(selectedElement);
+        cb(selectedElement);
+      }
+    }
+  }
+
+  function executeElement(elementId, elements, deps, func, parentElement) {
+    findElement(elementId, elements, function(element) {
+      if(deps) {
+        func.apply(element, Injector.resolve(deps));
+      } else {
+        func.call(element, parentElement);
+      }
+    });
+  }
+
+  // TODO: decide if element() will be moved to new package (kilo-element)
   core.element = function(elementId, funcOrDeps, func) {
+    var deps, allElements;
+
+    if(Util.isFunction(funcOrDeps)) {
+      func = funcOrDeps;
+    } else if(Util.isArray(funcOrDeps)) {
+      deps = funcOrDeps;
+    } else {
+      Util.error('element: second argument should be function or dependency array.');
+    }
+
+    onDocumentReady(function(document) {
+      var body;
+      if(!allElements) {
+        body = document.getElementsByTagName('body');
+        if(!body || !body[0]) {
+          return;
+        }
+        allElements = body[0].querySelectorAll('*');
+      }
+      executeElement(elementId, allElements, deps, func);
+    });
+
+    return this;
+  };
+  core.childElement = function(parentId, elementId, funcOrDeps, func) {
     var deps;
 
     if(Util.isFunction(funcOrDeps)) {
@@ -154,25 +212,12 @@ var kilo = (function(id) {
     }
 
     onDocumentReady(function() {
-      var i, body, numElements, selectedElement;
-
-      if(!allElements) {
-        body = document.getElementsByTagName('body');
-        if(!body || !body[0]) {
-          return;
-        }
-        allElements = body[0].querySelectorAll('*');
-      }
-
-      for(i = 0, numElements = allElements.length; i < numElements; i++) {
-        selectedElement = allElements[i];
-        if(selectedElement.hasAttribute('data-' + elementId) || selectedElement.hasAttribute(elementId)){
-          if(deps) {
-            func.apply(selectedElement, Injector.resolve(deps));
-          } else {
-            func.call(selectedElement);
-          }
-        }
+      var i, elements, numParents, parentElement;
+      var parentElements = elementMap[parentId];
+      for(i = 0, numParents = parentElements.length; i < numParents; i++) {
+        parentElement = parentElements[i];
+        elements = parentElement.querySelectorAll('*');
+        executeElement(elementId, elements, deps, func, parentElement);
       }
     });
 
