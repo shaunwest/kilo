@@ -101,11 +101,12 @@ var kilo = (function(id) {
   /** run onReady when document readyState is 'complete' */
   function onDocumentReady(onReady) {
     var readyStateCheckInterval;
-    if (document.readyState === 'complete') {
+    if(!onReady) return;
+    if(document.readyState === 'complete') {
       onReady(document);
     } else {
       readyStateCheckInterval = setInterval(function () {
-        if (document.readyState === 'complete') {
+        if(document.readyState === 'complete') {
           onReady(document);
           clearInterval(readyStateCheckInterval);
         }
