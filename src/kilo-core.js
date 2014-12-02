@@ -166,14 +166,23 @@ var kilo = (function(id) {
   }
 
   function executeElement(elementId, elements, deps, func, containerElement) {
-    findElement(elementId, elements, function(element) {
+    if(elementMap.hasOwnProperty(elementId)) {
+      Util.warn('element \'' + elementId + '\' already defined');
+      elementMap[elementId].forEach(function(element) {
+        callElementFunc(element);
+      });
+    } else {
+      findElement(elementId, elements, callElementFunc);
+    }
+
+    function callElementFunc(element) {
       var context = (containerElement) ? {container: containerElement, element: element} : element;
       if(deps) {
         func.apply(context, Injector.resolve(deps));
       } else {
         func.call(context);
       }
-    });
+    }
   }
 
   // TODO: decide if element() will be moved to new package (kilo-element)
@@ -197,6 +206,8 @@ var kilo = (function(id) {
         }
         allElements = body[0].querySelectorAll('*');
       }
+
+
       executeElement(elementId, allElements, deps, func);
     });
 
