@@ -26,10 +26,10 @@
           .element('getgid1', function() { this.innerHTML = Util.getGID('myid'); })
           .element('getgid2', function() { this.innerHTML = Util.getGID('myid'); })
           .element('def', function() { this.innerHTML = Util.def(undefined, 'This is a defined value'); })
-          .element('parent', function() {console.log(this)})
-          .childElement('parent', 'child', function(parent) {
-            console.log(parent);
-            console.log(this);
+          .element('container', function() {console.log(this)})
+          .subElement('sub', 'container', function() {
+            console.log(this.container.getAttribute('data-msg'));
+            console.log(this.element.textContent);
           });
       };
     });
@@ -51,9 +51,9 @@
   <div>getGID('myid'): <span data-getgid1></span></div>
   <div>getGID('myid'): <span data-getgid2></span></div>
   <div>def(undefined, 'This is a defined value'): <span data-def></span></div>
-  <div data-parent>
-    <div data-child></div>
-    <div data-child></div>
+  <div data-container data-msg="I'm the container">
+    <div data-sub>Sub Element 1</div>
+    <div data-sub>Sub Element 2</div>
   </div>
 </body>
 </html>

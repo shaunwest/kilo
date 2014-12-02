@@ -165,12 +165,13 @@ var kilo = (function(id) {
     }
   }
 
-  function executeElement(elementId, elements, deps, func, parentElement) {
+  function executeElement(elementId, elements, deps, func, containerElement) {
     findElement(elementId, elements, function(element) {
+      var context = (containerElement) ? {container: containerElement, element: element} : element;
       if(deps) {
-        func.apply(element, Injector.resolve(deps));
+        func.apply(context, Injector.resolve(deps));
       } else {
-        func.call(element, parentElement);
+        func.call(context);
       }
     });
   }
@@ -201,7 +202,7 @@ var kilo = (function(id) {
 
     return this;
   };
-  core.childElement = function(parentId, elementId, funcOrDeps, func) {
+  core.subElement = function(elementId, containerId, funcOrDeps, func) {
     var deps;
 
     if(Util.isFunction(funcOrDeps)) {
@@ -213,12 +214,12 @@ var kilo = (function(id) {
     }
 
     onDocumentReady(function() {
-      var i, elements, numParents, parentElement;
-      var parentElements = elementMap[parentId];
-      for(i = 0, numParents = parentElements.length; i < numParents; i++) {
-        parentElement = parentElements[i];
-        elements = parentElement.querySelectorAll('*');
-        executeElement(elementId, elements, deps, func, parentElement);
+      var i, elements, numContainers, containerElement;
+      var containerElements = elementMap[containerId];
+      for(i = 0, numContainers = containerElements.length; i < numContainers; i++) {
+        containerElement = containerElements[i];
+        elements = containerElement.querySelectorAll('*');
+        executeElement(elementId, elements, deps, func, containerElement);
       }
     });
 
