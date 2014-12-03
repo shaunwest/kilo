@@ -9,7 +9,7 @@
     var myLib = kilo.noConflict();
 
     // make a function that tests out some utility methods
-    myLib('testFunc', ['Util'], function(Util) {
+    myLib('testFunc', ['Util', 'Element'], function(Util, Element) {
       'use strict';
 
       Util.log('TestFunc() was resolved');
@@ -18,8 +18,12 @@
         Util.log('TestFunc() was called! ' + message);
 
         // create HTML elements that will output results of Util methods
+
+        // Element() can be injected and called like this...
+        Element('isdefined', function() { this.innerHTML = Util.isDefined(0); })
+
+        // ...or .element() can be called like this (both are identical)
         myLib
-          .element('isdefined', function() { this.innerHTML = Util.isDefined(0); })
           .element('isobject', function() { this.innerHTML = Util.isObject({}); })
           .element('isboolean', function() { this.innerHTML = Util.isBoolean(false); })
           .element('isnumber', function() { this.innerHTML = Util.isNumber('abc'); })

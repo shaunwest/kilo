@@ -92,11 +92,7 @@ var kilo = (function(id) {
     }
   };
 
-  /** add these basic modules to the injector */
-  Injector
-    .setModule('helper', Util).setModule('Helper', Util).setModule('Util', Util)
-    .setModule('injector', Injector).setModule('Injector', Injector)
-    .setModule('appConfig', appConfig);
+
 
   /** run onReady when document readyState is 'complete' */
   function onDocumentReady(onReady) {
@@ -238,6 +234,13 @@ var kilo = (function(id) {
   };
   core.onDocumentReady = core.ready = onDocumentReady;
   core.log = true;
+
+  /** add these basic modules to the injector */
+  Injector
+    .setModule('helper', Util).setModule('Helper', Util).setModule('Util', Util)
+    .setModule('injector', Injector).setModule('Injector', Injector)
+    .setModule('Element', core.element)
+    .setModule('appConfig', appConfig);
 
   /** create global reference to core */
   if(window[id]) {
