@@ -2,7 +2,7 @@
  * Created by Shaun on 5/1/14.
  */
 
-var kilo = (function(id) {
+(function(id) {
   'use strict';
 
   var core, Util, Injector, appConfig = {}, gids = {}, elementMap = {}, previousOwner = undefined;
@@ -10,7 +10,6 @@ var kilo = (function(id) {
 
   Util = {
     isDefined: function(value) { return (typeof value !== 'undefined'); },
-    //isObject: function(value) { return (value !== null && typeof value === 'object'); },
     isBoolean: function(value) { return (typeof value === 'boolean'); },
     def: function(value, defaultValue) { return (typeof value === 'undefined') ? defaultValue : value; },
     error: function(message) { throw new Error(CONSOLE_ID + ': ' + message); },
@@ -217,7 +216,7 @@ var kilo = (function(id) {
     } else if(Util.isArray(funcOrDeps)) {
       deps = funcOrDeps;
     } else {
-      Util.error('element: second argument should be function or dependency array.');
+      Util.error('subElement: third argument should be function or dependency array.');
     }
 
     onDocumentReady(function() {
@@ -239,14 +238,17 @@ var kilo = (function(id) {
   Injector
     .setModule('helper', Util).setModule('Helper', Util).setModule('Util', Util)
     .setModule('injector', Injector).setModule('Injector', Injector)
-    .setModule('Element', core.element)
+    .setModule('Element', core.element).setModule('SubElement', core.subElement)
     .setModule('appConfig', appConfig);
 
-  /** create global reference to core */
+  /** create global references to core */
   if(window[id]) {
     Util.warn('a preexisting value at namespace \'' + id + '\' has been overwritten.');
     previousOwner = window[id];
   }
   window[id] = core;
+  if(!window.define) window.define = core;
+  if(!window.require) window.require = core;
+
   return core;
 })('kilo');

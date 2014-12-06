@@ -2,7 +2,7 @@
  * Created by Shaun on 11/15/2014.
  */
 describe('Kilo Core Injector Spec', function() {
-  var Injector = kilo('Injector');
+  var Injector = require('Injector');
 
   describe('registered function', function() {
     var returnedFunc, newFunc;

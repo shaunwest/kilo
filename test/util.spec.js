@@ -1,5 +1,5 @@
 describe('Kilo Core Util Spec', function() {
-  var Util = kilo('Util');
+  var Util = require('Util');
 
   describe('Value "123"', function() {
     var aString = '123';
