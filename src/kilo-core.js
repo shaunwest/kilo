@@ -5,7 +5,7 @@
 (function(id) {
   'use strict';
 
-  var core, Util, Injector, appConfig = {}, gids = {}, elementMap = {}, previousOwner = undefined;
+  var core, Util, Injector, types, appConfig = {}, gids = {}, elementMap = {}, previousOwner = undefined;
   var CONSOLE_ID = id;
 
   Util = {
@@ -28,12 +28,14 @@
     }
   };
 
-  ['Array', 'Object', 'Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'HTMLImageElement'].
-    forEach(function(name) { // TODO: don't use forEach
-      Util['is' + name] = function(obj) {
-        return Object.prototype.toString.call(obj) === '[object ' + name + ']';
-      };
-    });
+  types = ['Array', 'Object', 'Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'HTMLImageElement'];
+  for(var i = 0; i < types.length; i++) {
+    Util['is' + types[i]] = (function(type) { 
+      return function(obj) {
+        return Object.prototype.toString.call(obj) === '[object ' + type + ']';
+      }; 
+    })(types[i]);
+  }
 
   Injector = {
     unresolved: {},
