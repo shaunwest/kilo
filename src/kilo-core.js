@@ -91,8 +91,6 @@
     }
   };
 
-
-
   /** run onReady when document readyState is 'complete' */
   function onDocumentReady(onReady) {
     var readyStateCheckInterval;
@@ -109,17 +107,34 @@
     }
   }
 
+  function registerDefinitionObject(result) {
+    var key;
+    if(Util.isObject(result)) {
+      for(key in result) {
+        if(result.hasOwnProperty(key)) {
+          Injector.register(key, [], (
+            function(func) {
+              return function() { return func; };
+            }
+          )(result[key]));
+        }
+      }
+    }
+  }
+
   /** the main interface */
   core = function(keyOrDeps, depsOrFunc, funcOrScope, scope) {
-    var result;
+    var result, key;
+
     // get dependencies
     if(Util.isArray(keyOrDeps)) {
       result = Injector.resolveAndApply(keyOrDeps, depsOrFunc, funcOrScope);
-      if(Util.isObject(result)) {
-        Object.keys(result).forEach(function(key) { // TODO: don't use Object.keys
-          Injector.setModule(key, result[key]);
-        });
-      }
+      registerDefinitionObject(result);
+
+    // no dependencies, just a function (and optionally a scope)
+    } else if(Util.isFunction(keyOrDeps)) {
+      result = Injector.apply([], keyOrDeps, depsOrFunc);
+      registerDefinitionObject(result);
 
     // register a new module (with dependencies)
     } else if(Util.isArray(depsOrFunc) && Util.isFunction(funcOrScope)) {
