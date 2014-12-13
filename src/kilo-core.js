@@ -90,6 +90,21 @@
     },
     resolveAndApply: function(deps, func, scope) {
       return this.apply(this.resolve(deps), func, scope);
+    },
+    process: function(deps, onProcessed) {
+      if(Util.isArray(deps)) {
+        deps.forEach(function(obj) {
+          if(Util.isString(obj)) {
+            obj = this.getDependency(obj);
+          }
+          onProcessed(obj);
+        });
+      } else {
+        if(Util.isString(deps)) {
+          deps = this.getDependency(deps);
+        }
+        onProcessed(deps);
+      }
     }
   };
 
