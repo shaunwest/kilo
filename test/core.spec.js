@@ -3,15 +3,15 @@
  */
 describe('Kilo Core Spec', function() {
   describe('existing dependency', function() {
-    var valIsDefined, utilDependency;
+    var valIsDefined, Util;
 
-    require(['Util'], function(Util) {
-      utilDependency = Util;
+    require('Util', function(_Util) {
+      Util = _Util;
       valIsDefined = Util.isDefined('123');
     });
 
     it('should be defined', function() {
-      expect(utilDependency);
+      expect(Util);
     });
 
     it('should work as expected', function() {
@@ -34,15 +34,17 @@ describe('Kilo Core Spec', function() {
     });
 
     it('should have registered MyDep1', function() {
-      MyDep1 = require('MyDep1');
-      expect(MyDep1).not.toBe(null);
-      expect(MyDep1()).toBe('foo');
+      require('MyDep1', function(MyDep1) {
+        expect(MyDep1).not.toBe(null);
+        expect(MyDep1()).toBe('foo');
+      });
     });
 
     it('should have registered MyDep2', function() {
-      MyDep2 = require('MyDep2');
-      expect(MyDep2).not.toBe(null);
-      expect(MyDep2()).toBe('bar');
+      require('MyDep2', function(MyDep2) {
+        expect(MyDep2).not.toBe(null);
+        expect(MyDep2()).toBe('bar');
+      });
     });
   });
 });

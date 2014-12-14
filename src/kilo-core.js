@@ -5,7 +5,7 @@
 (function(id) {
   'use strict';
 
-  var core, Util, Injector, types, appConfig = {}, gids = {}, elementMap = {}, previousOwner = undefined;
+  var core, Util, Injector, types, appConfig = {}, gids = {}, allElements, elementMap = {}, previousOwner = undefined;
   var CONSOLE_ID = id;
 
   Util = {
@@ -41,6 +41,7 @@
     unresolved: {},
     modules: {},
     register: function(key, deps, func, scope) {
+      this.unresolve(key);
       this.unresolved[key] = {deps: deps, func: func, scope: scope};
       return this;
     },
@@ -53,57 +54,79 @@
       this.modules[key] = module;
       return this;
     },
-    getDependency: function(key) {
+    getDependency: function(key, cb) {
       var module = this.modules[key];
       if(module) {
-        return module;
+        cb(module);
+        return;
       }
 
       module = this.unresolved[key];
       if(!module) {
         Util.warn('Module \'' + key + '\' not found');
-        return null;
+        return;
       }
 
       Util.log('Resolving dependencies for \'' + key + '\'');
-      module = this.modules[key] = this.resolveAndApply(module.deps, module.func, module.scope);
-      if(Util.isObject(module)) {
-        module.getType = function() { return key; };
-      }
-      return module;
+      this.resolveAndApply(module.deps, module.func, module.scope, function(module) {
+        if(Util.isObject(module)) {
+          module.getType = function() { return key; };
+        }
+        cb(module);
+      });
+
+      return;
     },
-    resolve: function(deps, func, scope) {
+    resolve: function(deps, cb) {
       var dep, depName, args = [], i;
       for(i = 0; i < deps.length; i++) {
         depName = deps[i];
-        dep = this.getDependency(depName);
-        if(dep) {
-          args.push(dep);
-        } else {
-          Util.warn('Can\'t resolve ' + depName);
-        }
+        this.getDependency(depName, function(dep) {
+          if(dep) {
+            args.push(dep);
+          } else {
+            Util.error('Can\'t resolve ' + depName);
+          }
+
+          if(args.length === deps.length) {
+            cb(args);    
+          }
+        });
       }
-      return args;
     },
     apply: function(args, func, scope) {
-      return func.apply(scope || core, args);
+      var result = func.apply(scope || core, args);
+      registerDefinitionObject(result);
+      return result;
     },
-    resolveAndApply: function(deps, func, scope) {
-      return this.apply(this.resolve(deps), func, scope);
+    resolveAndApply: function(deps, func, scope, cb) {
+      var that = this;
+      this.resolve(deps, function(args) {
+        var result = that.apply(args, func, scope);
+        if(cb) {
+          cb(result);
+        }
+      });
     },
-    process: function(deps, onProcessed) {
+    process: function(deps, cb) {
       if(Util.isArray(deps)) {
         deps.forEach(function(obj) {
           if(Util.isString(obj)) {
-            obj = this.getDependency(obj);
+            this.getDependency(obj, function(obj) {
+              cb(obj);
+            });
+          } else {
+            cb(obj);
           }
-          onProcessed(obj);
         });
       } else {
         if(Util.isString(deps)) {
-          deps = this.getDependency(deps);
+          this.getDependency(deps, function(deps) {
+            cb(deps);
+          });
+        } else {
+          cb(deps);
         }
-        onProcessed(deps);
       }
     }
   };
@@ -145,13 +168,16 @@
 
     // get dependencies
     if(Util.isArray(keyOrDeps)) {
-      result = Injector.resolveAndApply(keyOrDeps, depsOrFunc, funcOrScope);
-      registerDefinitionObject(result);
+      Injector.resolveAndApply(keyOrDeps, depsOrFunc, funcOrScope);
+
+    // get a single dependency
+    } else if(Util.isString(keyOrDeps)) {
+      Injector.resolveAndApply([keyOrDeps], depsOrFunc, funcOrScope);
 
     // no dependencies, just a function (and optionally a scope)
     } else if(Util.isFunction(keyOrDeps)) {
       result = Injector.apply([], keyOrDeps, depsOrFunc);
-      registerDefinitionObject(result);
+      //registerDefinitionObject(result);
 
     // register a new module (with dependencies)
     } else if(Util.isArray(depsOrFunc) && Util.isFunction(funcOrScope)) {
@@ -162,9 +188,9 @@
       Injector.register(keyOrDeps, [], depsOrFunc, funcOrScope);
 
     // get a module
-    } else if(keyOrDeps && !Util.isDefined(depsOrFunc)) {
+    } /*else if(keyOrDeps && !Util.isDefined(depsOrFunc)) {
       return Injector.getDependency(keyOrDeps);
-    }
+    }*/
 
     return null;
   };
@@ -214,7 +240,7 @@
 
   // TODO: decide if element() will be moved to new package (kilo-element)
   core.element = function(elementId, funcOrDeps, func) {
-    var deps, allElements;
+    var deps;
 
     if(Util.isFunction(funcOrDeps)) {
       func = funcOrDeps;
@@ -234,12 +260,12 @@
         allElements = body[0].querySelectorAll('*');
       }
 
-
       executeElement(elementId, allElements, deps, func);
     });
 
     return this;
   };
+  
   core.subElement = function(elementId, containerId, funcOrDeps, func) {
     var deps;
 

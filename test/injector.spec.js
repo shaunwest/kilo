@@ -2,18 +2,32 @@
  * Created by Shaun on 11/15/2014.
  */
 describe('Kilo Core Injector Spec', function() {
-  var Injector = require('Injector');
+  var Injector;
 
   describe('registered function', function() {
     var returnedFunc, newFunc;
 
-    Injector.register('IsDefinedTester', ['Util'], function(Util) {
-      return function(val) {
-        return Util.isDefined(val);
-      }
+    beforeEach(function(done) {
+      require('Injector', function(_Injector) {
+        Injector = _Injector;
+
+        Injector.register('IsDefinedTester', ['Util'], function(Util) {
+          return function(val) {
+            return Util.isDefined(val);
+          }
+        });
+
+        Injector.getDependency('IsDefinedTester', function(IsDefinedTester) {
+          returnedFunc = IsDefinedTester;
+          done();
+        });
+      });
     });
 
-    returnedFunc = Injector.getDependency('IsDefinedTester');
+    afterEach(function() {
+      Injector.unresolve('IsDefinedTester');
+      returnedFunc = null;      
+    })
 
     it('should be returned', function() {
       expect(returnedFunc);
@@ -30,12 +44,10 @@ describe('Kilo Core Injector Spec', function() {
     });
 
     it('should be a new function instance', function() {
-      newFunc = Injector.getDependency('IsDefinedTester');
-      expect(newFunc).not.toBe(returnedFunc);
-    });
-
-    it('should still work the same', function() {
-      expect(newFunc('456')).toBe(true);
+      Injector.getDependency('IsDefinedTester', function(newFunc) {
+        expect(newFunc).not.toBe(returnedFunc);
+        expect(newFunc('456')).toBe(true);
+      });
     });
   });
 });
