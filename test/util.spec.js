@@ -2,7 +2,7 @@ describe('Kilo Core Util Spec', function() {
   var Util;
 
   beforeEach(function(done) {
-    require('Util', function(_Util) {
+    use(['Util'], function(_Util) {
       Util = _Util;
       done();
     });

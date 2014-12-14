@@ -170,14 +170,9 @@
     if(Util.isArray(keyOrDeps)) {
       Injector.resolveAndApply(keyOrDeps, depsOrFunc, funcOrScope);
 
-    // get a single dependency
-    } else if(Util.isString(keyOrDeps)) {
-      Injector.resolveAndApply([keyOrDeps], depsOrFunc, funcOrScope);
-
     // no dependencies, just a function (and optionally a scope)
     } else if(Util.isFunction(keyOrDeps)) {
-      result = Injector.apply([], keyOrDeps, depsOrFunc);
-      //registerDefinitionObject(result);
+      Injector.apply([], keyOrDeps, depsOrFunc);
 
     // register a new module (with dependencies)
     } else if(Util.isArray(depsOrFunc) && Util.isFunction(funcOrScope)) {
@@ -186,15 +181,20 @@
     // register a new module (without dependencies)
     } else if(Util.isFunction(depsOrFunc)) {
       Injector.register(keyOrDeps, [], depsOrFunc, funcOrScope);
-
-    // get a module
-    } /*else if(keyOrDeps && !Util.isDefined(depsOrFunc)) {
-      return Injector.getDependency(keyOrDeps);
-    }*/
+    }
 
     return null;
   };
 
+  core.use = function(deps, func, scope) {
+    if(Util.isString(deps)) {
+      deps = [deps];      
+    }
+    core(deps, func, scope);
+  };
+  core.register = function(key, depsOrFunc, funcOrScope, scope) {
+    core(key, depsOrFunc, funcOrScope, scope);
+  };
   core.unresolve = function(key) {
     Injector.unresolve(key);
   };
@@ -305,8 +305,8 @@
     previousOwner = window[id];
   }
   window[id] = core;
-  if(!window.define) window.define = core;
-  if(!window.require) window.require = core;
+  if(!window.register) window.register = core.register;
+  if(!window.use) window.use = core.use;
 
   return core;
 })('kilo');

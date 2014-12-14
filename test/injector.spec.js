@@ -8,7 +8,7 @@ describe('Kilo Core Injector Spec', function() {
     var returnedFunc, newFunc;
 
     beforeEach(function(done) {
-      require('Injector', function(_Injector) {
+      use(['Injector'], function(_Injector) {
         Injector = _Injector;
 
         Injector.register('IsDefinedTester', ['Util'], function(Util) {
