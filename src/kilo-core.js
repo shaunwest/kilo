@@ -79,6 +79,10 @@
     },
     resolve: function(deps, cb) {
       var dep, depName, args = [], i;
+      if(!deps || !deps.length) {
+        cb();
+        return;        
+      }
       for(i = 0; i < deps.length; i++) {
         depName = deps[i];
         this.getDependency(depName, function(dep) {
