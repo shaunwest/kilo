@@ -113,8 +113,10 @@
       });
     },
     process: function(deps, cb) {
+      var key, obj;
       if(Util.isArray(deps)) {
-        deps.forEach(function(obj) {
+        for(key in deps) {
+          obj = deps[key]; 
           if(Util.isString(obj)) {
             this.getDependency(obj, function(obj) {
               cb(obj);
@@ -122,7 +124,7 @@
           } else {
             cb(obj);
           }
-        });
+        }
       } else {
         if(Util.isString(deps)) {
           this.getDependency(deps, function(deps) {
