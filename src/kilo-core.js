@@ -237,7 +237,9 @@
     function callElementFunc(element) {
       var context = (containerElement) ? {container: containerElement, element: element} : element;
       if(deps) {
-        func.apply(context, Injector.resolve(deps));
+        Injector.resolve(deps, function(args) {
+          func.apply(context, args);
+        });
       } else {
         func.call(context);
       }
