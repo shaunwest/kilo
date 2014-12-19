@@ -107,7 +107,6 @@
     },
     apply: function(args, func, scope) {
       var result = func.apply(scope || core, args);
-      registerDefinitionObject(result);
       return result;
     },
     resolveAndApply: function(deps, func, scope, cb) {
@@ -260,10 +259,12 @@
           elementMap[elementId].push(element);
         }
       }
-      if(bracketIndex === -1) {
-        cb(elementMap[elementId][0]);
-      } else {
-        cb(elementMap[elementId]);
+      if(elementMap[elementId]) {
+        if(bracketIndex === -1) {
+          cb(elementMap[elementId][0]);
+        } else {
+          cb(elementMap[elementId]);
+        }
       }
     }); 
   }
@@ -351,6 +352,7 @@
     .setModule('helper', Util).setModule('Helper', Util).setModule('Util', Util)
     .setModule('injector', Injector).setModule('Injector', Injector)
     .setModule('Element', core.element).setModule('SubElement', core.subElement)
+    .setModule('registerAll', registerDefinitionObject)
     .setModule('appConfig', appConfig);
 
   /** create global references to core */

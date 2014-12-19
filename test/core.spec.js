@@ -22,29 +22,33 @@ describe('Kilo Core Spec', function() {
   describe('new dependencies', function() {
     var MyDep1, MyDep2
 
-    register(function() {
-      return {
-        MyDep1: function() {
-          return 'foo';          
-        },
-        MyDep2: function() {
-          return 'bar';          
-        }
-      }
+    beforeEach(function(done) {
+      register(['registerAll'], function(registerAll) {
+        registerAll({
+          MyDep1: function() {
+            return 'foo';          
+          },
+          MyDep2: function() {
+            return 'bar';        
+          }
+        });
+      });
+
+      use(['MyDep1', 'MyDep2'], function(_MyDep1, _MyDep2) {
+        MyDep1 = _MyDep1;
+        MyDep2 = _MyDep2;
+        done();
+      });
     });
 
     it('should have registered MyDep1', function() {
-      use('MyDep1', function(MyDep1) {
-        expect(MyDep1).not.toBe(null);
-        expect(MyDep1()).toBe('foo');
-      });
+      expect(MyDep1).not.toBe(null);
+      expect(MyDep1()).toBe('foo');
     });
 
     it('should have registered MyDep2', function() {
-      use('MyDep2', function(MyDep2) {
-        expect(MyDep2).not.toBe(null);
-        expect(MyDep2()).toBe('bar');
-      });
+      expect(MyDep2).not.toBe(null);
+      expect(MyDep2()).toBe('bar');
     });
   });
 });
