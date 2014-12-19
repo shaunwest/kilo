@@ -56,6 +56,7 @@
     },
     getDependency: function(key, cb) {
       var module = this.modules[key];
+
       if(module) {
         cb(module);
         return;
@@ -63,7 +64,13 @@
 
       module = this.unresolved[key];
       if(!module) {
-        Util.warn('Module \'' + key + '\' not found');
+        getElement(key, function(element) {
+          if(element) {
+            cb(element);
+          } else {
+            Util.warn('Module \'' + key + '\' not found');
+          }
+        });
         return;
       }
 
@@ -224,15 +231,54 @@
     }
   }
 
+  function getElement(elementId, cb) {
+    onDocumentReady(function(document) {
+      var body;
+      var i, numElements, element, bracketIndex;
+      if(!allElements) {
+        body = document.getElementsByTagName('body');
+        if(!body || !body[0]) {
+          return;
+        }
+        allElements = body[0].querySelectorAll('*');
+      }
+
+      /*findElement(elementId, allElements, function(element) {
+        cb(element);    
+      });*/
+
+      bracketIndex = elementId.indexOf('[]');
+      if(bracketIndex !== -1) {
+        elementId = elementId.substring(0, bracketIndex);
+      }
+      for(i = 0, numElements = allElements.length; i < numElements; i++) {
+        element = allElements[i];
+        if(element.hasAttribute('data-' + elementId)) {
+          if(!elementMap[elementId]) {
+            elementMap[elementId] = [];
+          }
+          elementMap[elementId].push(element);
+        }
+      }
+      if(bracketIndex === -1) {
+        cb(elementMap[elementId][0]);
+      } else {
+        cb(elementMap[elementId]);
+      }
+    }); 
+  }
+
   function executeElement(elementId, elements, deps, func, containerElement) {
-    if(elementMap.hasOwnProperty(elementId)) {
-      Util.warn('element \'' + elementId + '\' already defined');
+    /*if(elementMap.hasOwnProperty(elementId)) {
+      //Util.warn('element \'' + elementId + '\' already defined'); // Don't need to report this
       elementMap[elementId].forEach(function(element) {
         callElementFunc(element);
       });
     } else {
       findElement(elementId, elements, callElementFunc);
-    }
+    }*/
+
+    findElement(elementId, elements, callElementFunc);
 
     function callElementFunc(element) {
       var context = (containerElement) ? {container: containerElement, element: element} : element;

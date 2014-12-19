@@ -44,6 +44,10 @@
 
       testFunc('Yo dawg!');
     });
+
+    myLib(['Util', 'foo-element[]'], function(Util, FooElement) {
+      console.log(FooElement[0].textContent);
+    });
   </script>
 </head>
 <body>
@@ -59,5 +63,12 @@
     <div data-sub>Sub Element 1</div>
     <div data-sub>Sub Element 2</div>
   </div>
+  <div data-sub>Sub Element 3</div>
+  <div data-container data-msg="I'm the other container">
+    <div data-sub>Sub Element 4</div>
+    <div data-sub>Sub Element 5</div>
+  </div>
+  <div data-foo-element>Foo Element</div>
+  <div data-foo-element>Foo Element2</div>
 </body>
 </html>
