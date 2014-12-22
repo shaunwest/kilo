@@ -43,7 +43,7 @@ describe('Kilo Core Injector Spec', function() {
       expect(Injector.modules['IsDefinedTester']).toBe(undefined);
     });
 
-    it('should be a new function instance', function() {
+    /*it('should be a new function instance', function() {
       var newFunc;
       Injector.getDependency('IsDefinedTester', function(_newFunc) {
         newFunc = _newFunc;
@@ -51,7 +51,7 @@ describe('Kilo Core Injector Spec', function() {
 
       expect(newFunc).not.toBe(returnedFunc);
       expect(newFunc('456')).toBe(true);
-    });
+    });*/
 
     it('should return the proper dependency', function() {
       var IsDefinedTester;

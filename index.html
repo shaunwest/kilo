@@ -9,7 +9,8 @@
     var myLib = kilo.noConflict();
 
     // make a function that tests out some utility methods
-    myLib('testFunc', ['Util', 'Element'], function(Util, Element) {
+    // FIXME: when a non-existent element dependency is requested, causes errors
+    myLib('testFunc', ['Util'], function(Util) {
       'use strict';
 
       Util.log('TestFunc() was resolved');
@@ -19,11 +20,36 @@
 
         // create HTML elements that will output results of Util methods
 
-        // Element() can be injected and called like this...
-        Element('isdefined', function() { this.innerHTML = Util.isDefined(0); })
+        myLib(['isdefined'], function(isDefined) {
+          isDefined.innerHTML = Util.isDefined(0); 
+        });
+
+        myLib(['isobject', 'isboolean', 'isnumber'], function(isObject, isBoolean, isNumber) {
+          isObject.innerHTML = Util.isObject({});
+          isBoolean.innerHTML = Util.isBoolean(false);
+          isNumber.innerHTML = Util.isNumber('abc');
+        });
+
+        myLib(['getgid1', 'getgid2', 'def'], function(getGID1, getGID2, def) {
+          getGID1.innerHTML = Util.getGID('myid');
+          getGID2.innerHTML = Util.getGID('myid');
+          def.innerHTML = Util.def(undefined, 'This is a defined value');
+        });
+
+        myLib(['container[]', 'element'], function(Containers, element) {
+          Containers.forEach(function(Container) {
+            Util.log(Container.getAttribute('data-msg'));
+            element('sub[]', Container, function(Subs) {
+              Subs.forEach(function(Sub) {
+                Util.log(Sub.textContent);
+              });
+            });
+          });
+        });
+
 
         // ...or .element() can be called like this (both are identical)
-        myLib
+        /*myLib
           .element('isobject', function() { this.innerHTML = Util.isObject({}); })
           .element('isboolean', function() { this.innerHTML = Util.isBoolean(false); })
           .element('isnumber', function() { this.innerHTML = Util.isNumber('abc'); })
@@ -32,9 +58,9 @@
           .element('def', function() { this.innerHTML = Util.def(undefined, 'This is a defined value'); })
           .element('container', function() {console.log(this)})
           .subElement('sub', 'container', function() {
-            console.log(this.container.getAttribute('data-msg'));
-            console.log(this.element.textContent);
-          });
+            Util.log(this.container.getAttribute('data-msg'));
+            Util.log(this.element.textContent);
+          });*/
       };
     });
 
@@ -45,9 +71,9 @@
       testFunc('Yo dawg!');
     });
 
-    myLib(['Util', 'foo-element[]'], function(Util, FooElement) {
-      console.log(FooElement[0].textContent);
-    });
+    /*myLib(['foo-element[]', 'Util'], function(FooElements, Util) {
+      Util.log(FooElements[1].textContent);
+    });*/
   </script>
 </head>
 <body>
@@ -69,6 +95,6 @@
     <div data-sub>Sub Element 5</div>
   </div>
   <div data-foo-element>Foo Element</div>
-  <div data-foo-element>Foo Element2</div>
+  <div data-foo-element>Foo Element 2</div>
 </body>
 </html>

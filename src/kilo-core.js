@@ -49,13 +49,17 @@
       if(this.modules[key]) {
         delete this.modules[key];
       }
+      return this;
     },
     setModule: function(key, module) { // save a module without doing dependency resolution
       this.modules[key] = module;
       return this;
     },
     getDependency: function(key, cb) {
-      var module = this.modules[key];
+      var modules, module;
+
+      modules = this.modules;
+      module = modules[key];
 
       if(module) {
         cb(module);
@@ -64,7 +68,7 @@
 
       module = this.unresolved[key];
       if(!module) {
-        getElement(key, function(element) {
+        getElement(key, null, function(element) {
           if(element) {
             cb(element);
           } else {
@@ -79,31 +83,41 @@
         if(Util.isObject(module)) {
           module.getType = function() { return key; };
         }
+        modules[key] = module;
         cb(module);
       });
 
       return;
     },
-    resolve: function(deps, cb) {
-      var dep, depName, args = [], i;
-      if(!deps || !deps.length) {
-        cb();
-        return;        
-      }
-      for(i = 0; i < deps.length; i++) {
-        depName = deps[i];
-        this.getDependency(depName, function(dep) {
-          if(dep) {
-            args.push(dep);
-          } else {
-            Util.error('Can\'t resolve ' + depName);
-          }
+    resolve: function(deps, cb, index, results) {
+      var dep, depName;
+      var that = this; // FIXME
 
-          if(args.length === deps.length) {
-            cb(args);    
-          }
-        });
+      if(!deps) {
+        done();
+        return;
       }
+
+      index = Util.def(index, 0);
+
+      depName = deps[index];
+      if(!depName) {
+        cb(results);
+        return;
+      }
+      
+      this.getDependency(depName, function(dep) {
+        if(!results) {
+          results = [];
+        }
+        if(dep) {
+          results.push(dep);
+        } else {
+          Util.error('Can\'t resolve ' + depName);
+        }
+
+        that.resolve(deps, cb, index + 1, results);    
+      });
     },
     apply: function(args, func, scope) {
       var result = func.apply(scope || core, args);
@@ -215,7 +229,7 @@
     return core;
   };
 
-  function findElement(elementId, elements, cb) {
+  /*function findElement(elementId, elements, cb) {
     var i, numElements, selectedElement;
 
     for(i = 0, numElements = elements.length; i < numElements; i++) {
@@ -228,30 +242,30 @@
         cb(selectedElement);
       }
     }
-  }
+  }*/
 
-  function getElement(elementId, cb) {
+  function getElement(elementId, container, cb) {
     onDocumentReady(function(document) {
-      var body;
-      var i, numElements, element, bracketIndex;
-      if(!allElements) {
-        body = document.getElementsByTagName('body');
-        if(!body || !body[0]) {
-          return;
+      var i, numElements, element, elements, bracketIndex;
+      if(!container) {
+        if(!allElements) {
+          container = document.getElementsByTagName('body');
+          if(!container || !container[0]) {
+            return;
+          }
+          allElements = container[0].querySelectorAll('*');
         }
-        allElements = body[0].querySelectorAll('*');
+        elements = allElements;
+      } else {
+        elements = container.querySelectorAll('*');
       }
-
-      /*findElement(elementId, allElements, function(element) {
-        cb(element);    
-      });*/
 
       bracketIndex = elementId.indexOf('[]');
       if(bracketIndex !== -1) {
         elementId = elementId.substring(0, bracketIndex);
       }
-      for(i = 0, numElements = allElements.length; i < numElements; i++) {
-        element = allElements[i];
+      for(i = 0, numElements = elements.length; i < numElements; i++) {
+        element = elements[i];
         if(element.hasAttribute('data-' + elementId)) {
           if(!elementMap[elementId]) {
             elementMap[elementId] = [];
@@ -269,7 +283,7 @@
     }); 
   }
 
-  function executeElement(elementId, elements, deps, func, containerElement) {
+  //function executeElement(elementId, elements, deps, func, containerElement) {
     /*if(elementMap.hasOwnProperty(elementId)) {
       //Util.warn('element \'' + elementId + '\' already defined'); // Don't need to report this
       elementMap[elementId].forEach(function(element) {
@@ -279,7 +293,7 @@
       findElement(elementId, elements, callElementFunc);
     }*/
 
-    findElement(elementId, elements, callElementFunc);
+  /*  findElement(elementId, elements, callElementFunc);
 
     function callElementFunc(element) {
       var context = (containerElement) ? {container: containerElement, element: element} : element;
@@ -291,10 +305,10 @@
         func.call(context);
       }
     }
-  }
+  }*/
 
   // TODO: decide if element() will be moved to new package (kilo-element)
-  core.element = function(elementId, funcOrDeps, func) {
+  /*core.element = function(elementId, funcOrDeps, func) {
     var deps;
 
     if(Util.isFunction(funcOrDeps)) {
@@ -343,7 +357,7 @@
     });
 
     return this;
-  };
+  };*/
   core.onDocumentReady = core.ready = onDocumentReady;
   core.log = true;
 
@@ -351,7 +365,8 @@
   Injector
     .setModule('helper', Util).setModule('Helper', Util).setModule('Util', Util)
     .setModule('injector', Injector).setModule('Injector', Injector)
-    .setModule('Element', core.element).setModule('SubElement', core.subElement)
+    //.setModule('Element', core.element).setModule('SubElement', core.subElement)
+    .setModule('element', getElement)
     .setModule('registerAll', registerDefinitionObject)
     .setModule('appConfig', appConfig);
 
