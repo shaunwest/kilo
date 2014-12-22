@@ -5,12 +5,9 @@
   <title>Kilo Core</title>
   <script src="src/kilo-core.js"></script>
   <script>
-    // let's use a different name for the Kilo library
-    var myLib = kilo.noConflict();
-
     // make a function that tests out some utility methods
     // FIXME: when a non-existent element dependency is requested, causes errors
-    myLib('testFunc', ['Util'], function(Util) {
+    register('testFunc', ['Util'], function(Util) {
       'use strict';
 
       Util.log('TestFunc() was resolved');
@@ -19,61 +16,41 @@
         Util.log('TestFunc() was called! ' + message);
 
         // create HTML elements that will output results of Util methods
-
-        myLib(['isdefined'], function(isDefined) {
-          isDefined.innerHTML = Util.isDefined(0); 
+        use(['isdefined'], function(isDefined) {
+          isDefined.textContent = Util.isDefined(0); 
         });
 
-        myLib(['isobject', 'isboolean', 'isnumber'], function(isObject, isBoolean, isNumber) {
-          isObject.innerHTML = Util.isObject({});
-          isBoolean.innerHTML = Util.isBoolean(false);
-          isNumber.innerHTML = Util.isNumber('abc');
+        use(['isobject', 'isboolean', 'isnumber'], function(isObject, isBoolean, isNumber) {
+          isObject.textContent = Util.isObject({});
+          isBoolean.textContent = Util.isBoolean(false);
+          isNumber.textContent = Util.isNumber('abc');
         });
 
-        myLib(['getgid1', 'getgid2', 'def'], function(getGID1, getGID2, def) {
-          getGID1.innerHTML = Util.getGID('myid');
-          getGID2.innerHTML = Util.getGID('myid');
-          def.innerHTML = Util.def(undefined, 'This is a defined value');
+        use(['getgid1', 'getgid2', 'def'], function(getGID1, getGID2, def) {
+          getGID1.textContent = Util.getGID('myid');
+          getGID2.textContent = Util.getGID('myid');
+          def.textContent = Util.def(undefined, 'This is a defined value');
         });
 
-        myLib(['container[]', 'element'], function(Containers, element) {
+        // demonstrates a container element with sub elements
+        use(['container[]', 'element'], function(Containers, element) {
           Containers.forEach(function(Container) {
-            Util.log(Container.getAttribute('data-msg'));
             element('sub[]', Container, function(Subs) {
               Subs.forEach(function(Sub) {
-                Util.log(Sub.textContent);
+                Sub.textContent = Container.getAttribute('data-msg') + ': ' + Sub.getAttribute('data-msg');
               });
             });
           });
         });
-
-
-        // ...or .element() can be called like this (both are identical)
-        /*myLib
-          .element('isobject', function() { this.innerHTML = Util.isObject({}); })
-          .element('isboolean', function() { this.innerHTML = Util.isBoolean(false); })
-          .element('isnumber', function() { this.innerHTML = Util.isNumber('abc'); })
-          .element('getgid1', function() { this.innerHTML = Util.getGID('myid'); })
-          .element('getgid2', function() { this.innerHTML = Util.getGID('myid'); })
-          .element('def', function() { this.innerHTML = Util.def(undefined, 'This is a defined value'); })
-          .element('container', function() {console.log(this)})
-          .subElement('sub', 'container', function() {
-            Util.log(this.container.getAttribute('data-msg'));
-            Util.log(this.element.textContent);
-          });*/
       };
     });
 
     // inject the newly created TestFunc and call it
-    myLib(['testFunc'], function(testFunc) {
+    use(['testFunc'], function(testFunc) {
       'use strict';
 
       testFunc('Yo dawg!');
     });
-
-    /*myLib(['foo-element[]', 'Util'], function(FooElements, Util) {
-      Util.log(FooElements[1].textContent);
-    });*/
   </script>
 </head>
 <body>
@@ -85,16 +62,17 @@
   <div>getGID('myid'): <span data-getgid1></span></div>
   <div>getGID('myid'): <span data-getgid2></span></div>
   <div>def(undefined, 'This is a defined value'): <span data-def></span></div>
-  <div data-container data-msg="I'm the container">
-    <div data-sub>Sub Element 1</div>
-    <div data-sub>Sub Element 2</div>
+  <div data-container data-msg="I'm container 1">
+    <div>
+      <div data-sub data-msg="Sub Element 1"></div>
+      <div data-sub data-msg="Sub Element 2"></div>
+    </div>
   </div>
-  <div data-sub>Sub Element 3</div>
-  <div data-container data-msg="I'm the other container">
-    <div data-sub>Sub Element 4</div>
-    <div data-sub>Sub Element 5</div>
+  <div data-container data-msg="I'm container 2">
+    <div>
+      <div data-sub data-msg="Sub Element 3"></div>
+      <div data-sub data-msg="Sub Element 4"></div>
+    </div>
   </div>
-  <div data-foo-element>Foo Element</div>
-  <div data-foo-element>Foo Element 2</div>
 </body>
 </html>

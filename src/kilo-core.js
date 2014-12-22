@@ -5,7 +5,7 @@
 (function(id) {
   'use strict';
 
-  var core, Util, Injector, types, appConfig = {}, gids = {}, allElements, elementMap = {}, previousOwner = undefined;
+  var core, Util, Injector, types, appConfig = {}, gids = {}, allElements, previousOwner = undefined;
   var CONSOLE_ID = id;
 
   Util = {
@@ -229,24 +229,10 @@
     return core;
   };
 
-  /*function findElement(elementId, elements, cb) {
-    var i, numElements, selectedElement;
-
-    for(i = 0, numElements = elements.length; i < numElements; i++) {
-      selectedElement = elements[i];
-      if(selectedElement.hasAttribute('data-' + elementId)) {
-        if(!elementMap[elementId]) {
-          elementMap[elementId] = [];
-        }
-        elementMap[elementId].push(selectedElement);
-        cb(selectedElement);
-      }
-    }
-  }*/
-
+  // TODO: performance
   function getElement(elementId, container, cb) {
     onDocumentReady(function(document) {
-      var i, numElements, element, elements, bracketIndex;
+      var i, numElements, element, elements, bracketIndex, results = [];
       if(!container) {
         if(!allElements) {
           container = document.getElementsByTagName('body');
@@ -267,105 +253,24 @@
       for(i = 0, numElements = elements.length; i < numElements; i++) {
         element = elements[i];
         if(element.hasAttribute('data-' + elementId)) {
-          if(!elementMap[elementId]) {
-            elementMap[elementId] = [];
-          }
-          elementMap[elementId].push(element);
+          results.push(element);
         }
       }
-      if(elementMap[elementId]) {
-        if(bracketIndex === -1) {
-          cb(elementMap[elementId][0]);
-        } else {
-          cb(elementMap[elementId]);
-        }
+      if(bracketIndex === -1) {
+        cb(results[0]);
+      } else {
+        cb(results);
       }
     }); 
   }
 
-  //function executeElement(elementId, elements, deps, func, containerElement) {
-    /*if(elementMap.hasOwnProperty(elementId)) {
-      //Util.warn('element \'' + elementId + '\' already defined'); // Don't need to report this
-      elementMap[elementId].forEach(function(element) {
-        callElementFunc(element);
-      });
-    } else {
-      findElement(elementId, elements, callElementFunc);
-    }*/
-
-  /*  findElement(elementId, elements, callElementFunc);
-
-    function callElementFunc(element) {
-      var context = (containerElement) ? {container: containerElement, element: element} : element;
-      if(deps) {
-        Injector.resolve(deps, function(args) {
-          func.apply(context, args);
-        });
-      } else {
-        func.call(context);
-      }
-    }
-  }*/
-
-  // TODO: decide if element() will be moved to new package (kilo-element)
-  /*core.element = function(elementId, funcOrDeps, func) {
-    var deps;
-
-    if(Util.isFunction(funcOrDeps)) {
-      func = funcOrDeps;
-    } else if(Util.isArray(funcOrDeps)) {
-      deps = funcOrDeps;
-    } else {
-      Util.error('element: second argument should be function or dependency array.');
-    }
-
-    onDocumentReady(function(document) {
-      var body;
-      if(!allElements) {
-        body = document.getElementsByTagName('body');
-        if(!body || !body[0]) {
-          return;
-        }
-        allElements = body[0].querySelectorAll('*');
-      }
-
-      executeElement(elementId, allElements, deps, func);
-    });
-
-    return this;
-  };
-  
-  core.subElement = function(elementId, containerId, funcOrDeps, func) {
-    var deps;
-
-    if(Util.isFunction(funcOrDeps)) {
-      func = funcOrDeps;
-    } else if(Util.isArray(funcOrDeps)) {
-      deps = funcOrDeps;
-    } else {
-      Util.error('subElement: third argument should be function or dependency array.');
-    }
-
-    onDocumentReady(function() {
-      var i, elements, numContainers, containerElement;
-      var containerElements = elementMap[containerId];
-      for(i = 0, numContainers = containerElements.length; i < numContainers; i++) {
-        containerElement = containerElements[i];
-        elements = containerElement.querySelectorAll('*');
-        executeElement(elementId, elements, deps, func, containerElement);
-      }
-    });
-
-    return this;
-  };*/
-  core.onDocumentReady = core.ready = onDocumentReady;
+  core.onDocumentReady = onDocumentReady;
   core.log = true;
 
   /** add these basic modules to the injector */
   Injector
     .setModule('helper', Util).setModule('Helper', Util).setModule('Util', Util)
     .setModule('injector', Injector).setModule('Injector', Injector)
-    //.setModule('Element', core.element).setModule('SubElement', core.subElement)
     .setModule('element', getElement)
     .setModule('registerAll', registerDefinitionObject)
     .setModule('appConfig', appConfig);
