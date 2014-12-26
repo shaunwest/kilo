@@ -5,6 +5,7 @@ describe('Kilo Core Spec', function() {
   describe('existing dependency', function() {
     var valIsDefined, Util;
 
+    // happens to be synchronous
     use('Util', function(_Util) {
       Util = _Util;
       valIsDefined = Util.isDefined('123');
@@ -19,11 +20,38 @@ describe('Kilo Core Spec', function() {
     });
   });
 
+  describe('new dependency', function() {
+    var MyDep1
+
+    beforeEach(function(done) {
+      register('MyDep1')
+      .depends('Util')
+      .factory(function(Util) {
+        return function(val) {
+          if(Util.isDefined(val)) {
+            return 'foo';
+          }
+          return 'bar';
+        };
+      });
+
+      use('MyDep1', function(_MyDep1) {
+        MyDep1 = _MyDep1;
+        done();
+      });
+    });
+
+    it('should have registered MyDep1', function() {
+      expect(MyDep1);
+      expect(MyDep1(1)).toBe('foo');
+    });
+  });
+
   describe('new dependencies', function() {
     var MyDep1, MyDep2
 
     beforeEach(function(done) {
-      register(['registerAll'], function(registerAll) {
+      use('registerAll', function(registerAll) {
         registerAll({
           MyDep1: function() {
             return 'foo';          

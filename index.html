@@ -16,7 +16,7 @@
         Util.log('TestFunc() was called! ' + message);
 
         // create HTML elements that will output results of Util methods
-        use(['isdefined'], function(isDefined) {
+        use('isdefined', function(isDefined) {
           isDefined.textContent = Util.isDefined(0); 
         });
 
@@ -46,10 +46,20 @@
     });
 
     // inject the newly created TestFunc and call it
-    use(['testFunc'], function(testFunc) {
+    use('testFunc', function(testFunc) {
       'use strict';
 
       testFunc('Yo dawg!');
+    });
+
+    // get the content of an external file and output it
+    use(['./data/hello.txt', 'output'], function(hello, output) {
+      output.textContent = hello;
+    });
+
+    // get json content (using full resource URL)
+    use(location.href + 'data/foo.json', function(foo) {
+      console.log(foo.bar);
     });
   </script>
 </head>
@@ -74,5 +84,6 @@
       <div data-sub data-msg="Sub Element 4"></div>
     </div>
   </div>
+  <span data-output></span>
 </body>
 </html>

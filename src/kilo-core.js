@@ -66,6 +66,11 @@
         return;
       }
 
+      if(key.indexOf('/') != -1) {
+        httpGet(key, cb);
+        return;
+      }
+
       module = this.unresolved[key];
       if(!module) {
         getElement(key, null, function(element) {
@@ -188,47 +193,6 @@
     }
   }
 
-  /** the main interface */
-  core = function(keyOrDeps, depsOrFunc, funcOrScope, scope) {
-    var result, key;
-
-    // get dependencies
-    if(Util.isArray(keyOrDeps)) {
-      Injector.resolveAndApply(keyOrDeps, depsOrFunc, funcOrScope);
-
-    // no dependencies, just a function (and optionally a scope)
-    } else if(Util.isFunction(keyOrDeps)) {
-      Injector.apply([], keyOrDeps, depsOrFunc);
-
-    // register a new module (with dependencies)
-    } else if(Util.isArray(depsOrFunc) && Util.isFunction(funcOrScope)) {
-      Injector.register(keyOrDeps, depsOrFunc, funcOrScope, scope);
-
-    // register a new module (without dependencies)
-    } else if(Util.isFunction(depsOrFunc)) {
-      Injector.register(keyOrDeps, [], depsOrFunc, funcOrScope);
-    }
-
-    return null;
-  };
-
-  core.use = function(deps, func, scope) {
-    if(Util.isString(deps)) {
-      deps = [deps];      
-    }
-    core(deps, func, scope);
-  };
-  core.register = function(key, depsOrFunc, funcOrScope, scope) {
-    core(key, depsOrFunc, funcOrScope, scope);
-  };
-  core.unresolve = function(key) {
-    Injector.unresolve(key);
-  };
-  core.noConflict = function() {
-    window[id] = previousOwner;
-    return core;
-  };
-
   // TODO: performance
   function getElement(elementId, container, cb) {
     onDocumentReady(function(document) {
@@ -264,6 +228,97 @@
     }); 
   }
 
+  function parseResponse(contentType, responseText) {
+    switch(contentType) {
+      case 'application/json':
+        return JSON.parse(responseText);
+      default:
+        return responseText;
+    }
+  }
+
+  function httpGet(url, onComplete, onProgress, contentType) {
+    var req = new XMLHttpRequest();
+
+    if(onProgress) {
+      req.addEventListener('progress', function(event) {
+        onProgress(event.loaded, event.total);
+      }, false);
+    }
+
+    req.onerror = function(event) {
+      Util.error('Network error.');
+    };
+
+    req.onload = function() {
+      var contentType = contentType || this.getResponseHeader('content-type');
+      switch(this.status) {
+        case 500:
+        case 404:
+          onComplete(this.statusText, this.status);
+          break;
+        case 304:
+        default:
+          onComplete(parseResponse(contentType, this.responseText), this.status);
+      }
+    };
+
+    req.open('get', url, true);
+    req.send();
+  }
+
+  function register(key, depsOrFunc, funcOrScope, scope) {
+    // register a new module (with dependencies)
+    if(Util.isArray(depsOrFunc) && Util.isFunction(funcOrScope)) {
+      Injector.register(key, depsOrFunc, funcOrScope, scope);
+    } 
+     // register a new module (without dependencies)
+    else if(Util.isFunction(depsOrFunc)) {
+      Injector.register(key, [], depsOrFunc, funcOrScope);
+    }
+  }
+
+  core = function() {};
+
+  core.use = function(depsOrFunc, funcOrScope, scope) {
+    // one dependency
+    if(Util.isString(depsOrFunc)) {
+      Injector.resolveAndApply([depsOrFunc], funcOrScope, scope);
+    }
+    // multiple dependencies
+    else if (Util.isArray(depsOrFunc)) {
+      Injector.resolveAndApply(depsOrFunc, funcOrScope, scope);
+    } 
+    // no dependencies
+    else if(Util.isFunction(depsOrFunc)) {
+      Injector.apply([], depsOrFunc, funcOrScope);
+    }
+  };
+
+  core.register = function(key, depsOrFunc, funcOrScope, scope) {
+    if(!funcOrScope) {
+      return {
+        depends: function() {
+          depsOrFunc = Util.argsToArray(arguments);
+          return this;
+        },
+        factory: function(func, scope) {
+          register(key, depsOrFunc, func, scope)
+        }
+      };
+    } else {
+      return register(key, depsOrFunc, funcOrScope, scope);
+    }
+  };
+
+  core.unresolve = function(key) {
+    Injector.unresolve(key);
+  };
+
+  core.noConflict = function() {
+    window[id] = previousOwner;
+    return core;
+  };
   core.onDocumentReady = onDocumentReady;
   core.log = true;
 
@@ -273,6 +328,7 @@
     .setModule('injector', Injector).setModule('Injector', Injector)
     .setModule('element', getElement)
     .setModule('registerAll', registerDefinitionObject)
+    .setModule('httpGet', httpGet)
     .setModule('appConfig', appConfig);
 
   /** create global references to core */
