@@ -296,7 +296,7 @@
   };
 
   core.register = function(key, depsOrFunc, funcOrScope, scope) {
-    if(!funcOrScope) {
+    if(!depsOrFunc) {
       return {
         depends: function() {
           depsOrFunc = Util.argsToArray(arguments);
