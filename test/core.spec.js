@@ -2,6 +2,8 @@
  * Created by Shaun on 12/7/2014.
  */
 describe('Kilo Core Spec', function() {
+  kilo.log = false;
+  
   describe('existing dependency', function() {
     var valIsDefined, Util;
 
@@ -20,11 +22,96 @@ describe('Kilo Core Spec', function() {
     });
   });
 
-  describe('new dependency', function() {
-    var MyDep1
+  describe('function with no dependencies', function() {
+    var MyFunc1
 
     beforeEach(function(done) {
-      register('MyDep1')
+      register('MyFunc1', function() {
+        return function(val) {
+          return val + '!';
+        };
+      });
+
+      use('MyFunc1', function(_MyFunc1) {
+        MyFunc1 = _MyFunc1;
+        done();
+      });
+    });
+
+    afterEach(function() {
+      kilo.unresolve('MyFunc1');
+    });
+
+    it('should have been registered', function() {
+      expect(MyFunc1);
+      expect(MyFunc1('foo')).toBe('foo!');
+    });
+  });
+
+  describe('function with a dependency', function() {
+    var MyFunc1
+
+    beforeEach(function(done) {
+      register('MyFunc1', ['Util'], function(Util) {
+        return function(val) {
+          if(Util.isDefined(val)) {
+            return 'foo';
+          }
+          return 'bar';
+        };
+      });
+
+      use('MyFunc1', function(_MyFunc1) {
+        MyFunc1 = _MyFunc1;
+        done();
+      });
+    });
+
+    afterEach(function() {
+      kilo.unresolve('MyFunc1');
+    });
+
+    it('should have been registered', function() {
+      expect(MyFunc1);
+      expect(MyFunc1(1)).toBe('foo');
+    });
+  });
+
+  describe('function with a dependency (advanced method 1)', function() {
+    var MyFunc1
+
+    beforeEach(function(done) {
+      register('MyFunc1', ['Util'])
+      .factory(function(Util) {
+        return function(val) {
+          if(Util.isDefined(val)) {
+            return 'foo';
+          }
+          return 'bar';
+        };
+      });
+
+      use('MyFunc1', function(_MyFunc1) {
+        MyFunc1 = _MyFunc1;
+        done();
+      });
+    });
+
+    afterEach(function() {
+      kilo.unresolve('MyFunc1');
+    });
+
+    it('should have been registered', function() {
+      expect(MyFunc1);
+      expect(MyFunc1(1)).toBe('foo');
+    });
+  });
+
+  describe('function with a dependency (advanced method 2)', function() {
+    var MyFunc1
+
+    beforeEach(function(done) {
+      register('MyFunc1')
       .depends('Util')
       .factory(function(Util) {
         return function(val) {
@@ -35,48 +122,57 @@ describe('Kilo Core Spec', function() {
         };
       });
 
-      use('MyDep1', function(_MyDep1) {
-        MyDep1 = _MyDep1;
+      use('MyFunc1', function(_MyFunc1) {
+        MyFunc1 = _MyFunc1;
         done();
       });
     });
 
-    it('should have registered MyDep1', function() {
-      expect(MyDep1);
-      expect(MyDep1(1)).toBe('foo');
+    afterEach(function() {
+      kilo.unresolve('MyFunc1');
+    });
+
+    it('should have been registered', function() {
+      expect(MyFunc1);
+      expect(MyFunc1(1)).toBe('foo');
     });
   });
 
-  describe('new dependencies', function() {
-    var MyDep1, MyDep2
+  describe('multiple functions', function() {
+    var MyFunc1, MyFunc2
 
     beforeEach(function(done) {
       use('registerAll', function(registerAll) {
         registerAll({
-          MyDep1: function() {
+          MyFunc1: function() {
             return 'foo';          
           },
-          MyDep2: function() {
+          MyFunc2: function() {
             return 'bar';        
           }
         });
       });
 
-      use(['MyDep1', 'MyDep2'], function(_MyDep1, _MyDep2) {
-        MyDep1 = _MyDep1;
-        MyDep2 = _MyDep2;
+      use(['MyFunc1', 'MyFunc2'], function(_MyFunc1, _MyFunc2) {
+        MyFunc1 = _MyFunc1;
+        MyFunc2 = _MyFunc2;
         done();
       });
     });
 
-    it('should have registered MyDep1', function() {
-      expect(MyDep1).not.toBe(null);
-      expect(MyDep1()).toBe('foo');
+    afterEach(function() {
+      kilo.unresolve('MyFunc1');
+      kilo.unresolve('MyFunc2');
     });
 
-    it('should have registered MyDep2', function() {
-      expect(MyDep2).not.toBe(null);
-      expect(MyDep2()).toBe('bar');
+    it('should have been registered (MyFunc1)', function() {
+      expect(MyFunc1).not.toBe(null);
+      expect(MyFunc1()).toBe('foo');
+    });
+
+    it('should have been registered (MyFunc2)', function() {
+      expect(MyFunc2).not.toBe(null);
+      expect(MyFunc2()).toBe('bar');
     });
   });
 });
