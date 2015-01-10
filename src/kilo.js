@@ -134,7 +134,7 @@
       var that = this;
       this.resolve(deps, function(args) {
         var result = that.apply(args, func, scope);
-        if(cb) {
+        if(cb && Util.isFunction(cb)) {
           cb(result);
         }
       });
