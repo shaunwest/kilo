@@ -43,7 +43,7 @@ describe('Kilo Core Spec', function() {
     });
 
     it('should have been registered', function() {
-      expect(MyFunc1);
+      expect(MyFunc1).toBeDefined();
       expect(MyFunc1('foo')).toBe('foo!');
     });
   });
@@ -72,8 +72,68 @@ describe('Kilo Core Spec', function() {
     });
 
     it('should have been registered', function() {
-      expect(MyFunc1);
+      expect(MyFunc1).toBeDefined();
       expect(MyFunc1(1)).toBe('foo');
+    });
+  });
+
+  describe('function with a dependency (deferred)', function() {
+    var MyFunc1, deferred;
+
+    beforeEach(function() {
+      register('MyFunc1', ['Util'], function(Util) {
+        return function(val) {
+          if(Util.isDefined(val)) {
+            return 'foo';
+          }
+          return 'bar';
+        };
+      });
+
+      deferred = use.defer('MyFunc1', function(_MyFunc1) {
+        MyFunc1 = _MyFunc1;
+      });
+    });
+
+    afterEach(function() {
+      kilo.unresolve('MyFunc1');
+    });
+
+    it('should not be registered', function() {
+      expect(MyFunc1).toBeUndefined();
+    });
+
+    it('should have been registered', function(done) {
+      deferred(function() {
+        expect(MyFunc1).toBeDefined();
+        expect(MyFunc1(1)).toBe('foo');
+        done();
+      });
+    });
+  });
+
+  describe('function with a dependency (run)', function() {
+    var deferred;
+
+    beforeEach(function() {
+      register('MyFunc1', function() {
+        return function() {
+          return 'baz';
+        };
+      });
+
+      deferred = use.run('MyFunc1');
+    });
+
+    afterEach(function() {
+      kilo.unresolve('MyFunc1');
+    });
+
+    it('should have been registered and executed', function(done) {
+      deferred(function(result) {
+        expect(result).toBe('baz');
+        done();
+      });
     });
   });
 
@@ -102,7 +162,7 @@ describe('Kilo Core Spec', function() {
     });
 
     it('should have been registered', function() {
-      expect(MyFunc1);
+      expect(MyFunc1).toBeDefined();
       expect(MyFunc1(1)).toBe('foo');
     });
   });
@@ -133,7 +193,7 @@ describe('Kilo Core Spec', function() {
     });
 
     it('should have been registered', function() {
-      expect(MyFunc1);
+      expect(MyFunc1).toBeDefined();
       expect(MyFunc1(1)).toBe('foo');
     });
   });

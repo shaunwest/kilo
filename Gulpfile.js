@@ -17,8 +17,9 @@ gulp.task('clean', function() {
 
 gulp.task('build', function() {
   return gulp.src('src/**/*.js')
+    .pipe(gulp.dest('dist'))
     .pipe(uglify())
-    .pipe(rename('kilo-core.min.js'))
+    .pipe(rename('kilo.min.js'))
     .pipe(gulp.dest('dist'));
 });
 

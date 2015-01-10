@@ -1,8 +1,8 @@
 {
-  "name": "kilo-core",
+  "name": "kilo",
   "version": "0.0.1",
-  "description": "March Core",
-  "main": "src/kilo-core.js",
+  "description": "Kilo Main Lib",
+  "main": "src/kilo.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,9 +13,9 @@
   "author": "Shaun West",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/shaunwest/kilo-core/issues"
+    "url": "https://github.com/shaunwest/kilo/issues"
   },
-  "homepage": "https://github.com/shaunwest/kilo-core",
+  "homepage": "https://github.com/shaunwest/kilo",
   "devDependencies": {
     "gulp": "^3.8.10",
     "gulp-clean": "^0.3.1",

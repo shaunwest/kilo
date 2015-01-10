@@ -1,12 +1,12 @@
 {
-  "name": "kilo-core",
-  "main": "src/kilo-core.js",
+  "name": "kilo",
+  "main": "src/kilo.js",
   "version": "0.0.1",
-  "homepage": "https://github.com/shaunwest/kilo-core",
+  "homepage": "https://github.com/shaunwest/kilo",
   "authors": [
     "Shaun West <shaunwest@gmail.com>"
   ],
-  "description": "KiloJS Core Lib",
+  "description": "KiloJS Main Lib",
   "license": "MIT",
   "private": true,
   "ignore": [
