@@ -309,12 +309,33 @@
   };
 
   core.use.run = function(dep, scope) {
-    return core.use.defer(dep, function(dep) {
-      if(Util.isFunction(dep)) {
-        return dep();
-      }
-      console.log('asdfasf');
-    }, scope);
+    var cb, done, result;
+    var func = function() {
+      var args = arguments;
+
+      core.use(dep, function(dep) {
+        if(Util.isFunction(dep)) {
+          result = dep.apply(null, args);
+          if(cb) {
+            cb(result);
+          }
+          done = true;
+          return result;
+        }
+      }, scope);
+
+      return { 
+        on: function(_cb) {
+          if(done) {
+            _cb(result);
+          } else {
+            cb = _cb;
+          }      
+        }
+      };
+    };
+
+    return func;
   };
 
   core.register = function(key, depsOrFunc, funcOrScope, scope) {

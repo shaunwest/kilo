@@ -112,13 +112,13 @@ describe('Kilo Core Spec', function() {
     });
   });
 
-  describe('function with a dependency (run)', function() {
+  describe('function', function() {
     var deferred;
 
     beforeEach(function() {
       register('MyFunc1', function() {
-        return function() {
-          return 'baz';
+        return function(val) {
+          return val + '!';
         };
       });
 
@@ -130,8 +130,8 @@ describe('Kilo Core Spec', function() {
     });
 
     it('should have been registered and executed', function(done) {
-      deferred(function(result) {
-        expect(result).toBe('baz');
+      deferred('baz').on(function(result) {
+        expect(result).toBe('baz!');
         done();
       });
     });
