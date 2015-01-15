@@ -77,6 +77,40 @@ describe('Kilo Core Spec', function() {
     });
   });
 
+  describe('intercepted dependency', function() {
+    var MyFunc1
+
+    beforeEach(function(done) {
+      use('Injector', function(Injector) {
+        Injector.addInterceptor(/\$(.*)\$/, function(MyFunc1) {
+          return function() {
+            return MyFunc1() + '!!!';
+          }          
+        });
+
+        register('MyFunc1', function() {
+          return function() {
+            return 'Hello';
+          };
+        });
+
+        use('$MyFunc1$', function(_MyFunc1) {
+          MyFunc1 = _MyFunc1;
+          done();
+        });
+      });
+    });
+
+    afterEach(function() {
+      kilo.unresolve('MyFunc1');
+    });
+
+    it('should return modified value', function() {
+      expect(MyFunc1).toBeDefined();
+      expect(MyFunc1()).toBe('Hello!!!');
+    });
+  });
+
   describe('function with a dependency (deferred)', function() {
     var MyFunc1, deferred;
 
