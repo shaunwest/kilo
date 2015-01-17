@@ -2,7 +2,7 @@
   "name": "kilo",
   "version": "0.0.1",
   "description": "Kilo Main Lib",
-  "main": "src/kilo.js",
+  "main": "dist/kilo.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

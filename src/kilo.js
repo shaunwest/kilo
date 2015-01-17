@@ -1,13 +1,13 @@
 /**
  * Created by Shaun on 5/1/14.
  *
- * TODO: create kilo-all
  */
 
 (function(id) {
   'use strict';
 
-  var core, Util, Injector, types, appConfig = {}, gids = {}, allElements, previousOwner = undefined;
+  var core, Util, Injector, types, gids = {}, allElements, previousOwner = undefined;
+  var exports = exports || undefined;
   var CONSOLE_ID = id;
 
   Util = {
@@ -124,17 +124,11 @@
       return;
     },
     resolve: function(deps, cb, index, results) {
-      var dep, depName;
       var that = this; // FIXME
-
-      /*if(!deps) { // WTF?
-        done();
-        return;
-      }*/
 
       index = Util.def(index, 0);
 
-      depName = deps[index];
+      var depName = deps[index];
       if(!depName) {
         cb(results);
         return;
@@ -400,17 +394,22 @@
     .setModule('Injector', Injector)
     .setModule('element', getElement)
     .setModule('registerAll', registerDefinitionObject)
-    .setModule('httpGet', httpGet)
-    .setModule('appConfig', appConfig);
+    .setModule('httpGet', httpGet);
 
-  /** create global references to core */
-  if(window[id]) {
-    Util.warn('a preexisting value at namespace \'' + id + '\' has been overwritten.');
-    previousOwner = window[id];
+  /** create references to core */
+  if(window) {
+    if(window[id]) {
+      Util.warn('a preexisting value at namespace \'' + id + '\' has been overwritten.');
+      previousOwner = window[id];
+    }
+    window[id] = core;
+    if(!window.register) window.register = core.register;
+    if(!window.use) window.use = core.use;
   }
-  window[id] = core;
-  if(!window.register) window.register = core.register;
-  if(!window.use) window.use = core.use;
+
+  if(exports) {
+    exports[id] = core;    
+  }
 
   return core;
 })('kilo');
