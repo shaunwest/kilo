@@ -7,7 +7,6 @@
   'use strict';
 
   var core, Util, Injector, types, gids = {}, allElements, previousOwner = undefined;
-  var exports = exports || undefined;
   var CONSOLE_ID = id;
 
   Util = {
@@ -397,7 +396,7 @@
     .setModule('httpGet', httpGet);
 
   /** create references to core */
-  if(window) {
+  if(typeof window !== 'undefined') {
     if(window[id]) {
       Util.warn('a preexisting value at namespace \'' + id + '\' has been overwritten.');
       previousOwner = window[id];
@@ -407,7 +406,7 @@
     if(!window.use) window.use = core.use;
   }
 
-  if(exports) {
+  if(typeof exports !== 'undefined') {
     exports[id] = core;    
   }
 
