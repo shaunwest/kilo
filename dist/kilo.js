@@ -407,7 +407,9 @@
   }
 
   if(typeof exports !== 'undefined') {
-    exports[id] = core;    
+    exports[id] = core; 
+    exports['register'] = core.register;
+    exports['use'] = core.use;   
   }
 
   return core;
