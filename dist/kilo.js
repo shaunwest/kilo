@@ -93,7 +93,7 @@
       }
 
       if(key.indexOf('/') != -1) {
-        httpGet(key, cb);
+        this.modules.httpGet(key, cb);
         return;
       }
 
