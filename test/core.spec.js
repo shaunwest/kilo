@@ -111,7 +111,7 @@ describe('Kilo Core Spec', function() {
     });
   });
 
-  describe('function with a dependency (deferred)', function() {
+  /*describe('function with a dependency (deferred)', function() {
     var MyFunc1, deferred;
 
     beforeEach(function() {
@@ -144,7 +144,7 @@ describe('Kilo Core Spec', function() {
         done();
       });
     });
-  });
+  });*/
 
   describe('function', function() {
     var deferred;
@@ -171,7 +171,7 @@ describe('Kilo Core Spec', function() {
     });
   });
 
-  describe('function with a dependency (advanced method 1)', function() {
+  /*describe('function with a dependency (advanced method 1)', function() {
     var MyFunc1
 
     beforeEach(function(done) {
@@ -230,8 +230,9 @@ describe('Kilo Core Spec', function() {
       expect(MyFunc1).toBeDefined();
       expect(MyFunc1(1)).toBe('foo');
     });
-  });
+  });*/
 
+  /*
   describe('multiple functions', function() {
     var MyFunc1, MyFunc2
 
@@ -268,5 +269,5 @@ describe('Kilo Core Spec', function() {
       expect(MyFunc2).not.toBe(null);
       expect(MyFunc2()).toBe('bar');
     });
-  });
+  });*/
 });

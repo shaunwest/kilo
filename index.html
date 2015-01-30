@@ -3,7 +3,29 @@
 <head lang="en">
   <meta charset="UTF-8">
   <title>Kilo Core</title>
-  <script src="src/kilo.js"></script>
+</head>
+<body>
+  <h1>Kilo Core</h1>
+  <div>isDefined(0): <span data-isdefined></span></div>
+  <div>isObject({}): <span data-isobject></span></div>
+  <div>isBoolean(false): <span data-isboolean></span></div>
+  <div>isNumber('abc'): <span data-isnumber></span></div>
+  <div>def(undefined, 'This is a defined value'): <span data-def></span></div>
+  <div data-container data-msg="I'm container 1">
+    <div>
+      <div data-sub data-msg="Sub Element 1"></div>
+      <div data-sub data-msg="Sub Element 2"></div>
+    </div>
+  </div>
+  <div data-container data-msg="I'm container 2">
+    <div>
+      <div data-sub data-msg="Sub Element 3"></div>
+      <div data-sub data-msg="Sub Element 4"></div>
+    </div>
+  </div>
+  <span data-output></span>
+</body>
+  <script src="dist/kilo.min.js"></script>
   <script>
     // make a function that tests out some utility methods
     // FIXME: when a non-existent element dependency is requested, causes errors
@@ -24,12 +46,6 @@
           isObject.textContent = Util.isObject({});
           isBoolean.textContent = Util.isBoolean(false);
           isNumber.textContent = Util.isNumber('abc');
-        });
-
-        use(['getgid1', 'getgid2', 'def'], function(getGID1, getGID2, def) {
-          getGID1.textContent = Util.getGID('myid');
-          getGID2.textContent = Util.getGID('myid');
-          def.textContent = Util.def(undefined, 'This is a defined value');
         });
 
         // demonstrates a container element with sub elements
@@ -62,28 +78,4 @@
       console.log(foo.bar);
     });
   </script>
-</head>
-<body>
-  <h1>Kilo Core</h1>
-  <div>isDefined(0): <span data-isdefined></span></div>
-  <div>isObject({}): <span data-isobject></span></div>
-  <div>isBoolean(false): <span data-isboolean></span></div>
-  <div>isNumber('abc'): <span data-isnumber></span></div>
-  <div>getGID('myid'): <span data-getgid1></span></div>
-  <div>getGID('myid'): <span data-getgid2></span></div>
-  <div>def(undefined, 'This is a defined value'): <span data-def></span></div>
-  <div data-container data-msg="I'm container 1">
-    <div>
-      <div data-sub data-msg="Sub Element 1"></div>
-      <div data-sub data-msg="Sub Element 2"></div>
-    </div>
-  </div>
-  <div data-container data-msg="I'm container 2">
-    <div>
-      <div data-sub data-msg="Sub Element 3"></div>
-      <div data-sub data-msg="Sub Element 4"></div>
-    </div>
-  </div>
-  <span data-output></span>
-</body>
 </html>

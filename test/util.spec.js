@@ -84,7 +84,8 @@ describe('Kilo Core Util Spec', function() {
     });
   });
 
-  describe('GID with prefix "MyId"', function() {
+  // to be moved out of kilo.js
+  /*describe('GID with prefix "MyId"', function() {
     var prefix = 'MyId';
     it('should be MyId1', function() {
       expect(Util.getGID(prefix)).toBe('MyId1');
@@ -92,5 +93,5 @@ describe('Kilo Core Util Spec', function() {
     it('should be MyId2', function() {
       expect(Util.getGID(prefix)).toBe('MyId2');
     });
-  });
+  });*/
 });

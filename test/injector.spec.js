@@ -53,12 +53,13 @@ describe('Kilo Core Injector Spec', function() {
       expect(newFunc('456')).toBe(true);
     });*/
 
+/*
     it('should return the proper dependency', function() {
       var IsDefinedTester;
       Injector.process(['IsDefinedTester'], function(_IsDefinedTester) {
         IsDefinedTester = _IsDefinedTester;
       });
       expect(IsDefinedTester('456')).toBe(true);
-    });
+    });*/
   });
 });
