@@ -11,7 +11,7 @@
 
   var Util = {
     isDefined: function(value) { return typeof value != 'undefined' },
-    isBoolean: function(value) { return typeof value == 'boolean' },
+    //isBoolean: function(value) { return typeof value == 'boolean' },
     def: function(value, defaultValue) { return (typeof value == 'undefined') ? defaultValue : value },
     error: function(message) { throw new Error(id + ': ' + message) },
     warn: function(message) { Util.log('Warning: ' + message) },
@@ -24,12 +24,12 @@
     //},
     rand: function(max, min) { // move to extra?
       min = min || 0;
-      if(min > max || max < min) { Util.error('rand: invalid range.'); }
+      if(min > max) { Util.error('rand: invalid range.'); }
       return Math.floor((Math.random() * (max - min + 1))) + (min);
     }
   };
 
-  var types = ['Array', 'Object', 'Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp']; //, 'HTMLImageElement'];
+  var types = ['Array', 'Object', 'Boolean', 'Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp']; //, 'HTMLImageElement'];
   for(var i = 0; i < types.length; i++) {
     Util['is' + types[i]] = (function(type) { 
       return function(obj) {
@@ -76,10 +76,10 @@
       return this;
     },
     // possible removal candidate (just use Injector.modules['myModule'] = ...)
-    setModule: function(key, module) { // save a module without doing dependency resolution
+    /*setModule: function(key, module) { // save a module without doing dependency resolution
       this.modules[key] = module;
       return this;
-    },
+    },*/
     getDependency: function(key, cb) {
       var interceptor = getInterceptor(this.interceptors, key);
       key = interceptor.key;
@@ -138,8 +138,7 @@
       });
     },
     apply: function(args, func, scope) {
-      var result = func.apply(scope || core, args);
-      return result;
+      return func.apply(scope || core, args);
     },
     resolveAndApply: function(deps, func, scope, cb) {
       var that = this;
@@ -221,7 +220,7 @@
   // TODO: performance
   function getElement(elementId, container, cb) {
     //onDocumentReady(function(document) {
-      var element, results = [];
+      var results = [];
       var elements = (!container) ? findElements() : container.querySelectorAll('*');
 
       var bracketIndex = elementId.indexOf('[]');
@@ -229,7 +228,7 @@
         elementId = elementId.substring(0, bracketIndex);
       }
       for(var i = 0, numElements = elements.length; i < numElements; i++) {
-        element = elements[i];
+        var element = elements[i];
         if(element.hasAttribute('data-' + elementId)) {
           results.push(element);
         }
@@ -287,6 +286,7 @@
 
   var core = {
     use: function(depsOrFunc, funcOrScope, scope, cb) {
+      var module;
       // no dependencies
       if(Util.isFunction(depsOrFunc)) {
         var result = Injector.apply([], depsOrFunc, funcOrScope);
@@ -300,8 +300,15 @@
       }
       // multiple dependencies
       if (Util.isArray(depsOrFunc)) {
-        Injector.resolveAndApply(depsOrFunc, funcOrScope, scope, cb);
+        if(!funcOrScope) {
+          Injector.resolveAndApply(depsOrFunc, function(_module) {
+            module = _module;
+          });
+        } else {
+          Injector.resolveAndApply(depsOrFunc, funcOrScope, scope, cb);
+        }
       } 
+      return module;
     },
 
     register: function(key, depsOrFunc, funcOrScope, scope) {
@@ -336,7 +343,7 @@
   };*/
 
   // TODO: try to get rid of this
-  core.use.run = function(dep, scope) {
+  /*core.use.run = function(dep, scope) {
     var cb, done, result;
     return function() {
       var args = arguments;
@@ -362,26 +369,26 @@
         }
       };
     };
-  };
+  };*/
 
  
   //core.onDocumentReady = onDocumentReady;
   core.log = true;
 
   /** add these basic modules to the injector */
-  Injector
+  Injector.modules['Injector'] = Injector;
     //.setModule('Util', Util)
-    .setModule('Injector', Injector);
+    //.setModule('Injector', Injector);
     //.setModule('element', getElement)
     //.setModule('registerAll', registerDefinitionObject)
     //.setModule('httpGet', httpGet);
 
   /** create references to core */
   if(typeof window != 'undefined') {
-    if(window[id]) {
+    //if(window[id]) {
       //Util.warn('a preexisting value at namespace \'' + id + '\' has been overwritten.');
       previousOwner = window[id];
-    }
+    //}
     window[id] = core;
     if(!window.register) window.register = core.register;
     if(!window.use) window.use = core.use;

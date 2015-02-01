@@ -156,18 +156,16 @@ describe('Kilo Core Spec', function() {
         };
       });
 
-      deferred = use.run('MyFunc1');
+      deferred = use('MyFunc1');
     });
 
     afterEach(function() {
       kilo.unresolve('MyFunc1');
     });
 
-    it('should have been registered and executed', function(done) {
-      deferred('baz').on(function(result) {
-        expect(result).toBe('baz!');
-        done();
-      });
+    it('should have been registered and executed', function() {
+      var result = deferred('baz');
+      expect(result).toBe('baz!');
     });
   });
 

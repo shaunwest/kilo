@@ -10,17 +10,16 @@ var runSequence = require('run-sequence');
 var clean = require('gulp-clean');
 var karmaConfig = __dirname + '/karma.conf.js';
 
-gulp.task('clean', function() {
-  return gulp.src('dist', {read: false})
+/*gulp.task('clean', function() {
+  return gulp.src('kilo.min.js', {read: false})
     .pipe(clean());
-});
+});*/
 
 gulp.task('build', function() {
-  return gulp.src('src/**/*.js')
-    .pipe(gulp.dest('dist'))
+  return gulp.src('kilo.js')
     .pipe(uglify())
     .pipe(rename('kilo.min.js'))
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest('.'));
 });
 
 gulp.task('test', function(cb) {
@@ -31,7 +30,7 @@ gulp.task('test', function(cb) {
 });
 
 gulp.task('watch', function() {
-  return gulp.watch('src/**/*.js', ['build']);
+  return gulp.watch('kilo.js', ['build']);
 });
 
 gulp.task('ci', function(cb) {
@@ -41,5 +40,6 @@ gulp.task('ci', function(cb) {
 });
 
 gulp.task('default', function(cb) {
-  runSequence('test', 'clean', 'build', 'watch', cb);
+  //runSequence('test', 'clean', 'build', 'watch', cb);
+  runSequence('test', 'build', 'watch', cb);
 });
