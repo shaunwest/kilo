@@ -27,7 +27,7 @@ describe('Kilo Core Injector Spec', function() {
     afterEach(function() {
       Injector.unresolve('IsDefinedTester');
       returnedFunc = null;      
-    })
+    });
 
     it('should be returned', function() {
       expect(returnedFunc).toBeDefined();
@@ -39,8 +39,8 @@ describe('Kilo Core Injector Spec', function() {
 
     it('should be unresolved', function() {
       Injector.unresolve('IsDefinedTester');
-      expect(Injector.unresolved['IsDefinedTester']).toBeDefined();
-      expect(Injector.modules['IsDefinedTester']).toBeUndefined();
+      expect(Injector.unresolved['_']['IsDefinedTester']).toBeDefined();
+      expect(Injector.modules['_']['IsDefinedTester']).toBeUndefined();
     });
 
     /*it('should be a new function instance', function() {

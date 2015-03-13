@@ -16,7 +16,7 @@ var karmaConfig = __dirname + '/karma.conf.js';
 });*/
 
 gulp.task('build', function() {
-  return gulp.src('kilo.js')
+  return gulp.src('kilo2.js')
     .pipe(uglify())
     .pipe(rename('kilo.min.js'))
     .pipe(gulp.dest('.'));

@@ -23,7 +23,7 @@ describe('Kilo Core Spec', function() {
   });
 
   describe('function with no dependencies', function() {
-    var MyFunc1
+    var MyFunc1;
 
     beforeEach(function(done) {
       register('MyFunc1', function() {
@@ -49,7 +49,7 @@ describe('Kilo Core Spec', function() {
   });
 
   describe('function with a dependency', function() {
-    var MyFunc1
+    var MyFunc1;
 
     beforeEach(function(done) {
       register('MyFunc1', ['Util'], function(Util) {

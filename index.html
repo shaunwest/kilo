@@ -25,11 +25,11 @@
   </div>
   <span data-output></span>
 </body>
-  <script src="kilo.min.js"></script>
+  <script src="kilo2.js"></script>
   <script>
     // make a function that tests out some utility methods
     // FIXME: when a non-existent element dependency is requested, causes errors
-    register('testFunc', ['Util'], function(Util) {
+    register('my.testFunc', ['Util'], function(Util) {
       'use strict';
 
       Util.log('TestFunc() was resolved');
@@ -62,7 +62,7 @@
     });
 
     // inject the newly created TestFunc and call it
-    use('testFunc', function(testFunc) {
+    use('my.testFunc', function(testFunc) {
       'use strict';
 
       testFunc('Yo dawg!');
