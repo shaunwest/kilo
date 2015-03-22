@@ -25,7 +25,7 @@
   </div>
   <span data-output></span>
 </body>
-  <script src="kilo2.js"></script>
+  <script src="kilo.js"></script>
   <script>
     // make a function that tests out some utility methods
     // FIXME: when a non-existent element dependency is requested, causes errors
@@ -37,6 +37,7 @@
       return function(message) {
         Util.log('TestFunc() was called! ' + message);
 
+        /*
         // create HTML elements that will output results of Util methods
         use('isdefined', function(isDefined) {
           isDefined.textContent = Util.isDefined(0); 
@@ -58,7 +59,14 @@
             });
           });
         });
+        */
       };
+    });
+
+    register('my.testFunc2', [], function() {
+      return function() {
+        console.log('testFunc2 called');
+      }
     });
 
     // inject the newly created TestFunc and call it
@@ -68,6 +76,11 @@
       testFunc('Yo dawg!');
     });
 
+    use('my.*', function(my) {
+      my.testFunc2();
+    });
+
+    /*
     // get the content of an external file and output it
     use(['./data/hello.txt', 'output'], function(hello, output) {
       output.textContent = hello;
@@ -77,5 +90,6 @@
     use(location.href + 'data/foo.json', function(foo) {
       console.log(foo.bar);
     });
+    */
   </script>
 </html>
