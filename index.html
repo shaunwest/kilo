@@ -37,7 +37,6 @@
       return function(message) {
         Util.log('TestFunc() was called! ' + message);
 
-        /*
         // create HTML elements that will output results of Util methods
         use('isdefined', function(isDefined) {
           isDefined.textContent = Util.isDefined(0); 
@@ -52,14 +51,13 @@
         // demonstrates a container element with sub elements
         use(['container[]', 'element'], function(Containers, element) {
           Containers.forEach(function(Container) {
-            element('sub[]', Container, function(Subs) {
+            element('', 'sub[]', function(Subs) {
               Subs.forEach(function(Sub) {
                 Sub.textContent = Container.getAttribute('data-msg') + ': ' + Sub.getAttribute('data-msg');
               });
-            });
+            }, Container);
           });
         });
-        */
       };
     });
 
@@ -80,7 +78,22 @@
       my.testFunc2();
     });
 
-    /*
+    register('testFunc3', [], function() {
+      return function() {
+        return 'testFunc3 called';
+      }
+    });
+
+    use('Injector', function(Injector) {
+      Injector.addInterceptor(/call (.*)/, function(func) {
+        return func();
+      });
+    });
+
+    use('call testFunc3', function(result) {
+      console.log(result);
+    });
+
     // get the content of an external file and output it
     use(['./data/hello.txt', 'output'], function(hello, output) {
       output.textContent = hello;
@@ -90,6 +103,5 @@
     use(location.href + 'data/foo.json', function(foo) {
       console.log(foo.bar);
     });
-    */
   </script>
 </html>

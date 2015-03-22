@@ -40,109 +40,59 @@
   }
 
   function getInjector () {
-    var registered = { _: { 'Util': {ns: '_', name: 'Util', resolved: Util} } },
+    var registered = {'_': {}},
       interceptors = [];
 
-    /*function getInterceptor (interceptors, matchString) {
+    function getInterceptor (matchString) {
       var matches;
       for(var i = 0; i < interceptors.length; i++) {
         var interceptor = interceptors[i];
         if(matches = matchString.match(interceptor.pattern)) {
-          return {key: matches[1], cb: interceptor.cb};
+          return {name: matches[1], cb: interceptor.cb};
         }
       }
-      return {key: matchString};
+      return {name: matchString};
     }
 
-    function intercept (key, interceptorFunc) {
+    /*function intercept (key, interceptorFunc) {
       return (interceptorFunc) ? interceptorFunc(key) : key;
     }*/
 
-    /**function getResolved (dep, cb) {
-      var ns = parseNs(dep);
-      var name = parseName(dep);
-      if(name == '*') {
-        resolveNamespace(ns, [], cb);
-        return;
-      }
-      cb((resolved[ns]) ? resolved[ns][name] : undefined);
-    }*/
-
-    /***function resolveNamespace(ns, cb) {
-      var nsObject = registered[ns];
-      if (!nsObject) {
-        cb(undefined);
-        return;
-      }
-      resolve(getDepsFromNs(ns, nsObject), [], function(result) {
-
-      });
-    }
-
-    function getDepsFromNs(ns, nsObject) {
-      var deps = [];
-      for(var key in nsObject) {
-        deps.push(ns + '.' + key);
-      }
-      return deps;
-    }*/
-
-    /*function getNamespaceObject(ns) {
-      if (!registered[ns]) {
-        return;
-      }
-      return registered[ns];
-    }*/
-
-    /*****function getUnresolved (ns, name, cb) {
-      if(resolved[ns] && resolved[ns][name]) {
-        var a = {};
-        cb(a[name] = resolved[ns][name]);
-        return;
-      }
-      if(!registered[ns] || !registered[ns][name]) {
-        cb(undefined);
-        return;
-      }
-      resolve(registered[ns][name].deps.slice(0), [], function(result) {
-        if(!resolved[ns]) resolved[ns] = {};
-        cb(resolved[ns][name] = result);
-      });
-    }*/
-
-    /*function getRegistered(deps) {
-      var results = [];
-      for(var i = 0; i < deps.length; i++) {
-        var ns = parseNs(deps[i]);
-        var name = parseName(deps[i]);
-        if(registered[ns]) {
-          if(name == '*') {
-            results.push(registered[ns]);
-          } else {
-            results.push(registered[ns][name]);
-          }
-        } else {
-          results.push(undefined);
+    /*function intercept (matchString, value) {
+      var matches;
+      for(var i = 0; i < interceptors.length; i++) {
+        var interceptor = interceptors[i];
+        if(matches = matchString.match(interceptor.pattern)) {
+          return interceptor.cb(value);
         }
       }
-      return results;
+      return value;
     }*/
 
     function getNamespace(ns, name, cb) {
-      var nsItems = [];
       var nsObject = registered[ns];
+
       if(!nsObject) {
         cb(undefined);
         return;
       }
+
       if(name == '*') {
+        var nsItems = [];
         for(var key in nsObject) {
           nsItems.push(nsObject[key]);
         }
-      } else {
-        nsItems.push(nsObject[name]);
+        resolveNamespace(nsItems, cb, {});
+        return;
       }
-      resolveNamespace(nsItems, cb, {});
+
+      if(!nsObject[name]) {
+        cb(undefined);
+        return;
+      }
+      resolveNamespace([nsObject[name]], function(result) {
+        cb(result[name]);
+      }, {});
     }
 
     function resolveNamespace(nsItems, cb, result) {
@@ -158,41 +108,34 @@
         });
         return;
       }
-      /*if(!result[nsItem.ns]) {
-        result[nsItem.ns] = {};
-      }*/
       result[nsItem.name] = nsItem.resolved;
       resolveNamespace(nsItems, cb, result);
     }
 
     function resolveNamespaceItem(nsItem, cb) {
       resolve(nsItem.deps, function(args) {
-      //resolve(nsItem.deps, function() {
         nsItem.resolved = nsItem.func.apply(Injector, args);
-        //nsItem.resolved = resolved;
         cb(nsItem);
       }, []);
     }
 
-    // Get the deps for our function, then call it with
-    // those deps.
-    // deps: array of registered functions
-    // results: array of resolved deps
     function resolve (deps, cb, args) {
+      if(!deps) {
+        cb();
+        return;
+      }
       var dep = deps.shift();
       if(!dep) {
         cb(args);
-        //func.apply(Injector, args);
         return;
       }
       var ns = parseNs(dep);
-      var name = parseName(dep);
-      getDependency(ns, name, Injector.handlers.slice(0), function(result) {
-        if(name == '*') {
-          args.push(result);
-        } else {
-          args.push(result[name]);
+      var interceptor = getInterceptor(parseName(dep));
+      getDependency(ns, interceptor.name, Injector.handlers.slice(0), function(result) {
+        if(interceptor.cb) {
+          result = interceptor.cb(result);
         }
+        args.push(result);
 
         resolve(deps, cb, args);
       });
@@ -202,7 +145,6 @@
       var handler = handlers.shift();
       if (!handler) return;
       handler(ns, name, function (result) {
-        // TODO: intercept
         if (result) {
           cb(result);
           return;
@@ -221,6 +163,7 @@
         var name = parseName(key);
         if (!registered[ns]) registered[ns] = {};
         registered[ns][name] = {ns: ns, name: name, deps: depsOrFunc, func: func, resolved: null};
+        return this;
       },
       use: function (depsOrFunc, func) {
         var module;
@@ -237,8 +180,8 @@
           return;
         }
         if (!func) {
-          resolve(depsOrFunc.slice(0), function (_module) {
-            module = _module; // FIXME
+          resolve(depsOrFunc.slice(0), function (args) {
+            module = func.apply(Injector, args);
           }, []);
           return module;
         }
@@ -247,7 +190,16 @@
           func.apply(Injector, args);
         }, []);
       },
-      handlers: [getNamespace] //, getHttp, getElement]
+      addResolved: function(name, value, ns) {
+        ns = ns || '_';
+        registered[ns][name] = {ns: ns, name: name, resolved: value};
+        return this;
+      },
+      addInterceptor: function(pattern, cb) {
+        interceptors.push({pattern: pattern, cb: cb});
+        return this;
+      },
+      handlers: [getNamespace, getElement, getHttp]
     };
 
     return Injector;
@@ -274,7 +226,7 @@
     req.onload = function() {
       // ALWAYS check content type?
       var contentType = contentType || this.getResponseHeader('content-type') || '';
-      (this.status >= 400) ? cb(null) :
+      (this.status >= 300) ? cb(null) :
         cb(parseResponse(contentType, this.responseText), this.status);
     };
 
@@ -282,8 +234,8 @@
     req.send();
   }
 
-  function findElements () {
-    var container = document.getElementsByTagName('html');
+  function findElements (container) {
+    container = (container) ? container.querySelectorAll('*') : document.getElementsByTagName('html');
     if(!container[0]) return;
     return container[0].querySelectorAll('*');
   }
@@ -291,7 +243,11 @@
   // TODO: perf
   function getElement (ns, elementId, cb, container) {
     var results = [];
-    var elements = (!container) ? findElements() : container.querySelectorAll('*');
+    var elements = findElements(container);
+    if(!elements){
+      cb(null);
+      return;
+    }
 
     var bracketIndex = elementId.indexOf('[]');
     if(bracketIndex != -1) {
@@ -311,6 +267,10 @@
   };
 
   var Injector = getInjector();
+  Injector
+    .addResolved('Injector', Injector)
+    .addResolved('Util', Util)
+    .addResolved('element', getElement);
   if(!window.register) window.register = Injector.register;
   if(!window.use) window.use = Injector.use;
 
