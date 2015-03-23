@@ -2,8 +2,6 @@
  * Created by Shaun on 12/7/2014.
  */
 describe('Kilo Core Spec', function() {
-  kilo.log = false;
-  
   describe('existing dependency', function() {
     var valIsDefined, Util;
 
@@ -23,7 +21,7 @@ describe('Kilo Core Spec', function() {
   });
 
   describe('function with no dependencies', function() {
-    var MyFunc1;
+    var MyFunc1, Injector;
 
     beforeEach(function(done) {
       register('MyFunc1', function() {
@@ -32,14 +30,15 @@ describe('Kilo Core Spec', function() {
         };
       });
 
-      use('MyFunc1', function(_MyFunc1) {
+      use(['Injector', 'MyFunc1'], function(_Injector, _MyFunc1) {
+        Injector = _Injector;
         MyFunc1 = _MyFunc1;
         done();
       });
     });
 
     afterEach(function() {
-      kilo.unresolve('MyFunc1');
+      Injector.unresolve('MyFunc1');
     });
 
     it('should have been registered', function() {
@@ -49,7 +48,7 @@ describe('Kilo Core Spec', function() {
   });
 
   describe('function with a dependency', function() {
-    var MyFunc1;
+    var MyFunc1, Injector;
 
     beforeEach(function(done) {
       register('MyFunc1', ['Util'], function(Util) {
@@ -61,14 +60,15 @@ describe('Kilo Core Spec', function() {
         };
       });
 
-      use('MyFunc1', function(_MyFunc1) {
+      use(['Injector', 'MyFunc1'], function(_Injector, _MyFunc1) {
+        Injector = _Injector;
         MyFunc1 = _MyFunc1;
         done();
       });
     });
 
     afterEach(function() {
-      kilo.unresolve('MyFunc1');
+      Injector.unresolve('MyFunc1');
     });
 
     it('should have been registered', function() {
@@ -78,10 +78,11 @@ describe('Kilo Core Spec', function() {
   });
 
   describe('intercepted dependency', function() {
-    var MyFunc1
+    var MyFunc1, Injector
 
     beforeEach(function(done) {
-      use('Injector', function(Injector) {
+      use('Injector', function(_Injector) {
+        Injector = _Injector;
         Injector.addInterceptor(/\$(.*)\$/, function(MyFunc1) {
           return function() {
             return MyFunc1() + '!!!';
@@ -102,7 +103,7 @@ describe('Kilo Core Spec', function() {
     });
 
     afterEach(function() {
-      kilo.unresolve('MyFunc1');
+      Injector.unresolve('MyFunc1');
     });
 
     it('should return modified value', function() {
@@ -147,9 +148,9 @@ describe('Kilo Core Spec', function() {
   });*/
 
   describe('function', function() {
-    var deferred;
+    var deferred, Injector;
 
-    beforeEach(function() {
+    beforeEach(function(done) {
       register('MyFunc1', function() {
         return function(val) {
           return val + '!';
@@ -157,10 +158,15 @@ describe('Kilo Core Spec', function() {
       });
 
       deferred = use('MyFunc1');
+
+      use('Injector', function(_Injector) {
+        Injector = _Injector;
+        done();
+      });
     });
 
     afterEach(function() {
-      kilo.unresolve('MyFunc1');
+      Injector.unresolve('MyFunc1');
     });
 
     it('should have been registered and executed', function() {

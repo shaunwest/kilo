@@ -40,7 +40,7 @@
   }
 
   function getInjector () {
-    var registered = {'_': {}},
+    var registered = {_: {}},
       interceptors = [];
 
     function getInterceptor (matchString) {
@@ -53,21 +53,6 @@
       }
       return {name: matchString};
     }
-
-    /*function intercept (key, interceptorFunc) {
-      return (interceptorFunc) ? interceptorFunc(key) : key;
-    }*/
-
-    /*function intercept (matchString, value) {
-      var matches;
-      for(var i = 0; i < interceptors.length; i++) {
-        var interceptor = interceptors[i];
-        if(matches = matchString.match(interceptor.pattern)) {
-          return interceptor.cb(value);
-        }
-      }
-      return value;
-    }*/
 
     function getNamespace(ns, name, cb) {
       var nsObject = registered[ns];
@@ -181,7 +166,7 @@
         }
         if (!func) {
           resolve(depsOrFunc.slice(0), function (args) {
-            module = func.apply(Injector, args);
+            module = args[0]; //func.apply(Injector, args);
           }, []);
           return module;
         }
@@ -190,10 +175,16 @@
           func.apply(Injector, args);
         }, []);
       },
-      addResolved: function(name, value, ns) {
+      add: function(name, value, ns) {
         ns = ns || '_';
         registered[ns][name] = {ns: ns, name: name, resolved: value};
         return this;
+      },
+      unresolve: function(name, ns) {
+        ns = ns || '_';
+        if(registered[ns] && registered[ns][name]) {
+          registered[ns][name].resolved = null;
+        }
       },
       addInterceptor: function(pattern, cb) {
         interceptors.push({pattern: pattern, cb: cb});
@@ -214,7 +205,7 @@
 
   function getHttp (ns, url, cb, contentType) {
     if(url.indexOf('/') < 0) {
-      cb(null);
+      cb();
       return;
     }
     var req = new XMLHttpRequest();
@@ -226,7 +217,7 @@
     req.onload = function() {
       // ALWAYS check content type?
       var contentType = contentType || this.getResponseHeader('content-type') || '';
-      (this.status >= 300) ? cb(null) :
+      (this.status >= 300) ? cb() :
         cb(parseResponse(contentType, this.responseText), this.status);
     };
 
@@ -245,7 +236,7 @@
     var results = [];
     var elements = findElements(container);
     if(!elements){
-      cb(null);
+      cb();
       return;
     }
 
@@ -259,7 +250,7 @@
         results.push(element);
       }
     }
-    (bracketIndex === -1) ? cb(results[0]) : cb((results.length == 0) ? null : results);
+    (bracketIndex === -1) ? cb(results[0]) : cb((results.length == 0) ? undefined : results);
   }
 
   var config = {
@@ -268,11 +259,16 @@
 
   var Injector = getInjector();
   Injector
-    .addResolved('Injector', Injector)
-    .addResolved('Util', Util)
-    .addResolved('element', getElement);
-  if(!window.register) window.register = Injector.register;
-  if(!window.use) window.use = Injector.use;
+    .add('Injector', Injector)
+    .add('Util', Util)
+    .add('element', getElement);
 
+  if(typeof exports != 'undefined') {
+    exports['register'] = Injector.register;
+    exports['use'] = Injector.use;
+  } else {
+    if(!window.register) window.register = Injector.register;
+    if(!window.use) window.use = Injector.use;
+  }
   return config;
 })();

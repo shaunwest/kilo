@@ -17,7 +17,7 @@ describe('Kilo Core Injector Spec', function() {
           }
         });
 
-        Injector.getDependency('IsDefinedTester', function(IsDefinedTester) {
+        Injector.use('IsDefinedTester', function(IsDefinedTester) {
           returnedFunc = IsDefinedTester;
           done();
         });
@@ -37,11 +37,11 @@ describe('Kilo Core Injector Spec', function() {
       expect(returnedFunc('123')).toBe(true);
     });
 
-    it('should be unresolved', function() {
+    /*it('should be unresolved', function() {
       Injector.unresolve('IsDefinedTester');
       expect(Injector.unresolved['_']['IsDefinedTester']).toBeDefined();
       expect(Injector.modules['_']['IsDefinedTester']).toBeUndefined();
-    });
+    });*/
 
     /*it('should be a new function instance', function() {
       var newFunc;
