@@ -66,8 +66,9 @@
       }
     }
 
-    function getNamespace(nsList, name, cb) {
-      var nsObject = getNsObject(nsList, name);
+    function getNamespace(nsInfo, cb) {
+      var name = nsInfo.name;
+      var nsObject = getNsObject(nsInfo.nsList, name);
 
       if(!nsObject) {
         cb();
@@ -77,7 +78,9 @@
       if(name == '*') {
         var nsItems = [];
         for(var key in nsObject) {
-          nsItems.push(nsObject[key]);
+          if(key !== nsInfo.ignore) {
+            nsItems.push(nsObject[key]);
+          }
         }
         resolveNamespace(nsItems, cb, {});
         return;
@@ -106,14 +109,14 @@
         resolve(nsItem.deps.slice(0), function(args) {
           result[nsItem.name] = nsItem.resolved = apply(nsItem.func, args);
           resolveNamespace(nsItems, cb, result);
-        }, [], nsItem.ns);
+        }, [], nsItem.ns, nsItem.name);
         return;
       }
       result[nsItem.name] = nsItem.resolved;
       resolveNamespace(nsItems, cb, result);
     }
 
-    function resolve (deps, cb, args, ns) {
+    function resolve (deps, cb, args, ns, ignore) {
       if(!deps) {
         cb();
         return;
@@ -127,7 +130,7 @@
       var nsList = (parsedNs == '_') ? [ns, '_'] : [parsedNs, ns, '_'];
       var interceptor = getInterceptor(parseName(dep));
 
-      getDependency(nsList, interceptor.name, Injector.handlers.slice(0), function(result) {
+      getDependency({nsList: nsList, name: interceptor.name, ignore: ignore}, Injector.handlers.slice(0), function(result) {
         if(interceptor.cb) {
           result = interceptor.cb(result);
         }
@@ -137,18 +140,18 @@
       });
     }
 
-    function getDependency (nsList, name, handlers, cb) {
+    function getDependency (depInfo, handlers, cb) {
       var handler = handlers.shift();
       if (!handler) {
         cb();
         return;
       }
-      handler(nsList, name, function (result) {
+      handler(depInfo, function (result) {
         if (result) {
           cb(result);
           return;
         }
-        getDependency(nsList, name, handlers, cb);
+        getDependency(depInfo, handlers, cb);
       });
     }
 
@@ -193,7 +196,6 @@
         // Async
         setTimeout(function() {
           resolve(depsOrFunc.slice(0), function(args) {
-            //func.apply(Injector, args);
             apply(func, args);
           }, []);
         }, 1);
@@ -228,7 +230,8 @@
     return responseText;
   }
 
-  function getHttp (ns, url, cb, contentType) {
+  function getHttp (config, cb, contentType) {
+    var url = config.name;
     if(url.indexOf('/') < 0) {
       cb();
       return;
@@ -258,7 +261,8 @@
   }
 
   // TODO: perf
-  function getElement (ns, elementId, cb, container) {
+  function getElement (config, cb, container) {
+    var elementId = config.name;
     var results = [];
     var elements = findElements(container);
     if(!elements){
@@ -288,7 +292,9 @@
   Injector
     .add('Injector', Injector)
     .add('Util', Util)
-    .add('element', getElement);
+    .add('element', function(elementId, cb, container) {
+      getElement({name: elementId}, cb, container);
+    });
 
   if(typeof exports != 'undefined') {
     exports['register'] = Injector.register;

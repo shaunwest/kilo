@@ -27,7 +27,7 @@
   <span data-output></span>
 </body>
 <script src="lib/jquery-1.11.2.min.js"></script>
-<script src="kilo.min.js"></script>
+<script src="kilo.js"></script>
 <script>
   // TODO make a function that tests out some utility methods
 
@@ -70,7 +70,7 @@
       // demonstrates a container element with sub elements
       use(['container[]', 'element'], function(Containers, element) {
         Containers.forEach(function(Container) {
-          element('', 'sub[]', function(Subs) {
+          element('sub[]', function(Subs) {
             Subs.forEach(function(Sub) {
               Sub.textContent = Container.getAttribute('data-msg') + ': ' + Sub.getAttribute('data-msg');
             });
@@ -105,6 +105,12 @@
 
   use('my.testFunc4', function(testFunc4) {
     testFunc4();
+  });
+
+  register('my.testFunc5', ['my.*'], function(my) {
+    return function() {
+      console.log('testFunc5 called');
+    }
   });
 
   // Interceptors!
