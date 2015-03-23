@@ -45,9 +45,11 @@
     testFunc('Yo dawg!');
   });
 
-  // FIXME: when a non-existent element dependency is requested, causes errors
-  register('my.testFunc', ['Util'], function(Util) {
+  register('my.testFunc', ['blah', 'Util'], function(blah, Util) {
     'use strict';
+
+    // blah doesn't exist, so it comes back undefined.
+    console.log('Blah is undefined:', blah);
 
     Util.log('TestFunc() was resolved');
 

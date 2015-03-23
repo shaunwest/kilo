@@ -125,6 +125,7 @@
     function getDependency (ns, name, handlers, cb) {
       var handler = handlers.shift();
       if (!handler) {
+        cb();
         return;
       }
       handler(ns, name, function (result) {
