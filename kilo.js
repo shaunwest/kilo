@@ -1,5 +1,6 @@
 /**
  * Created by Shaun on 3/11/2015.
+ *
  */
 
 (function() {
@@ -136,7 +137,7 @@
         }
         args.push(result);
 
-        resolve(deps, cb, args, ns);
+        resolve(deps, cb, args, ns, ignore);
       });
     }
 
