@@ -3,6 +3,8 @@
  */
 
 (function() {
+  'use strict';
+
   var id = 'kilo';
   var Util = {
     isDefined: function (value) { return typeof value != 'undefined' },
@@ -87,21 +89,14 @@
         return;
       }
       if(!nsItem.resolved) {
-        resolveNamespaceItem(nsItem, function (resolved) {
-          result[resolved.name] = resolved.resolved;
+        resolve(nsItem.deps, function(args) {
+          result[nsItem.name] = nsItem.resolved = nsItem.func.apply(Injector, args);
           resolveNamespace(nsItems, cb, result);
-        });
+        }, []);
         return;
       }
       result[nsItem.name] = nsItem.resolved;
       resolveNamespace(nsItems, cb, result);
-    }
-
-    function resolveNamespaceItem(nsItem, cb) {
-      resolve(nsItem.deps, function(args) {
-        nsItem.resolved = nsItem.func.apply(Injector, args);
-        cb(nsItem);
-      }, []);
     }
 
     function resolve (deps, cb, args) {
@@ -116,6 +111,7 @@
       }
       var ns = parseNs(dep);
       var interceptor = getInterceptor(parseName(dep));
+
       getDependency(ns, interceptor.name, Injector.handlers.slice(0), function(result) {
         if(interceptor.cb) {
           result = interceptor.cb(result);
@@ -128,7 +124,9 @@
 
     function getDependency (ns, name, handlers, cb) {
       var handler = handlers.shift();
-      if (!handler) return;
+      if (!handler) {
+        return;
+      }
       handler(ns, name, function (result) {
         if (result) {
           cb(result);
@@ -146,16 +144,27 @@
         }
         var ns = parseNs(key);
         var name = parseName(key);
-        if (!registered[ns]) registered[ns] = {};
-        registered[ns][name] = {ns: ns, name: name, deps: depsOrFunc, func: func, resolved: null};
+        if (!registered[ns]) {
+          registered[ns] = {};
+        }
+        registered[ns][name] = {
+          ns: ns,
+          name: name,
+          deps: depsOrFunc,
+          func: func,
+          resolved: null
+        };
         return this;
       },
       use: function (depsOrFunc, func) {
         var module;
+
+        /*
         // no dependencies
         if (Util.isFunction(depsOrFunc)) {
           depsOrFunc.apply(Injector, []);
         }
+        */
         // one dependency
         if (Util.isString(depsOrFunc)) {
           depsOrFunc = [depsOrFunc];
@@ -164,16 +173,19 @@
         if (!Util.isArray(depsOrFunc)) {
           return;
         }
+        // Not async
         if (!func) {
           resolve(depsOrFunc.slice(0), function (args) {
-            module = args[0]; //func.apply(Injector, args);
+            module = args[0];
           }, []);
           return module;
         }
-
-        resolve(depsOrFunc.slice(0), function(args) {
-          func.apply(Injector, args);
-        }, []);
+        // Async
+        setTimeout(function() {
+          resolve(depsOrFunc.slice(0), function(args) {
+            func.apply(Injector, args);
+          }, []);
+        }, 1);
       },
       add: function(name, value, ns) {
         ns = ns || '_';
@@ -192,6 +204,8 @@
       },
       handlers: [getNamespace, getElement, getHttp]
     };
+
+    Injector.register.lib = Injector.add;
 
     return Injector;
   }
@@ -226,7 +240,8 @@
   }
 
   function findElements (container) {
-    container = (container) ? container.querySelectorAll('*') : document.getElementsByTagName('html');
+    container = (container) ?
+      container.querySelectorAll('*') : document.getElementsByTagName('html');
     if(!container[0]) return;
     return container[0].querySelectorAll('*');
   }
@@ -250,7 +265,8 @@
         results.push(element);
       }
     }
-    (bracketIndex === -1) ? cb(results[0]) : cb((results.length == 0) ? undefined : results);
+    (bracketIndex === -1) ?
+      cb(results[0]) : cb((results.length == 0) ? undefined : results);
   }
 
   var config = {

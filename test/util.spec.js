@@ -1,12 +1,5 @@
 describe('Kilo Core Util Spec', function() {
-  var Util;
-
-  beforeEach(function(done) {
-    use(['Util'], function(_Util) {
-      Util = _Util;
-      done();
-    });
-  });
+  var Util = use('Util');
 
   describe('Value "123"', function() {
     var aString = '123';

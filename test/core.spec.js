@@ -5,10 +5,12 @@ describe('Kilo Core Spec', function() {
   describe('existing dependency', function() {
     var valIsDefined, Util;
 
-    // happens to be synchronous
-    use('Util', function(_Util) {
-      Util = _Util;
-      valIsDefined = Util.isDefined('123');
+    beforeEach(function(done) {
+      use('Util', function(_Util) {
+        Util = _Util;
+        valIsDefined = Util.isDefined('123');
+        done();
+      });
     });
 
     it('should be defined', function() {
