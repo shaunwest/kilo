@@ -56,11 +56,21 @@
       return {name: matchString};
     }
 
-    function getNamespace(ns, name, cb) {
-      var nsObject = registered[ns];
+    function getNsObject(nsList, name) {
+      var i = 0;
+      while(i < nsList.length) {
+        var nsObject = registered[nsList[i++]];
+        if(nsObject && (name == '*' || nsObject[name])) {
+          return nsObject;
+        }
+      }
+    }
+
+    function getNamespace(nsList, name, cb) {
+      var nsObject = getNsObject(nsList, name);
 
       if(!nsObject) {
-        cb(undefined);
+        cb();
         return;
       }
 
@@ -74,12 +84,16 @@
       }
 
       if(!nsObject[name]) {
-        cb(undefined);
+        cb();
         return;
       }
       resolveNamespace([nsObject[name]], function(result) {
         cb(result[name]);
       }, {});
+    }
+
+    function apply(func, args) {
+      return func.apply(Injector, args);
     }
 
     function resolveNamespace(nsItems, cb, result) {
@@ -89,17 +103,17 @@
         return;
       }
       if(!nsItem.resolved) {
-        resolve(nsItem.deps, function(args) {
-          result[nsItem.name] = nsItem.resolved = nsItem.func.apply(Injector, args);
+        resolve(nsItem.deps.slice(0), function(args) {
+          result[nsItem.name] = nsItem.resolved = apply(nsItem.func, args);
           resolveNamespace(nsItems, cb, result);
-        }, []);
+        }, [], nsItem.ns);
         return;
       }
       result[nsItem.name] = nsItem.resolved;
       resolveNamespace(nsItems, cb, result);
     }
 
-    function resolve (deps, cb, args) {
+    function resolve (deps, cb, args, ns) {
       if(!deps) {
         cb();
         return;
@@ -109,31 +123,32 @@
         cb(args);
         return;
       }
-      var ns = parseNs(dep);
+      var parsedNs = parseNs(dep);
+      var nsList = (parsedNs == '_') ? [ns, '_'] : [parsedNs, ns, '_'];
       var interceptor = getInterceptor(parseName(dep));
 
-      getDependency(ns, interceptor.name, Injector.handlers.slice(0), function(result) {
+      getDependency(nsList, interceptor.name, Injector.handlers.slice(0), function(result) {
         if(interceptor.cb) {
           result = interceptor.cb(result);
         }
         args.push(result);
 
-        resolve(deps, cb, args);
+        resolve(deps, cb, args, ns);
       });
     }
 
-    function getDependency (ns, name, handlers, cb) {
+    function getDependency (nsList, name, handlers, cb) {
       var handler = handlers.shift();
       if (!handler) {
         cb();
         return;
       }
-      handler(ns, name, function (result) {
+      handler(nsList, name, function (result) {
         if (result) {
           cb(result);
           return;
         }
-        getDependency(ns, name, handlers, cb);
+        getDependency(nsList, name, handlers, cb);
       });
     }
 
@@ -160,12 +175,6 @@
       use: function (depsOrFunc, func) {
         var module;
 
-        /*
-        // no dependencies
-        if (Util.isFunction(depsOrFunc)) {
-          depsOrFunc.apply(Injector, []);
-        }
-        */
         // one dependency
         if (Util.isString(depsOrFunc)) {
           depsOrFunc = [depsOrFunc];
@@ -184,7 +193,8 @@
         // Async
         setTimeout(function() {
           resolve(depsOrFunc.slice(0), function(args) {
-            func.apply(Injector, args);
+            //func.apply(Injector, args);
+            apply(func, args);
           }, []);
         }, 1);
       },

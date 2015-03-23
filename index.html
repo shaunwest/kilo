@@ -27,7 +27,7 @@
   <span data-output></span>
 </body>
 <script src="lib/jquery-1.11.2.min.js"></script>
-<script src="kilo.js"></script>
+<script src="kilo.min.js"></script>
 <script>
   // TODO make a function that tests out some utility methods
 
@@ -45,11 +45,11 @@
     testFunc('Yo dawg!');
   });
 
-  register('my.testFunc', ['blah', 'Util'], function(blah, Util) {
+  register('my.testFunc', ['Util'], function(Util) {
     'use strict';
 
     // blah doesn't exist, so it comes back undefined.
-    console.log('Blah is undefined:', blah);
+    //console.log('Blah is undefined:', blah);
 
     Util.log('TestFunc() was resolved');
 
@@ -93,7 +93,18 @@
   register('testFunc3', [], function() {
     return function() {
       return 'testFunc3 called';
-    }
+    };
+  });
+
+  register('my.testFunc4', ['testFunc2'], function(testFunc2) {
+    return function() {
+      console.log('testFunc4 called');
+      testFunc2();
+    };
+  });
+
+  use('my.testFunc4', function(testFunc4) {
+    testFunc4();
   });
 
   // Interceptors!
