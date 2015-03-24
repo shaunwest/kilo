@@ -6,7 +6,11 @@
 (function() {
   'use strict';
 
-  var id = 'kilo';
+  var id = 'kilo',
+    EMPTY_NAMESPACE = '_',
+    WILD_CARD = '*',
+    types = ['Array', 'Object', 'Boolean', 'Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'];
+
   var Util = {
     isDefined: function (value) { return typeof value != 'undefined' },
     def: function (value, defaultValue) { return (typeof value == 'undefined') ? defaultValue : value },
@@ -21,7 +25,6 @@
     }
   };
 
-  var types = ['Array', 'Object', 'Boolean', 'Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'];
   for(var i = 0; i < types.length; i++) {
     Util['is' + types[i]] = (function(type) {
       return function(obj) {
@@ -39,7 +42,7 @@
   function parseNs (key) {
     var lastIndex = key.lastIndexOf('.');
     return (key.indexOf('/') < 0 && lastIndex > -1) ?
-      key.substr(0, lastIndex) : '_';
+      key.substr(0, lastIndex) : EMPTY_NAMESPACE;
   }
 
   function getInjector () {
@@ -61,7 +64,7 @@
       var i = 0;
       while(i < nsList.length) {
         var nsObject = registered[nsList[i++]];
-        if(nsObject && (name == '*' || nsObject[name])) {
+        if(nsObject && (name == WILD_CARD || nsObject[name])) {
           return nsObject;
         }
       }
@@ -76,7 +79,7 @@
         return;
       }
 
-      if(name == '*') {
+      if(name == WILD_CARD) {
         var nsItems = [];
         for(var key in nsObject) {
           if(key !== nsInfo.ignore) {
@@ -128,7 +131,8 @@
         return;
       }
       var parsedNs = parseNs(dep);
-      var nsList = (parsedNs == '_') ? [ns, '_'] : [parsedNs, ns, '_'];
+      var nsList = (parsedNs == EMPTY_NAMESPACE) ?
+        [ns, EMPTY_NAMESPACE] : [parsedNs, ns, EMPTY_NAMESPACE];
       var interceptor = getInterceptor(parseName(dep));
 
       getDependency({nsList: nsList, name: interceptor.name, ignore: ignore}, Injector.handlers.slice(0), function(result) {
@@ -187,14 +191,14 @@
         if (!Util.isArray(depsOrFunc)) {
           return;
         }
-        // Not async
+        // not async
         if (!func) {
           resolve(depsOrFunc.slice(0), function (args) {
             module = args[0];
           }, []);
           return module;
         }
-        // Async
+        // async
         setTimeout(function() {
           resolve(depsOrFunc.slice(0), function(args) {
             apply(func, args);
@@ -202,15 +206,16 @@
         }, 1);
       },
       add: function(name, value, ns) {
-        ns = ns || '_';
+        ns = ns || EMPTY_NAMESPACE;
         registered[ns][name] = {ns: ns, name: name, resolved: value};
         return this;
       },
       unresolve: function(name, ns) {
-        ns = ns || '_';
+        ns = ns || EMPTY_NAMESPACE;
         if(registered[ns] && registered[ns][name]) {
           registered[ns][name].resolved = null;
         }
+        return this;
       },
       addInterceptor: function(pattern, cb) {
         interceptors.push({pattern: pattern, cb: cb});
@@ -244,7 +249,6 @@
     };
 
     req.onload = function() {
-      // ALWAYS check content type?
       var contentType = contentType || this.getResponseHeader('content-type') || '';
       (this.status >= 300) ? cb() :
         cb(parseResponse(contentType, this.responseText), this.status);
@@ -257,22 +261,25 @@
   function findElements (container) {
     container = (container) ?
       container.querySelectorAll('*') : document.getElementsByTagName('html');
-    if(!container[0]) return;
+    if(!container[0]) {
+      return
+    }
     return container[0].querySelectorAll('*');
   }
 
   // TODO: perf
   function getElement (config, cb, container) {
-    var elementId = config.name;
-    var results = [];
-    var elements = findElements(container);
+    var elementId = config.name,
+      results = [],
+      elements = findElements(container);
+
     if(!elements){
       cb();
       return;
     }
 
     var bracketIndex = elementId.indexOf('[]');
-    if(bracketIndex != -1) {
+    if(bracketIndex < 0) {
       elementId = elementId.substring(0, bracketIndex);
     }
     for(var i = 0, numElements = elements.length; i < numElements; i++) {
@@ -281,7 +288,7 @@
         results.push(element);
       }
     }
-    (bracketIndex === -1) ?
+    (bracketIndex == -1) ?
       cb(results[0]) : cb((results.length == 0) ? undefined : results);
   }
 
@@ -293,6 +300,7 @@
   Injector
     .add('Injector', Injector)
     .add('Util', Util)
+    .add('config', config)
     .add('element', function(elementId, cb, container) {
       getElement({name: elementId}, cb, container);
     });
@@ -304,5 +312,4 @@
     if(!window.register) window.register = Injector.register;
     if(!window.use) window.use = Injector.use;
   }
-  return config;
 })();
