@@ -262,7 +262,7 @@
     container = (container) ?
       container.querySelectorAll('*') : document.getElementsByTagName('html');
     if(!container[0]) {
-      return
+      return;
     }
     return container[0].querySelectorAll('*');
   }
@@ -279,7 +279,7 @@
     }
 
     var bracketIndex = elementId.indexOf('[]');
-    if(bracketIndex < 0) {
+    if(bracketIndex > -1) {
       elementId = elementId.substring(0, bracketIndex);
     }
     for(var i = 0, numElements = elements.length; i < numElements; i++) {
