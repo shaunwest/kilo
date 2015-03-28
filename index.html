@@ -107,7 +107,7 @@
     testFunc4();
   });
 
-  register('my.testFunc5', ['my.*'], function(my) {
+  register('my.testFunc5', ['*'], function(my) {
     return function() {
       console.log('testFunc5 called');
     }
