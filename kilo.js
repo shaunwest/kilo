@@ -193,10 +193,16 @@
         }
         // not async
         if (!func) {
-          resolve(depsOrFunc.slice(0), function (args) {
-            module = args[0];
-          }, []);
-          return module;
+          return function() {
+            var args1 = arguments;
+            setTimeout(function() {
+              resolve(depsOrFunc.slice(0), function (args) {
+                if(Util.isFunction(args[0])) {
+                  apply(args[0], args1);
+                }
+              }, []);
+            }, 1);
+          };
         }
         // async
         setTimeout(function() {

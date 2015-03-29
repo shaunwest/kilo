@@ -107,11 +107,13 @@
     testFunc4();
   });
 
-  register('my.testFunc5', ['*'], function(my) {
-    return function() {
-      console.log('testFunc5 called');
+  register('my.testFunc5', function() {
+    return function(msg) {
+      console.log('testFunc5 called: ' + msg);
     }
   });
+
+  use('my.testFunc5')('this is a message');
 
   // Interceptors!
   use(['Injector', '$'], function(Injector, $) {
